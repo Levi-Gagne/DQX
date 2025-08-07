@@ -1,0 +1,25 @@
+# dqx_output_config.yaml
+
+dqx_config_table_name: dq_dev.dqx.checks_config
+
+run_config_name:
+  default:
+    output_config:
+      location: dq_dev.dqx.checks_log
+      mode: overwrite
+      options:
+        mergeSchema: true
+    quarantine_config:
+      location: dq_dev.dqx.checks_quarantine
+      mode: append
+      options:
+        mergeSchema: true
+  none:
+    output_config:
+      location: none
+      mode: none
+      options: {}
+    quarantine_config:
+      location: none
+      mode: none
+      options: {}
