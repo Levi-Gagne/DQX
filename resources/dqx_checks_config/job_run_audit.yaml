@@ -1,3 +1,5 @@
+# dqx_checks_config/job_run_audit.yaml
+
 # 1) Row-level: basic presence
 - table_name: dq_prd.monitoring.job_run_audit
   name: run_id_is_not_null
