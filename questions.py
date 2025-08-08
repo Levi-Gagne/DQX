@@ -1,26 +1,33 @@
-So i have a few questions about some of these checks i created
+So when it created the app the tree was like this:
 
 
-So below are two differnt checks:
-# 1) Row-level: basic presence
-- table_name: dq_prd.monitoring.job_run_audit
-  name: run_id_is_not_null
-  criticality: error
-  run_config_name: default
-  check:
-    function: is_not_null
-    arguments:
-      column: run_id
+profilon/databricks-hello-world-app/app.py, requirements.txt, app.yaml
 
-# 2) Dataset-level: unique key
-- table_name: dq_prd.monitoring.job_run_audit
-  name: run_id_is_unique
-  criticality: error
-  run_config_name: default
-  check:
-    function: is_unique
-    arguments:
-      columns: [run_id]
+Here is the conentes of requirments.py and app.yaml:
+requirments.txt:
+streamlit==1.38.0
 
 
-what im curisou about is one has [] around the columns and one does not; which is correct?
+app.yaml:
+command: [
+  "streamlit", 
+  "run",
+  "app.py"
+]
+
+
+
+
+So a few things i was thinking of reformating my app to be like this strucutre:
+
+in the root of the project i would have:
+.gitignore
+LICENSE
+NOTICE
+README.md
+(above files were already included in app and were at rood)
+requirments.txt (consiginering moving this to root and not same folder as app.py; is that a problem?)
+src/profilon/app.py, app.yaml
+src/profilon/pages/1_configure_&_run.py
+
+what are your thoughts on this refactor?
