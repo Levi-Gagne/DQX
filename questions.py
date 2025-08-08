@@ -1,10 +1,8 @@
-I know we updated the code to load checks, but i want to focus on the version of the code i have belwo:
-
 import os
 import json
 import hashlib
 import yaml
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from pyspark.sql import SparkSession, types as T
 from delta.tables import DeltaTable
@@ -105,7 +103,6 @@ def process_yaml_file(path: str, output_config: Dict[str, Any], time_zone: str =
         if for_each is not None and not isinstance(for_each, list):
             raise ValueError(f"{path}: check.for_each_column must be an array of strings (rule '{rule.get('name')}').")
         if isinstance(for_each, list):
-            # ensure all entries are strings (DQX schema uses ARRAY<STRING>)
             try:
                 for_each = [str(x) for x in for_each]
             except Exception:
@@ -153,8 +150,11 @@ def process_yaml_file(path: str, output_config: Dict[str, Any], time_zone: str =
 def parse_output_config(config_path: str) -> Dict[str, Any]:
     with open(config_path, "r") as fh:
         config = yaml.safe_load(fh)
-    if "dqx_config_table_name" not in config or "run_config_name" not in config:
-        raise ValueError("Config must include 'dqx_config_table_name' and 'run_config_name'.")
+    # Expect the new keys
+    required = ["dqx_checks_config_table_name", "dqx_yaml_checks", "run_config_name"]
+    missing = [k for k in required if k not in config]
+    if missing:
+        raise ValueError(f"Config missing required keys: {missing}")
     return config
 
 
@@ -235,8 +235,7 @@ def upsert_rules_into_delta(spark: SparkSession, rules, delta_table_name: str):
 
     df = spark.createDataFrame(rules, schema=TABLE_SCHEMA)
 
-    # If you want to cast audit timestamps to actual timestamps in the sink,
-    # uncomment the next two lines and make sure your Delta schema is evolved accordingly.
+    # Cast audit timestamps to actual TIMESTAMP in the sink
     df = df.withColumn("created_at", to_timestamp(col("created_at"))) \
            .withColumn("updated_at", to_timestamp(col("updated_at")))
 
@@ -302,8 +301,8 @@ def validate_all_rules(rules_dir: str, output_config: Dict[str, Any], fail_fast:
 
 
 def main(
-    output_config_path: str = "resources/dqx_output_config.yaml",
-    rules_dir: str = "resources/dqx_checks_config/",
+    output_config_path: str = "resources/dqx_config.yaml",
+    rules_dir: Optional[str] = None,
     time_zone: str = "America/Chicago",
     dry_run: bool = False,
     validate_only: bool = False
@@ -313,7 +312,11 @@ def main(
     print_notebook_env(spark, local_timezone=time_zone)
 
     output_config = parse_output_config(output_config_path)
-    delta_table_name = output_config["dqx_config_table_name"]
+
+    # pick up rules_dir from config if not provided explicitly
+    rules_dir = rules_dir or output_config["dqx_yaml_checks"]
+
+    delta_table_name = output_config["dqx_checks_config_table_name"]
 
     all_rules = []
     for fname in os.listdir(rules_dir):
@@ -341,79 +344,3 @@ if __name__ == "__main__":
     # main(dry_run=True)
     # main(validate_only=True)
     main()
-
-
-
-
-So the changes I want to make are this
-
-For the rules_dir, I would like to define thisn in the yaml file we currently call output_config_path
-
-
-This is the current file:
-# resources/dqx_output_config.yaml
-
-dqx_config_table_name: dq_dev.dqx.checks_config
-
-run_config_name:
-  default:
-    output_config:
-      location: dq_dev.dqx.checks_log
-      mode: overwrite
-      options:
-        mergeSchema: true
-    quarantine_config:
-      location: dq_dev.dqx.checks_quarantine
-      mode: append
-      options:
-        mergeSchema: true
-  none:
-    output_config:
-      location: none
-      mode: none
-      options: {}
-    quarantine_config:
-      location: none
-      mode: none
-      options: {}
-
-
-
-I would like to rename the file: dqx_config.yaml
-
-
-also beacuase we define the new value inside it would look like this:
-# resources/dqx_output_config.yaml
-
-dqx_checks_config_table_name: dq_dev.dqx.checks_config
-
-dqx_yaml_checks = "resources/dqx_checks_config/"
-
-run_config_name:
-  default:
-    output_config:
-      location: dq_dev.dqx.checks_log
-      mode: overwrite
-      options:
-        mergeSchema: true
-    quarantine_config:
-      location: dq_dev.dqx.checks_quarantine
-      mode: append
-      options:
-        mergeSchema: true
-  none:
-    output_config:
-      location: none
-      mode: none
-      options: {}
-    quarantine_config:
-      location: none
-      mode: none
-      options: {}
-
-
-
-
-without removing code or making chnages other than i describe can you show me the updated yaml file and the code to apply the checks?
-
-
