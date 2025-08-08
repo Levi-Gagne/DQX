@@ -1,32 +1,12 @@
 # resources/dqx_config.yaml
 
-# Where the YAML rule files live (directory or volume path)
 dqx_yaml_checks: resources/dqx_checks_config/
-
-# Where to store flattened DQX rules (Delta table)
 dqx_checks_config_table_name: dq_dev.dqx.checks_config
-
-# Global default output table for check hits (used if a run-config doesn't specify one)
 dqx_checks_log_table_name: dq_dev.dqx.checks_log
 
 run_config_name:
   default:
     output_config:
-      location: dq_dev.dqx.checks_log
       mode: overwrite
       options:
         mergeSchema: true
-    quarantine_config:
-      location: dq_dev.dqx.checks_quarantine
-      mode: append
-      options:
-        mergeSchema: true
-  none:
-    output_config:
-      location: none
-      mode: none
-      options: {}
-    quarantine_config:
-      location: none
-      mode: none
-      options: {}
