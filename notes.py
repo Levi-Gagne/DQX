@@ -1,59 +1,81 @@
-So it runs, and it creates teh table, but are we actually applying the checks on the data?
+from databricks.sdk import WorkspaceClient
+from databricks.labs.dqx.engine import DQEngine
+from pyspark.sql import functions as F
+import hashlib, json
 
+engine = DQEngine(WorkspaceClient())
 
+TABLE = "dq_prd.monitoring.job_run_audit"
+KEY_COLS = ["run_id"]
+RUN_CONFIG = "default"
 
-I get this as an ouput:
-RUN-CONFIG: default
-none has no output location — skipping.
-TOTAL rows written: 0
+# --- your two rules (or load from YAML) ---
+rules = [
+    {
+        "table_name": TABLE,
+        "name": "run_id_is_not_null",
+        "criticality": "error",
+        "run_config_name": "default",
+        "check": {"function": "is_not_null", "arguments": {"column": "run_id"}},
+    },
+    {
+        "table_name": TABLE,
+        "name": "failed_state_is_terminated",
+        "criticality": "error",
+        "run_config_name": "default",
+        "filter": "result_state = 'FAILED'",
+        "check": {"function": "sql_expression", "arguments": {"expression": "state = 'TERMINATED'"}},
+    },
+]
 
+def rule_logic_hash(rule: dict) -> str:
+    payload = {
+        "table_name": str(rule["table_name"]).lower(),
+        "check": {
+            "function": str(rule["check"]["function"]).lower(),
+            "arguments": rule["check"].get("arguments") or {},
+            "for_each_column": rule["check"].get("for_each_column"),
+        },
+        "filter": rule.get("filter"),
+    }
+    return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
 
-what does none has no ouput location mean? 
+rule_rows = [(r["name"], rule_logic_hash(r), r["criticality"]) for r in rules]
+rule_map = spark.createDataFrame(rule_rows, ["name", "rule_id", "criticality"])
 
+def fp_expr(cols):
+    return F.sha2(F.concat_ws("||", *[F.coalesce(F.col(c).cast("string"), F.lit("∅")) for c in cols]), 256)
 
-please calrify that as im not sure what that is supposed to mean
+df = spark.table(TABLE)
 
-we need to make sure we are getting all the information to run the checks from the table then running those against the data
+# Build a per-row JSON snapshot once
+row_struct = F.struct(*[F.col(c).alias(c) for c in df.columns])
+row_json   = F.to_json(row_struct)
 
+annotated = engine.apply_checks_by_metadata(df, rules)  # adds _errors/_warnings
+base = (annotated
+        .withColumn("_fp", fp_expr(KEY_COLS))
+        .withColumn("_row_snapshot_json", row_json))
 
-Can we say if any hit or not and which ones?
+errors = (base
+    .select(*KEY_COLS, "_fp", "_row_snapshot_json", F.explode_outer(F.col("_errors")).alias("hit"))
+    .withColumn("severity", F.lit("error")))
 
-For clarification I dont want us to 
+warnings = (base
+    .select(*KEY_COLS, "_fp", "_row_snapshot_json", F.explode_outer(F.col("_warnings")).alias("hit"))
+    .withColumn("severity", F.lit("warning")))
 
+hits = (errors.unionByName(warnings, allowMissingColumns=True)
+    .filter(F.col("hit").isNotNull())
+    .select(*KEY_COLS, "_fp", "severity", "hit.*", F.col("_row_snapshot_json").alias("row_snapshot_json"))
+    .join(rule_map, on="name", how="left")
+    .withColumn("result_id", F.expr("uuid()"))
+    .withColumn("source_table", F.lit(TABLE))
+    .withColumn("run_config_name", F.lit(RUN_CONFIG))
+    .withColumn("created_at", F.current_timestamp())
+)
 
-Also can you verify, as the dqx documentation suggests (https://databrickslabs.github.io/dqx/docs/guide/quality_checks/#applying-quality-rules-defined-in-a-delta-table)
+display(hits)
 
-that we are using one of these two methods?
-apply_checks_by_metadata_and_split: splits the input data into valid and invalid (quarantined) dataframes.
-
-or 
-
-  apply_checks_by_metadata: report issues as additional columns.
-
-
-not i dont want the results saved to the table as an addiitonal table but teh resuttls should go into the table we defined here:
-dqx_checks_log_table_name: dq_dev.dqx.checks_log
-
-
-Its the same as the run_config_name, but then this is the schema of the table
-DQX_CHECKS_LOG_SCHEMA = T.StructType([
-    T.StructField("result_id",       T.StringType(),  False),
-    T.StructField("rule_id",         T.StringType(),  False),
-    T.StructField("source_table",    T.StringType(),  False),
-    T.StructField("run_config_name", T.StringType(),  False),
-    T.StructField("severity",        T.StringType(),  False),
-    T.StructField("name",            T.StringType(),  True),
-    T.StructField("message",         T.StringType(),  True),
-    T.StructField("columns",         T.ArrayType(T.StringType()), True),
-    T.StructField("filter",          T.StringType(),  True),
-    T.StructField("function",        T.StringType(),  True),
-    T.StructField("run_time",        T.TimestampType(), True),
-    T.StructField("user_metadata",   T.MapType(T.StringType(), T.StringType()), True),
-    T.StructField("created_by",      T.StringType(),  False),
-    T.StructField("created_at",      T.TimestampType(), False),
-    T.StructField("updated_by",      T.StringType(),  True),
-    T.StructField("updated_at",      T.TimestampType(), True)
-])
-
-
-Then here is more documentation https://databrickslabs.github.io/dqx/docs/guide/quality_checks/#quality-check-results
+# Optional: summary for the dashboard
+display(hits.groupBy("source_table", "rule_id", "name", "severity").count().orderBy(F.desc("count")))
