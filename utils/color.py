@@ -1,4 +1,4 @@
-# utils/color.py
+# src/profilon/utils/color.py
 
 """
 colorConfig.py
