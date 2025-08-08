@@ -1,4 +1,4 @@
-# pages/1_Configure_&_Run.py
+# src/profilon/pages/1_configure_&_run.py
 import os
 import io
 import time
