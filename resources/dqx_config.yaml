@@ -6,6 +6,9 @@ dqx_yaml_checks: resources/dqx_checks_config/
 # Where to store flattened DQX rules (Delta table)
 dqx_checks_config_table_name: dq_dev.dqx.checks_config
 
+# Global default output table for check hits (used if a run-config doesn't specify one)
+dqx_checks_log_table_name: dq_dev.dqx.checks_log
+
 run_config_name:
   default:
     output_config:
