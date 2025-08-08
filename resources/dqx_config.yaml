@@ -1,10 +1,10 @@
 # resources/dqx_config.yaml
 
-# Where to store flattened DQX rules (Delta table)
-dqx_checks_config_table_name: dq_dev.dqx.checks_config
-
 # Where the YAML rule files live (directory or volume path)
 dqx_yaml_checks: resources/dqx_checks_config/
+
+# Where to store flattened DQX rules (Delta table)
+dqx_checks_config_table_name: dq_dev.dqx.checks_config
 
 run_config_name:
   default:
