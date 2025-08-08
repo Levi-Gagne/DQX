@@ -1,4 +1,4 @@
-# DQX config (loader)
+# resources/dqx_config.yaml
 
 # Where to store flattened DQX rules (Delta table)
 dqx_checks_config_table_name: dq_dev.dqx.checks_config
