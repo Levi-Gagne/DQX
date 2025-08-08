@@ -339,3 +339,82 @@ def validate_all_rules(rules_dir: str, output_config: Dict[str, Any], fail_fast:
         for e in errors:
             print(e)
     return errors
+    
+# === Cell 5: Thin Orchestrator (holds state; logic stays in pure functions) ===
+class RunMode(Enum):
+    VALIDATE = auto()
+    DRY_RUN  = auto()
+    WRITE    = auto()
+
+@dataclass(frozen=True)
+class LoaderConfig:
+    output_config_path: str
+    rules_dir: str
+    time_zone: str = "America/Chicago"
+
+class DQXRuleLoader:
+    """Tiny facade for clear phases & logging; recomputes rules on every run."""
+    def __init__(self, spark: SparkSession, cfg: LoaderConfig):
+        self.spark = spark
+        self.cfg = cfg
+
+        section("PARSING OUTPUT CONFIG")
+        self.output_config = parse_output_config(cfg.output_config_path)
+        self.delta_table   = self.output_config["dqx_config_table_name"]
+
+    def _load_all_rules(self) -> List[Dict[str, Any]]:
+        section("LOADING + FLATTENING RULES FROM YAML")
+        rules: List[Dict[str, Any]] = []
+        rules_dir = self.cfg.rules_dir.rstrip("/")
+
+        for fname in sorted(os.listdir(rules_dir)):
+            if not fname.endswith((".yaml", ".yml")) or fname.startswith("."):
+                continue
+            path = os.path.join(rules_dir, fname)
+            rules.extend(process_yaml_file(path, self.output_config, time_zone=self.cfg.time_zone))
+        print(f"Collected {len(rules)} rule rows from YAML.")
+        return rules
+
+    def run(self, mode: RunMode) -> None:
+        section("ENVIRONMENT")
+        print_notebook_env(self.spark, local_timezone=self.cfg.time_zone)
+
+        rules = self._load_all_rules()
+
+        if mode is RunMode.VALIDATE:
+            section("VALIDATE-ONLY")
+            validate_all_rules(self.cfg.rules_dir, self.output_config)
+            return
+
+        if mode is RunMode.DRY_RUN:
+            section("DRY RUN (SHOW DATAFRAME)")
+            print_rules_df(self.spark, rules)
+            return
+
+        section("WRITE (UPSERT INTO DELTA)")
+        ensure_delta_table(self.spark, self.delta_table)
+        upsert_rules_into_delta(self.spark, rules, self.delta_table)
+        print(f"Finished writing rules to '{self.delta_table}'.")
+        
+        
+# === Cell 6: Entrypoint ===
+spark = SparkSession.builder.getOrCreate()
+
+loader = DQXRuleLoader(
+    spark,
+    LoaderConfig(
+        output_config_path=OUTPUT_CONFIG_PATH,
+        rules_dir=RULES_DIR,
+        time_zone=TIME_ZONE,
+    ),
+)
+
+mode = {
+    "VALIDATE": RunMode.VALIDATE,
+    "DRY_RUN":  RunMode.DRY_RUN,
+    "WRITE":    RunMode.WRITE,
+}.get(MODE.upper(), RunMode.WRITE)
+
+loader.run(mode)
+
+
