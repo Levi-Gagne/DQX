@@ -1,4 +1,4 @@
-# dqx_checks_config/job_run_audit.yaml
+# resources/dqx_checks_config/job_run_audit.yaml
 
 # 1) Row-level: basic presence
 - table_name: dq_prd.monitoring.job_run_audit
@@ -112,9 +112,9 @@
       expression: "error_code IS NOT NULL AND trim(error_code) <> ''"
 
 
-#######################
-#   FAILED
-#######################
+############################################################################################
+#   FAILED CHECKS: The below checks are meant for testing & should fail everytime
+############################################################################################
 
 # All of these are meant to FAIL (produce hits)
 
