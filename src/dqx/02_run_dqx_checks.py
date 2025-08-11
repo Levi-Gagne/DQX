@@ -7,6 +7,9 @@
 # === Cell 1: Install DQX Package (if your cluster image doesn't already include it) ===
 %pip install databricks-labs-dqx==0.8.0
 
+# === Cell 2: Restart Python to pick up libs (Databricks convention) ===
+dbutils.library.restartPython()
+
 # COMMAND ----------
 
 # === Cell 2: Restart Python to pick up libs (Databricks convention) ===
