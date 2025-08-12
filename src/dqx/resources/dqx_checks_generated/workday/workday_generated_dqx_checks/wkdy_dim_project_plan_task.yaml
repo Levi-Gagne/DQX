@@ -1,0 +1,153 @@
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: project_plan_task_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_plan_task_key is not null
+      name: project_plan_task_key_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: project_plan_task_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_plan_task_key >= 18235781 and project_plan_task_key <= 18566081
+      name: project_plan_task_key_min_max
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: project_plan_task_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_plan_task_name is not null
+      name: project_plan_task_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: is_billable_task_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_billable_task is not null
+      name: is_billable_task_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: is_milestone_task_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_milestone_task is not null
+      name: is_milestone_task_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: project_plan_task_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_plan_task_wid is not null
+      name: project_plan_task_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: project_plan_phase_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_plan_phase_wid is not null
+      name: project_plan_phase_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: is_star_historical_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_star_historical is not null
+      name: is_star_historical_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: project_plan_task_status_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_plan_task_status is not null
+      name: project_plan_task_status_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: project_plan_task_status_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_plan_task_status in ('Unchanged')
+      name: project_plan_task_status_is_in
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: is_deleted_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_deleted is not null
+      name: is_deleted_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: project_plan_phase_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_plan_phase_key is not null
+      name: project_plan_phase_key_is_not_null
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: project_plan_phase_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_plan_phase_key >= 893315 and project_plan_phase_key <= 2064242
+      name: project_plan_phase_key_min_max
+- table_name: de_prd.gold.wkdy_dim_project_plan_task
+  name: project_task_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_task_wid is not null and trim(project_task_wid) <> ''
+      name: project_task_wid_is_not_null_or_empty

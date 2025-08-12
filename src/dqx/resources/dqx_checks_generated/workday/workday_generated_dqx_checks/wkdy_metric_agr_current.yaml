@@ -1,0 +1,576 @@
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: period_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: period_date is not null
+      name: period_date_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: period_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: period_date >= '2024-02-28' and period_date <= '2025-08-01'
+      name: period_date_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: period_year_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: period_year is not null
+      name: period_year_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: period_year_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: period_year in (2025, 2024)
+      name: period_year_is_in
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: period_year_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: period_year >= 2024 and period_year <= 2025
+      name: period_year_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: period_month_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: period_month is not null
+      name: period_month_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: period_month_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: period_month >= 1 and period_month <= 12
+      name: period_month_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: metric_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: metric_date is not null
+      name: metric_date_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: metric_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: metric_date >= '2024-03-22' and metric_date <= '2025-08-10'
+      name: metric_date_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: company_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company_name is not null
+      name: company_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: company_name_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company_name in ('CliftonLarsonAllen LLP', 'CliftonLarsonAllen Wealth
+        Advisors LLC')
+      name: company_name_is_in
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: cost_center_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_name is not null
+      name: cost_center_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: project_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_name is not null
+      name: project_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: customer_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_name is not null
+      name: customer_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: customer_contract_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_contract_name is not null
+      name: customer_contract_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: currency_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: currency is not null
+      name: currency_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: currency_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: currency in ('USD')
+      name: currency_is_in
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: gross_professional_fees_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: gross_professional_fees is not null
+      name: gross_professional_fees_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: gross_professional_fees_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: gross_professional_fees >= -1050.00 and gross_professional_fees
+        <= 17866.95127532899412326514721
+      name: gross_professional_fees_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_gross_professional_fees_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_gross_professional_fees is not null
+      name: net_daily_gross_professional_fees_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_gross_professional_fees_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_gross_professional_fees >= -2341.051022358236409745586570
+        and net_daily_gross_professional_fees <= 2550.799862358236409745586570
+      name: net_daily_gross_professional_fees_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: services_to_other_offices_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: services_to_other_offices is not null
+      name: services_to_other_offices_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_services_to_other_offices_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_services_to_other_offices is not null
+      name: net_daily_services_to_other_offices_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: services_from_other_offices_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: services_from_other_offices is not null
+      name: services_from_other_offices_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: services_from_other_offices_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: services_from_other_offices >= -345.25 and services_from_other_offices
+        <= 1771.442366699320204133982770
+      name: services_from_other_offices_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_services_from_other_offices_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_services_from_other_offices is not null
+      name: net_daily_services_from_other_offices_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: technology_fees_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: technology_fees is not null
+      name: technology_fees_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: technology_fees_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: technology_fees >= -50.00 and technology_fees <= 878.9085027952228763933817390
+      name: technology_fees_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_technology_fees_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_technology_fees is not null
+      name: net_daily_technology_fees_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: customer_charge_backs_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_charge_backs is not null
+      name: customer_charge_backs_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_customer_charge_backs_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_customer_charge_backs is not null
+      name: net_daily_customer_charge_backs_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: wealth_advisory_commission_income_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: wealth_advisory_commission_income is not null
+      name: wealth_advisory_commission_income_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_wealth_advisory_commission_income_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_wealth_advisory_commission_income is not null
+      name: net_daily_wealth_advisory_commission_income_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: finance_charges_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: finance_charges is not null
+      name: finance_charges_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_finance_charges_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_finance_charges is not null
+      name: net_daily_finance_charges_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: other_revenue_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: other_revenue is not null
+      name: other_revenue_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_other_revenue_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_other_revenue is not null
+      name: net_daily_other_revenue_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: premiums_discounts_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: premiums_discounts is not null
+      name: premiums_discounts_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: premiums_discounts_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: premiums_discounts >= -6643.097992236870834167348221 and premiums_discounts
+        <= 6337.643012236870834167348221
+      name: premiums_discounts_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_premiums_discounts_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_premiums_discounts is not null
+      name: net_daily_premiums_discounts_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_premiums_discounts_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_premiums_discounts >= -777.3519480486851898240274750 and
+        net_daily_premiums_discounts <= 778.8625280486851898240274750
+      name: net_daily_premiums_discounts_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: wip_reserve_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: wip_reserve is not null
+      name: wip_reserve_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: wip_reserve_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: wip_reserve >= -3945.579718356638082041172311 and wip_reserve <=
+        3770.378158356638082041172311
+      name: wip_reserve_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_wip_reserve_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_wip_reserve is not null
+      name: net_daily_wip_reserve_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_wip_reserve_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_wip_reserve >= -597.6061575730241976907564094 and net_daily_wip_reserve
+        <= 551.9402775730241976907564094
+      name: net_daily_wip_reserve_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: other_adjustments_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: other_adjustments is not null
+      name: other_adjustments_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: net_daily_other_adjustments_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: net_daily_other_adjustments is not null
+      name: net_daily_other_adjustments_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: company_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company_wid is not null
+      name: company_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: company_wid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company_wid in ('31d4e51a50e201ad2baa90d343179d66', '31d4e51a50e2018dc3e79dd34317ab66')
+      name: company_wid_is_in
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: cost_center_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_wid is not null
+      name: cost_center_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: project_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_wid is not null
+      name: project_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: customer_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_wid is not null
+      name: customer_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: customer_contract_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_contract_wid is not null
+      name: customer_contract_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: project_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_key is not null
+      name: project_key_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: project_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_key >= 1484927882 and project_key <= 1808733802
+      name: project_key_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: customer_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_key is not null
+      name: customer_key_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: customer_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_key >= 543276173 and customer_key <= 547922657
+      name: customer_key_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: cost_center_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_key is not null
+      name: cost_center_key_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: _created_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date >= '2024-12-12T00:00:00.000000+0000' and _created_date
+        <= '2025-08-12T00:00:00.000000+0000'
+      name: _created_date_min_max
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null
+- table_name: de_prd.gold.wkdy_metric_agr_current
+  name: is_star_historical_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_star_historical is not null
+      name: is_star_historical_is_not_null

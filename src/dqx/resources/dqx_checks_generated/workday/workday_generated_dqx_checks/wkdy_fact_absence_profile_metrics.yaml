@@ -1,0 +1,292 @@
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: window_start_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: window.start is not null
+      name: window_start_is_not_null
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: window_start_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: window.start >= '2025-04-09T00:00:00.000000+0000' and window.start
+        <= '2025-05-09T00:00:00.000000+0000'
+      name: window_start_min_max
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: window_end_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: window.end is not null
+      name: window_end_is_not_null
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: window_end_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: window.end >= '2025-04-10T00:00:00.000000+0000' and window.end <=
+        '2025-05-10T00:00:00.000000+0000'
+      name: window_end_min_max
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: log_type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: log_type is not null
+      name: log_type_is_not_null
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: log_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: log_type in ('INPUT')
+      name: log_type_is_in
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: logging_table_commit_version_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: logging_table_commit_version is not null
+      name: logging_table_commit_version_is_not_null
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: logging_table_commit_version_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: logging_table_commit_version in (485)
+      name: logging_table_commit_version_is_in
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: logging_table_commit_version_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: logging_table_commit_version >= 485 and logging_table_commit_version
+        <= 485
+      name: logging_table_commit_version_min_max
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: monitor_version_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: monitor_version is not null
+      name: monitor_version_is_not_null
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: monitor_version_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: monitor_version in (0)
+      name: monitor_version_is_in
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: granularity_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: granularity is not null
+      name: granularity_is_not_null
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: granularity_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: granularity in ('1 day')
+      name: granularity_is_in
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: slice_key_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: slice_key is not null and trim(slice_key) <> ''
+      name: slice_key_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: slice_value_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: slice_value is not null and trim(slice_value) <> ''
+      name: slice_value_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: column_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: column_name is not null
+      name: column_name_is_not_null
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: count_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: count is not null
+      name: count_is_not_null
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: count_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: count >= 1 and count <= 17364
+      name: count_min_max
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: data_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: data_type in ('string', 'bigint', 'timestamp', 'decimal(18,2)')
+      name: data_type_is_in
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: data_type_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: data_type is not null and trim(data_type) <> ''
+      name: data_type_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: num_nulls_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: num_nulls in (0)
+      name: num_nulls_is_in
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: avg_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: avg >= 6.233738872403561 and avg <= 10949127.021146173
+      name: avg_min_max
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: min_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: min >= 0.12 and min <= 1746166232.923
+      name: min_min_max
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: max_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: max >= 8.0 and max <= 1746166232.923
+      name: max_min_max
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: num_zeros_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: num_zeros in (0)
+      name: num_zeros_is_in
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: num_nan_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: num_nan in (0)
+      name: num_nan_is_in
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: min_length_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: min_length >= 1.0 and min_length <= 64.0
+      name: min_length_min_max
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: max_length_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: max_length >= 1.0 and max_length <= 64.0
+      name: max_length_min_max
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: avg_length_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: avg_length >= 1.0 and avg_length <= 64.0
+      name: avg_length_min_max
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: median_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: median >= 8.0 and median <= 1746166232.923
+      name: median_min_max
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: distinct_count_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: distinct_count >= 1 and distinct_count <= 7959
+      name: distinct_count_min_max
+- table_name: de_prd.gold.wkdy_fact_absence_profile_metrics
+  name: percent_distinct_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: percent_distinct >= 0.0036271309394269135 and percent_distinct <=
+        100.0
+      name: percent_distinct_min_max

@@ -1,0 +1,194 @@
+- table_name: de_prd.gold.wkdy_dim_location
+  name: location_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_key is not null
+      name: location_key_is_not_null
+- table_name: de_prd.gold.wkdy_dim_location
+  name: location_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_wid is not null and trim(location_wid) <> ''
+      name: location_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_location
+  name: location_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_name is not null
+      name: location_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_location
+  name: location_type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_type is not null
+      name: location_type_is_not_null
+- table_name: de_prd.gold.wkdy_dim_location
+  name: phone_number_primary_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: phone_number_primary is not null and trim(phone_number_primary)
+        <> ''
+      name: phone_number_primary_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_location
+  name: phone_number_secondary_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: phone_number_secondary is not null and trim(phone_number_secondary)
+        <> ''
+      name: phone_number_secondary_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_location
+  name: office_fax_number_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: office_fax_number is not null and trim(office_fax_number) <> ''
+      name: office_fax_number_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_location
+  name: primary_address_line1_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: primary_address_line1 is not null
+      name: primary_address_line1_is_not_null
+- table_name: de_prd.gold.wkdy_dim_location
+  name: primary_address_line2_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: primary_address_line2 is not null and trim(primary_address_line2)
+        <> ''
+      name: primary_address_line2_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_location
+  name: primary_address_city_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: primary_address_city is not null
+      name: primary_address_city_is_not_null
+- table_name: de_prd.gold.wkdy_dim_location
+  name: primary_address_state_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: primary_address_state is not null
+      name: primary_address_state_is_not_null
+- table_name: de_prd.gold.wkdy_dim_location
+  name: primary_address_postal_code_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: primary_address_postal_code is not null
+      name: primary_address_postal_code_is_not_null
+- table_name: de_prd.gold.wkdy_dim_location
+  name: latitude_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: latitude is not null
+      name: latitude_is_not_null
+- table_name: de_prd.gold.wkdy_dim_location
+  name: latitude_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: latitude >= 26.201536 and latitude <= 48.399940
+      name: latitude_min_max
+- table_name: de_prd.gold.wkdy_dim_location
+  name: longitude_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: longitude is not null
+      name: longitude_is_not_null
+- table_name: de_prd.gold.wkdy_dim_location
+  name: longitude_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: longitude >= -122.680077 and longitude <= -70.926720
+      name: longitude_min_max
+- table_name: de_prd.gold.wkdy_dim_location
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_location
+  name: _created_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date >= '2024-03-22T00:00:00.000000+0000' and _created_date
+        <= '2024-05-30T00:00:00.000000+0000'
+      name: _created_date_min_max
+- table_name: de_prd.gold.wkdy_dim_location
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_location
+  name: _last_updated_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date >= '2024-03-22T00:00:00.000000+0000' and _last_updated_date
+        <= '2025-03-14T00:00:00.000000+0000'
+      name: _last_updated_date_min_max
+- table_name: de_prd.gold.wkdy_dim_location
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null

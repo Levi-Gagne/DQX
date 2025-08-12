@@ -1,0 +1,25 @@
+# src/dqx/resources/dqx_checks_generated/mcdonalds/mcdonalds_table_list-gold.yaml
+
+# QUERY TO REPRODUCE LIST
+# ----------------------------------------
+#SELECT table_name
+#FROM de_prd.information_schema.tables
+#WHERE table_schema = 'gold'
+#  AND table_name LIKE 'mcdonalds_%';
+
+table_name:
+  - mcdonalds_fact_ending_inventory
+  - mcdonalds_fact_cashless_mobile
+  - mcdonalds_fact_journal_vw
+  - mcdonalds_dim_foodoverbase
+  - mcdonalds_fact_journal
+  - mcdonalds_fact_gma
+  - mcdonalds_fact_fob
+  - mcdonalds_fact_inventory_transfers
+  - mcdonalds_fact_delivery
+  - mcdonalds_dim_rawitems_v2
+  - mcdonalds_dim_rawitems
+  - mcdonalds_fact_tax
+  - mcdonalds_location_mapping
+  - mcdonalds_dim_foodoverbase_v2
+  - mcdonalds_intacct_post_log

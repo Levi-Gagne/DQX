@@ -1,6 +1,6 @@
 # dqx/resources/dqx_config.yaml
 
-dqx_yaml_checks: resources/dqx_checks_config/
+dqx_yaml_checks: resources/dqx_checks_config_load/
 dqx_checks_config_table_name: dq_dev.dqx.checks_config
 dqx_checks_log_table_name: dq_dev.dqx.checks_log
 

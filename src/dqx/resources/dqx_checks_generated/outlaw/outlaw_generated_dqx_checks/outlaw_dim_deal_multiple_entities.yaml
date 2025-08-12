@@ -1,0 +1,157 @@
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: deal_multiple_entities_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deal_multiple_entities_key is not null
+      name: deal_multiple_entities_key_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: deal_multiple_entities_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deal_multiple_entities_key >= 1671972 and deal_multiple_entities_key
+        <= 6152426
+      name: deal_multiple_entities_key_min_max
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: deals_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deals_key is not null
+      name: deals_key_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: deals_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deals_key >= 1255 and deals_key <= 2760133
+      name: deals_key_min_max
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: deal_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deal_id is not null
+      name: deal_id_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: client_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: client_name is not null
+      name: client_name_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: client_number_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: client_number is not null
+      name: client_number_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: _sequence_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _sequence_id is not null
+      name: _sequence_id_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: _sequence_id_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _sequence_id >= 1 and _sequence_id <= 961
+      name: _sequence_id_min_max
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: _is_deleted_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _is_deleted is not null
+      name: _is_deleted_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: _created_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date >= '2024-10-16T00:00:00.000000+0000' and _created_date
+        <= '2025-03-30T00:00:00.000000+0000'
+      name: _created_date_min_max
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: _last_updated_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date >= '2025-03-28T00:00:00.000000+0000' and _last_updated_date
+        <= '2025-03-30T00:00:00.000000+0000'
+      name: _last_updated_date_min_max
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: _effective_start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: __effective_start_date is not null
+      name: _effective_start_date_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: _effective_start_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: __effective_start_date >= '2025-03-20' and __effective_start_date
+        <= '2025-03-29'
+      name: _effective_start_date_min_max
+- table_name: de_prd.gold.outlaw_dim_deal_multiple_entities
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null

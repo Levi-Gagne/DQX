@@ -1,0 +1,174 @@
+- table_name: de_prd.gold.outlaw_dim_template
+  name: template_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: template_key is not null
+      name: template_key_is_not_null
+- table_name: de_prd.gold.outlaw_dim_template
+  name: template_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: template_key >= -1 and template_key <= 470
+      name: template_key_min_max
+- table_name: de_prd.gold.outlaw_dim_template
+  name: deal_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deal_id is not null
+      name: deal_id_is_not_null
+- table_name: de_prd.gold.outlaw_dim_template
+  name: team_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: team is not null
+      name: team_is_not_null
+- table_name: de_prd.gold.outlaw_dim_template
+  name: name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: name is not null
+      name: name_is_not_null
+- table_name: de_prd.gold.outlaw_dim_template
+  name: description_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: description is not null
+      name: description_is_not_null
+- table_name: de_prd.gold.outlaw_dim_template
+  name: status_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: status is not null
+      name: status_is_not_null
+- table_name: de_prd.gold.outlaw_dim_template
+  name: status_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: status in ('Unknown', 'Draft', 'Active')
+      name: status_is_in
+- table_name: de_prd.gold.outlaw_dim_template
+  name: key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: key is not null
+      name: key_is_not_null
+- table_name: de_prd.gold.outlaw_dim_template
+  name: source_template_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: source_template is not null and trim(source_template) <> ''
+      name: source_template_is_not_null_or_empty
+- table_name: de_prd.gold.outlaw_dim_template
+  name: source_template_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: source_template_key is not null
+      name: source_template_key_is_not_null
+- table_name: de_prd.gold.outlaw_dim_template
+  name: _is_deleted_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _is_deleted is not null
+      name: _is_deleted_is_not_null
+- table_name: de_prd.gold.outlaw_dim_template
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.outlaw_dim_template
+  name: _created_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date >= '2024-10-14T00:00:00.000000+0000' and _created_date
+        <= '2025-08-10T00:00:00.000000+0000'
+      name: _created_date_min_max
+- table_name: de_prd.gold.outlaw_dim_template
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.outlaw_dim_template
+  name: _last_updated_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date >= '2024-10-14T00:00:00.000000+0000' and _last_updated_date
+        <= '2025-08-10T00:00:00.000000+0000'
+      name: _last_updated_date_min_max
+- table_name: de_prd.gold.outlaw_dim_template
+  name: _effective_start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: __effective_start_date is not null
+      name: _effective_start_date_is_not_null
+- table_name: de_prd.gold.outlaw_dim_template
+  name: _effective_start_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: __effective_start_date >= '2024-10-14' and __effective_start_date
+        <= '2025-08-09'
+      name: _effective_start_date_min_max
+- table_name: de_prd.gold.outlaw_dim_template
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null

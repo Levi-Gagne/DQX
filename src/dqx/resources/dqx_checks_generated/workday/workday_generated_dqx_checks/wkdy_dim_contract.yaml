@@ -1,0 +1,191 @@
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: contract_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: contract_key is not null
+      name: contract_key_is_not_null
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: contract_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: contract_key >= 780556 and contract_key <= 1646670
+      name: contract_key_min_max
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: contract_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: contract_wid is not null
+      name: contract_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: customer_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_wid is not null
+      name: customer_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: company_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company_wid is not null
+      name: company_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: company_wid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company_wid in ('31d4e51a50e201ad2baa90d343179d66', '31d4e51a50e2018dc3e79dd34317ab66')
+      name: company_wid_is_in
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: cost_center_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_wid is not null
+      name: cost_center_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: industry_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: industry_wid is not null
+      name: industry_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: contract_type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: contract_type is not null
+      name: contract_type_is_not_null
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: contract_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: contract_type in ('Master', 'Wealth Advisory')
+      name: contract_type_is_in
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: contract_status_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: contract_status is not null
+      name: contract_status_is_not_null
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: contract_status_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: contract_status in ('Approved')
+      name: contract_status_is_in
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: contract_effective_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: contract_effective_date is not null
+      name: contract_effective_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: project_type_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_type_wid is not null
+      name: project_type_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: salesperson_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: salesperson is not null and trim(salesperson) <> ''
+      name: salesperson_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: salesperson_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: salesperson_wid is not null and trim(salesperson_wid) <> ''
+      name: salesperson_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: _created_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date >= '2024-10-14T00:00:00.000000+0000' and _created_date
+        <= '2025-06-20T00:00:00.000000+0000'
+      name: _created_date_min_max
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: _last_updated_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date >= '2025-05-02T00:00:00.000000+0000' and _last_updated_date
+        <= '2025-06-20T00:00:00.000000+0000'
+      name: _last_updated_date_min_max
+- table_name: de_prd.gold.wkdy_dim_contract
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null

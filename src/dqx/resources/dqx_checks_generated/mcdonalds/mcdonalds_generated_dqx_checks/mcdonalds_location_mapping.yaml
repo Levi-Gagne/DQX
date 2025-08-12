@@ -1,0 +1,54 @@
+- table_name: de_prd.gold.mcdonalds_location_mapping
+  name: datapass_location_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: datapass_location is not null
+      name: datapass_location_is_not_null
+- table_name: de_prd.gold.mcdonalds_location_mapping
+  name: intacct_location_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: intacct_location is not null
+      name: intacct_location_is_not_null
+- table_name: de_prd.gold.mcdonalds_location_mapping
+  name: location_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_name is not null
+      name: location_name_is_not_null
+- table_name: de_prd.gold.mcdonalds_location_mapping
+  name: parent_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: parent_name is not null
+      name: parent_name_is_not_null
+- table_name: de_prd.gold.mcdonalds_location_mapping
+  name: parent_entity_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: parent_entity is not null
+      name: parent_entity_is_not_null
+- table_name: de_prd.gold.mcdonalds_location_mapping
+  name: deposit_bank_account_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deposit_bank_account is not null
+      name: deposit_bank_account_is_not_null

@@ -1,0 +1,99 @@
+- table_name: de_prd.gold.mcdonalds_fact_ending_inventory
+  name: NSN_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: NSN is not null
+      name: NSN_is_not_null
+- table_name: de_prd.gold.mcdonalds_fact_ending_inventory
+  name: store_busn_dt_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: store_busn_dt is not null
+      name: store_busn_dt_is_not_null
+- table_name: de_prd.gold.mcdonalds_fact_ending_inventory
+  name: store_busn_dt_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: store_busn_dt in ('2025-08-10', '2025-08-09')
+      name: store_busn_dt_is_in
+- table_name: de_prd.gold.mcdonalds_fact_ending_inventory
+  name: food_cost_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: food_cost is not null
+      name: food_cost_is_not_null
+- table_name: de_prd.gold.mcdonalds_fact_ending_inventory
+  name: food_cost_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: food_cost >= 5983.08 and food_cost <= 30491.60065562616283778334036
+      name: food_cost_min_max
+- table_name: de_prd.gold.mcdonalds_fact_ending_inventory
+  name: condiment_cost_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: condiment_cost is not null
+      name: condiment_cost_is_not_null
+- table_name: de_prd.gold.mcdonalds_fact_ending_inventory
+  name: condiment_cost_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: condiment_cost >= 903.21 and condiment_cost <= 5146.724835242133742991427425
+      name: condiment_cost_min_max
+- table_name: de_prd.gold.mcdonalds_fact_ending_inventory
+  name: paper_cost_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: paper_cost is not null
+      name: paper_cost_is_not_null
+- table_name: de_prd.gold.mcdonalds_fact_ending_inventory
+  name: paper_cost_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: paper_cost >= 2870.92 and paper_cost <= 15741.39017193290658280602656
+      name: paper_cost_min_max
+- table_name: de_prd.gold.mcdonalds_fact_ending_inventory
+  name: non_product_cost_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: non_product_cost is not null
+      name: non_product_cost_is_not_null
+- table_name: de_prd.gold.mcdonalds_fact_ending_inventory
+  name: non_product_cost_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: non_product_cost >= 573.31 and non_product_cost <= 10597.75529579121502448106185
+      name: non_product_cost_min_max

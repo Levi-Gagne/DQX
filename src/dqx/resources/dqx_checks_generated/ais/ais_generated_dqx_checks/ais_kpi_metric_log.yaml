@@ -1,0 +1,64 @@
+- table_name: de_prd.gold.ais_kpi_metric_log
+  name: trialbalance_version_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: trialbalance_version_id is not null
+      name: trialbalance_version_id_is_not_null
+- table_name: de_prd.gold.ais_kpi_metric_log
+  name: process_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: process is not null
+      name: process_is_not_null
+- table_name: de_prd.gold.ais_kpi_metric_log
+  name: start_time_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: start_time is not null
+      name: start_time_is_not_null
+- table_name: de_prd.gold.ais_kpi_metric_log
+  name: start_time_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: start_time >= '2025-08-12T00:00:00.000000+0000' and start_time <=
+        '2025-08-13T00:00:00.000000+0000'
+      name: start_time_min_max
+- table_name: de_prd.gold.ais_kpi_metric_log
+  name: end_time_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: end_time is not null
+      name: end_time_is_not_null
+- table_name: de_prd.gold.ais_kpi_metric_log
+  name: end_time_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: end_time >= '2025-08-12T00:00:00.000000+0000' and end_time <= '2025-08-13T00:00:00.000000+0000'
+      name: end_time_min_max
+- table_name: de_prd.gold.ais_kpi_metric_log
+  name: status_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: status is not null
+      name: status_is_not_null

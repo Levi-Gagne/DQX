@@ -1,0 +1,45 @@
+- table_name: de_prd.gold.mcdonalds_fact_tax
+  name: NSN_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: NSN is not null
+      name: NSN_is_not_null
+- table_name: de_prd.gold.mcdonalds_fact_tax
+  name: store_busn_dt_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: store_busn_dt is not null
+      name: store_busn_dt_is_not_null
+- table_name: de_prd.gold.mcdonalds_fact_tax
+  name: delivery_doordash_tax_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: delivery_doordash_tax is not null
+      name: delivery_doordash_tax_is_not_null
+- table_name: de_prd.gold.mcdonalds_fact_tax
+  name: delivery_ubereats_tax_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: delivery_ubereats_tax is not null
+      name: delivery_ubereats_tax_is_not_null
+- table_name: de_prd.gold.mcdonalds_fact_tax
+  name: delivery_grubhub_tax_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: delivery_grubhub_tax is not null
+      name: delivery_grubhub_tax_is_not_null

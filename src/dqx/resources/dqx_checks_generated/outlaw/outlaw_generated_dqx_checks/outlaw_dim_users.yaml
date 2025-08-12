@@ -1,0 +1,219 @@
+- table_name: de_prd.gold.outlaw_dim_users
+  name: users_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: users_key is not null
+      name: users_key_is_not_null
+- table_name: de_prd.gold.outlaw_dim_users
+  name: users_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: users_key >= -1 and users_key <= 9369
+      name: users_key_min_max
+- table_name: de_prd.gold.outlaw_dim_users
+  name: team_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: team_id is not null
+      name: team_id_is_not_null
+- table_name: de_prd.gold.outlaw_dim_users
+  name: user_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: user_id is not null
+      name: user_id_is_not_null
+- table_name: de_prd.gold.outlaw_dim_users
+  name: address_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: address is not null and trim(address) <> ''
+      name: address_is_not_null_or_empty
+- table_name: de_prd.gold.outlaw_dim_users
+  name: email_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email is not null
+      name: email_is_not_null
+- table_name: de_prd.gold.outlaw_dim_users
+  name: full_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: full_name is not null
+      name: full_name_is_not_null
+- table_name: de_prd.gold.outlaw_dim_users
+  name: org_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: org is not null and trim(org) <> ''
+      name: org_is_not_null_or_empty
+- table_name: de_prd.gold.outlaw_dim_users
+  name: phone_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: phone is not null and trim(phone) <> ''
+      name: phone_is_not_null_or_empty
+- table_name: de_prd.gold.outlaw_dim_users
+  name: role_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: role is not null
+      name: role_is_not_null
+- table_name: de_prd.gold.outlaw_dim_users
+  name: role_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: role in ('Unknown', 'viewer', 'owner')
+      name: role_is_in
+- table_name: de_prd.gold.outlaw_dim_users
+  name: title_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: title is not null and trim(title) <> ''
+      name: title_is_not_null_or_empty
+- table_name: de_prd.gold.outlaw_dim_users
+  name: observer_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: observer is not null
+      name: observer_is_not_null
+- table_name: de_prd.gold.outlaw_dim_users
+  name: observer_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: observer in ('Unknown', 'true', 'false')
+      name: observer_is_in
+- table_name: de_prd.gold.outlaw_dim_users
+  name: _sequence_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _sequence_id is not null
+      name: _sequence_id_is_not_null
+- table_name: de_prd.gold.outlaw_dim_users
+  name: _sequence_id_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _sequence_id >= 1 and _sequence_id <= 3431
+      name: _sequence_id_min_max
+- table_name: de_prd.gold.outlaw_dim_users
+  name: _is_deleted_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _is_deleted is not null
+      name: _is_deleted_is_not_null
+- table_name: de_prd.gold.outlaw_dim_users
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.outlaw_dim_users
+  name: _created_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date >= '2024-10-14T00:00:00.000000+0000' and _created_date
+        <= '2024-10-20T00:00:00.000000+0000'
+      name: _created_date_min_max
+- table_name: de_prd.gold.outlaw_dim_users
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.outlaw_dim_users
+  name: _last_updated_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date >= '2024-10-21T00:00:00.000000+0000' and _last_updated_date
+        <= '2024-11-20T00:00:00.000000+0000'
+      name: _last_updated_date_min_max
+- table_name: de_prd.gold.outlaw_dim_users
+  name: _effective_start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: __effective_start_date is not null
+      name: _effective_start_date_is_not_null
+- table_name: de_prd.gold.outlaw_dim_users
+  name: _effective_start_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: __effective_start_date >= '2024-10-19' and __effective_start_date
+        <= '2024-11-19'
+      name: _effective_start_date_min_max
+- table_name: de_prd.gold.outlaw_dim_users
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null

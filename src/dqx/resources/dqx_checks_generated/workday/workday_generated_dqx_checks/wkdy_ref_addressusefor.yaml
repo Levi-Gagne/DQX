@@ -1,0 +1,212 @@
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: address_use_for_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: address_use_for_key is not null
+      name: address_use_for_key_is_not_null
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: address_use_for_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: address_use_for_key >= -1 and address_use_for_key <= 384
+      name: address_use_for_key_min_max
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: address_use_for_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: address_use_for is not null
+      name: address_use_for_is_not_null
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: address_use_for_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: address_use_for in ('Unknown', 'Shipping', 'Remit To', 'Billing')
+      name: address_use_for_is_in
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: address_use_for_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: address_use_for_wid is not null
+      name: address_use_for_wid_is_not_null
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: address_use_for_wid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: address_use_for_wid in ('Unknown', '31d4e51a50e2014c0c08f38e99164908',
+        '31d4e51a50e2010b415dd38e99164608', '31d4e51a50e20153c6e2f68e99164a08')
+      name: address_use_for_wid_is_in
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: scd_record_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scd_record_id is not null
+      name: scd_record_id_is_not_null
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: scd_record_id_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scd_record_id >= 1 and scd_record_id <= 129
+      name: scd_record_id_min_max
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: start_date is not null
+      name: start_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: start_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: start_date >= '2025-04-04T00:00:00.000000+0000' and start_date <=
+        '2025-08-11T00:00:00.000000+0000'
+      name: start_date_min_max
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: end_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: end_date is not null
+      name: end_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: end_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: end_date >= '2025-04-05T00:00:00.000000+0000' and end_date <= '2025-08-12T00:00:00.000000+0000'
+      name: end_date_min_max
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: reporting_start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_start_date is not null
+      name: reporting_start_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: reporting_start_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_start_date >= '1991-01-18' and reporting_start_date <=
+        '2025-08-10'
+      name: reporting_start_date_min_max
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: reporting_end_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_end_date is not null
+      name: reporting_end_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: reporting_end_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_end_date >= '2025-04-04' and reporting_end_date <= '2025-08-10'
+      name: reporting_end_date_min_max
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: is_active_record_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_active_record is not null
+      name: is_active_record_is_not_null
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: is_star_historical_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_star_historical is not null
+      name: is_star_historical_is_not_null
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: _created_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date >= '2025-04-04T00:00:00.000000+0000' and _created_date
+        <= '2025-08-12T00:00:00.000000+0000'
+      name: _created_date_min_max
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: _last_updated_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date >= '2025-04-04T00:00:00.000000+0000' and _last_updated_date
+        <= '2025-08-13T00:00:00.000000+0000'
+      name: _last_updated_date_min_max
+- table_name: de_prd.gold.wkdy_ref_addressusefor
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null

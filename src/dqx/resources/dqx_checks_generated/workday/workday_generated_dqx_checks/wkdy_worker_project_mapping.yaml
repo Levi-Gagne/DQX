@@ -1,0 +1,72 @@
+- table_name: de_prd.gold.wkdy_worker_project_mapping
+  name: worker_mapping_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_mapping_key is not null
+      name: worker_mapping_key_is_not_null
+- table_name: de_prd.gold.wkdy_worker_project_mapping
+  name: worker_mapping_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_mapping_key >= 11458215 and worker_mapping_key <= 11590335
+      name: worker_mapping_key_min_max
+- table_name: de_prd.gold.wkdy_worker_project_mapping
+  name: project_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_wid is not null
+      name: project_wid_is_not_null
+- table_name: de_prd.gold.wkdy_worker_project_mapping
+  name: worker_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_wid is not null
+      name: worker_wid_is_not_null
+- table_name: de_prd.gold.wkdy_worker_project_mapping
+  name: management_level_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: management_level is not null
+      name: management_level_is_not_null
+- table_name: de_prd.gold.wkdy_worker_project_mapping
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_worker_project_mapping
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_worker_project_mapping
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null

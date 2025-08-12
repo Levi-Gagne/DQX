@@ -75,14 +75,14 @@ def print_notebook_env(spark: SparkSession, local_timezone: str = "America/Chica
         times = get_current_times(local_timezone)
 
         print(f"{Color.saffron}={Color.r}" * 60)
-        print(f"{C.Color}{Color.python}Python version    :{Color.r} {python_version}")
-        print(f"{C.Color}{Color.spark}Spark version     :{Color.r} {spark_version}")
-        print(f"{C.Color}{Color.spark}Notebook path     :{Color.r} {notebook_path}")
-        print(f"{C.Color}{Color.spark}Cluster name      :{Color.r} {cluster_name}")
-        print(f"{C.Color}{Color.spark}Cluster ID        :{Color.r} {cluster_id}")
-        print(f"{C.Color}{Color.spark}Executor memory   :{Color.r} {executor_memory}")
-        print(f"{C.Color}{Color.spark}Local time ({local_timezone}):{Color.r} {times['local_time']}")
-        print(f"{C.Color}{Color.spark}UTC time          : {times['utc_time']}")
+        print(f"{Color.b}{Color.python}Python version    :{Color.r} {Color.b}{Color.ivory}{python_version}{Color.r}")
+        print(f"{Color.b}{Color.spark}Spark version     :{Color.r} {Color.b}{Color.ivory}{spark_version}{Color.r}")
+        print(f"{Color.b}{Color.forest_green}Notebook path     :{Color.r} {Color.b}{Color.ivory}{notebook_path}{Color.r}")
+        print(f"{Color.b}{Color.CLUSTER_SECONDARY}Cluster name      :{Color.r} {Color.b}{Color.ivory}{cluster_name}{Color.r}")
+        print(f"{Color.b}{Color.CLUSTER_SECONDARY}Cluster ID        :{Color.r} {Color.b}{Color.ivory}{cluster_id}{Color.r}")
+        print(f"{Color.b}{Color.CLUSTER_SECONDARY}Executor memory   :{Color.r} {Color.b}{Color.ivory}{executor_memory}{Color.r}")
+        print(f"{Color.b}{Color.neon_blue}Local time ({local_timezone}):{Color.r} {Color.b}{Color.ivory}{times['local_time']}{Color.r}")
+        print(f"{Color.b}{Color.neon_blue}UTC time          :{Color.r} {Color.b}{Color.ivory}{times['utc_time']}{Color.r}")
         print(f"{Color.saffron}={Color.r}" * 60)
 
         return {

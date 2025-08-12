@@ -1,0 +1,117 @@
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: referral_class_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: referral_class_key is not null
+      name: referral_class_key_is_not_null
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: referral_class_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: referral_class is not null
+      name: referral_class_is_not_null
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: referral_class_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: referral_class_wid is not null
+      name: referral_class_wid_is_not_null
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: referral_class_status_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: referral_class_status is not null
+      name: referral_class_status_is_not_null
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: scd_record_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scd_record_id is not null
+      name: scd_record_id_is_not_null
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: is_star_historical_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_star_historical is not null
+      name: is_star_historical_is_not_null
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: start_date is not null
+      name: start_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: reporting_start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_start_date is not null
+      name: reporting_start_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: reporting_end_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_end_date is not null
+      name: reporting_end_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: is_active_record_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_active_record is not null
+      name: is_active_record_is_not_null
+- table_name: de_prd.gold.wkdy_ref_referral_class
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null

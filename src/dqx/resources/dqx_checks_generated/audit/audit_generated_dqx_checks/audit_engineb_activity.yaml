@@ -1,0 +1,198 @@
+- table_name: de_prd.gold.audit_engineb_activity
+  name: type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: type is not null
+      name: type_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: type in ('Trial Balance', 'General Ledger')
+      name: type_is_in
+- table_name: de_prd.gold.audit_engineb_activity
+  name: TrialBalanceType_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: TrialBalanceType is not null
+      name: TrialBalanceType_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: TrialBalanceType_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: TrialBalanceType in ('Unadjusted', 'Final')
+      name: TrialBalanceType_is_in
+- table_name: de_prd.gold.audit_engineb_activity
+  name: CorrelationName_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CorrelationName is not null
+      name: CorrelationName_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: correlationDetailID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: correlationDetailID is not null
+      name: correlationDetailID_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: folder_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: folder_name is not null
+      name: folder_name_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: ProjectNumber_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ProjectNumber is not null
+      name: ProjectNumber_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: ProjectName_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ProjectName is not null
+      name: ProjectName_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: ClientName_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ClientName is not null
+      name: ClientName_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: IndustrySegment_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: IndustrySegment is not null and trim(IndustrySegment) <> ''
+      name: IndustrySegment_is_not_null_or_empty
+- table_name: de_prd.gold.audit_engineb_activity
+  name: IndustryCode_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: IndustryCode is not null
+      name: IndustryCode_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: YearEndDate_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: YearEndDate is not null
+      name: YearEndDate_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: Minutes_to_Ingest_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Minutes_to_Ingest is not null
+      name: Minutes_to_Ingest_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: Minutes_to_Ingest_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Minutes_to_Ingest >= 0.02 and Minutes_to_Ingest <= 169074.0008956835827417671680
+      name: Minutes_to_Ingest_min_max
+- table_name: de_prd.gold.audit_engineb_activity
+  name: name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: name is not null
+      name: name_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: name_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: name in ('grouped_trialBalance.csv', 'glDetail.csv')
+      name: name_is_in
+- table_name: de_prd.gold.audit_engineb_activity
+  name: file_size_mb_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: file_size_mb is not null
+      name: file_size_mb_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: file_size_mb_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: file_size_mb >= 0.0008 and file_size_mb <= 138.4352813404558068046208064
+      name: file_size_mb_min_max
+- table_name: de_prd.gold.audit_engineb_activity
+  name: Date_Ingested_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Date_Ingested is not null
+      name: Date_Ingested_is_not_null
+- table_name: de_prd.gold.audit_engineb_activity
+  name: Date_Ingested_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Date_Ingested >= '2025-06-19' and Date_Ingested <= '2025-08-12'
+      name: Date_Ingested_min_max
+- table_name: de_prd.gold.audit_engineb_activity
+  name: createdby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby is not null
+      name: createdby_is_not_null

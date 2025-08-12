@@ -1,0 +1,148 @@
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: ais_project_smartform_answer_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ais_project_smartform_answer_id is not null
+      name: ais_project_smartform_answer_id_is_not_null
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: client_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: client_id is not null
+      name: client_id_is_not_null
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: project_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_id is not null
+      name: project_id_is_not_null
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: legal_entity_type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: legal_entity_type is not null
+      name: legal_entity_type_is_not_null
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: legal_entity_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: legal_entity_type in ('Nonprofit', 'For Profit', 'Government')
+      name: legal_entity_type_is_in
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: entrance_fee_community_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: entrance_fee_community in ('No', 'Yes')
+      name: entrance_fee_community_is_in
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: entrance_fee_community_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: entrance_fee_community is not null and trim(entrance_fee_community)
+        <> ''
+      name: entrance_fee_community_is_not_null_or_empty
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: single_or_multi_site_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: single_or_multi_site in ('Single-Site', 'Multi-Site')
+      name: single_or_multi_site_is_in
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: single_or_multi_site_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: single_or_multi_site is not null and trim(single_or_multi_site)
+        <> ''
+      name: single_or_multi_site_is_not_null_or_empty
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: service_provided_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: service_provided is not null and trim(service_provided) <> ''
+      name: service_provided_is_not_null_or_empty
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: type_of_dealer_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: type_of_dealer is not null and trim(type_of_dealer) <> ''
+      name: type_of_dealer_is_not_null_or_empty
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: franchise_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: franchise is not null and trim(franchise) <> ''
+      name: franchise_is_not_null_or_empty
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: created_date is not null
+      name: created_date_is_not_null
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: created_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: created_date >= '2023-12-06T00:00:00.000000+0000' and created_date
+        <= '2025-08-13T00:00:00.000000+0000'
+      name: created_date_min_max
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: last_updated_date is not null
+      name: last_updated_date_is_not_null
+- table_name: de_prd.gold.ais_project_smartform_answer
+  name: last_updated_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: last_updated_date >= '2023-12-06T00:00:00.000000+0000' and last_updated_date
+        <= '2025-08-13T00:00:00.000000+0000'
+      name: last_updated_date_min_max

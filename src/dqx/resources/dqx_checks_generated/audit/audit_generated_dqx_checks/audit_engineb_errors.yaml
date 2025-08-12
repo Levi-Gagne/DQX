@@ -1,0 +1,54 @@
+- table_name: de_prd.gold.audit_engineb_errors
+  name: DII_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: DII is not null
+      name: DII_is_not_null
+- table_name: de_prd.gold.audit_engineb_errors
+  name: Date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Date is not null
+      name: Date_is_not_null
+- table_name: de_prd.gold.audit_engineb_errors
+  name: Date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Date >= '2024-07-29' and Date <= '2025-02-21'
+      name: Date_min_max
+- table_name: de_prd.gold.audit_engineb_errors
+  name: isProcessedFlag_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: isProcessedFlag is not null
+      name: isProcessedFlag_is_not_null
+- table_name: de_prd.gold.audit_engineb_errors
+  name: isProcessedFlag_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: isProcessedFlag in ('Bronze')
+      name: isProcessedFlag_is_in
+- table_name: de_prd.gold.audit_engineb_errors
+  name: ErrorMessage_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ErrorMessage is not null
+      name: ErrorMessage_is_not_null

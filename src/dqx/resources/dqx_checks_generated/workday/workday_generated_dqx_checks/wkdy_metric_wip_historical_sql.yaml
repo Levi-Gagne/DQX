@@ -1,0 +1,479 @@
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_cost_center_level_2_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_cost_center_level_2 is not null
+      name: project_cost_center_level_2_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_cost_center_level_2_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_cost_center_level_2 in ('Eastern Midwest', 'West', 'Sunbelt',
+        'Midwest', 'Northeast', 'Firmwide')
+      name: project_cost_center_level_2_is_in
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_cost_center_level_4_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_cost_center_level_4 is not null
+      name: project_cost_center_level_4_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: csl_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: csl_name is not null
+      name: csl_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: customer_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_id is not null
+      name: customer_id_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: customer_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_name is not null
+      name: customer_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: customer_relationship_leader_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_relationship_leader_name is not null
+      name: customer_relationship_leader_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: customer_relationship_biller_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_relationship_biller_name is not null
+      name: customer_relationship_biller_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_id is not null
+      name: project_id_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_name is not null
+      name: project_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_status_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_status is not null
+      name: project_status_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_status_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_status in ('Active', 'Pending Close', 'Suspended')
+      name: project_status_is_in
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_type is not null
+      name: project_type_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_service_line_level_2_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_service_line_level_2 is not null
+      name: project_service_line_level_2_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_service_line_level_2_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_service_line_level_2 in ('Tax', 'Assurance', 'Outsourcing',
+        'Digital')
+      name: project_service_line_level_2_is_in
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_service_line_level_3_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_service_line_level_3 is not null
+      name: project_service_line_level_3_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_service_line_level_4_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_service_line_level_4 is not null
+      name: project_service_line_level_4_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_leader_name_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_leader_name is not null and trim(project_leader_name) <>
+        ''
+      name: project_leader_name_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_biller_name_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_biller_name is not null and trim(project_biller_name) <>
+        ''
+      name: project_biller_name_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: parent_customer_name_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: parent_customer_name is not null and trim(parent_customer_name)
+        <> ''
+      name: parent_customer_name_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: central_biller_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: central_biller is not null
+      name: central_biller_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: total_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: total is not null
+      name: total_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: total_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: total >= -11567.19141645572432695189491 and total <= 13950.82969645572432695189491
+      name: total_min_max
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: 0_to_30_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: 0_to_30 is not null
+      name: 0_to_30_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: 31_to_45_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: 31_to_45 is not null
+      name: 31_to_45_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: 46_to_60_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: 46_to_60 is not null
+      name: 46_to_60_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: 61_to_90_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: 61_to_90 is not null
+      name: 61_to_90_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: 91_to_120_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: 91_to_120 is not null
+      name: 91_to_120_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: 121_to_360_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: 121_to_360 is not null
+      name: 121_to_360_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: 121_to_360_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: 121_to_360 >= -250.00 and 121_to_360 <= 567.9701326027936794525885489
+      name: 121_to_360_min_max
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: greater_than_360_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: greater_than_360 is not null
+      name: greater_than_360_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: wip_expense_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: wip_expense is not null
+      name: wip_expense_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: wip_expense_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: wip_expense >= -250.00 and wip_expense <= 325.9920396035037228148212307
+      name: wip_expense_min_max
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: wip_hours_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: wip_hours is not null
+      name: wip_hours_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: market_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: market is not null
+      name: market_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: market_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: market in ('Financial Services and Real Estate', 'Other Industries',
+        'Industrials', 'Service Industries', 'Health Care', 'Public Sector')
+      name: market_is_in
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: market_group_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: market_group is not null
+      name: market_group_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: market_segment_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: market_segment is not null and trim(market_segment) <> ''
+      name: market_segment_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: customer_industry_level_3_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_level_3 is not null
+      name: customer_industry_level_3_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: customer_industry_level_3_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_level_3 in ('Other Industries', 'Financial Services
+        and Real Estate', 'Industrials', 'Service Industries', 'Health Care', 'Public
+        Sector')
+      name: customer_industry_level_3_is_in
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: customer_industry_level_2_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_level_2 is not null
+      name: customer_industry_level_2_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: customer_industry_level_4_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_level_4 is not null and trim(customer_industry_level_4)
+        <> ''
+      name: customer_industry_level_4_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: customer_status_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_status is not null
+      name: customer_status_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: customer_status_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_status in ('Active', 'Hold', 'Inactive')
+      name: customer_status_is_in
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: last_payment_reference_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: last_payment_reference is not null and trim(last_payment_reference)
+        <> ''
+      name: last_payment_reference_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: last_payment_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: last_payment_date >= '2023-11-30' and last_payment_date <= '2024-02-07'
+      name: last_payment_date_min_max
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: last_payment_amount_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: last_payment_amount is not null
+      name: last_payment_amount_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: last_payment_amount_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: last_payment_amount >= -15449.07877589777311339275911 and last_payment_amount
+        <= 17522.30191589777311339275911
+      name: last_payment_amount_min_max
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: customer_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_wid is not null
+      name: customer_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: project_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_wid is not null
+      name: project_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_metric_wip_historical_sql
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null

@@ -4,12 +4,12 @@
 
 # COMMAND ----------
 
-# === Cell 1: Install DQX Package (if your cluster image doesn't already include it) ===
-%pip install databricks-labs-dqx==0.8.0
+# DBTITLE 1,Install DQX Package
+# MAGIC %pip install databricks-labs-dqx==0.8.0
 
 # COMMAND ----------
 
-# === Cell 2: Restart Python to pick up libs (Databricks convention) ===
+# DBTITLE 1,Restart Python Environment
 dbutils.library.restartPython()
 
 # COMMAND ----------
@@ -531,6 +531,11 @@ run_checks(
     # exclude_cols=["_created_date","_last_updated_date"],
     coercion_mode="strict"   # 'strict'| 'permissive' – strict will hard-fail on any invalid rule args
 )
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Validation
 
 # COMMAND ----------
 

@@ -1,0 +1,210 @@
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: worker_service_line_level_2_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_line_level_2_wid is not null
+      name: worker_service_line_level_2_wid_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: worker_service_line_level_2_wid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_line_level_2_wid in ('be0aaf88b66b1001234d3e4f32ac0000',
+        'dca3d765f2a51001234c6df3e2930000')
+      name: worker_service_line_level_2_wid_is_in
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: worker_service_line_level_2_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_line_level_2 is not null
+      name: worker_service_line_level_2_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: worker_service_line_level_2_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_line_level_2 in ('Tax', 'Assurance')
+      name: worker_service_line_level_2_is_in
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: worker_industry_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_industry_wid is not null
+      name: worker_industry_wid_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: worker_industry_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_industry_name is not null
+      name: worker_industry_name_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: management_level_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: management_level_wid is not null
+      name: management_level_wid_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: management_level_wid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: management_level_wid in ('31d4e51a50e201f6b0844beba816da2f', '31d4e51a50e201620ccb9cfaa816df2f',
+        '31d4e51a50e2017d305340eea816db2f', '31d4e51a50e20157f3217af0a816dc2f', '31d4e51a50e20182a7ffe4f4a816dd2f')
+      name: management_level_wid_is_in
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: management_level_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: management_level_name is not null
+      name: management_level_name_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: management_level_name_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: management_level_name in ('Intern', 'Director', 'Associate', 'Senior',
+        'Manager')
+      name: management_level_name_is_in
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: year_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: year is not null
+      name: year_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: year_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: year in (2025)
+      name: year_is_in
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: month_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: month is not null
+      name: month_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: month_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: month >= 1 and month <= 12
+      name: month_min_max
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: hours_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: hours is not null
+      name: hours_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: hours_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: hours >= 80.000000 and hours <= 230.000000
+      name: hours_min_max
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: budget_date_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: budget_date_key is not null
+      name: budget_date_key_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: management_level_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: management_level_key is not null
+      name: management_level_key_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: management_level_key_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: management_level_key in ('10', '3', '6', '2', '7')
+      name: management_level_key_is_in
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: last_successful_file_datetime_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: last_successful_file_datetime is not null
+      name: last_successful_file_datetime_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.ofs_fact_standard_budget
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null

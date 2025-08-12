@@ -1,0 +1,223 @@
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: CompletenessID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CompletenessID is not null
+      name: CompletenessID_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: CompletenessID_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CompletenessID >= 341 and CompletenessID <= 12541
+      name: CompletenessID_min_max
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: PPTrialBalanceVersionID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: PPTrialBalanceVersionID is not null
+      name: PPTrialBalanceVersionID_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: CPTrialBalanceVersionID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CPTrialBalanceVersionID is not null
+      name: CPTrialBalanceVersionID_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: GeneralLedgerVersionID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: GeneralLedgerVersionID is not null
+      name: GeneralLedgerVersionID_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: CorrelationID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CorrelationID is not null
+      name: CorrelationID_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: CompletenessTypeID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CompletenessTypeID is not null
+      name: CompletenessTypeID_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: CompletenessTypeID_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CompletenessTypeID in (1, 2, 3)
+      name: CompletenessTypeID_is_in
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: CompletenessTypeID_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CompletenessTypeID >= 1 and CompletenessTypeID <= 3
+      name: CompletenessTypeID_min_max
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: AccountNumber_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: AccountNumber is not null
+      name: AccountNumber_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: AccountDescription_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: AccountDescription is not null
+      name: AccountDescription_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: FinalBalance_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: FinalBalance is not null
+      name: FinalBalance_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: FinalBalance_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: FinalBalance >= -9854168.41703708722934126854 and FinalBalance <=
+        10399353.22359708722934126854
+      name: FinalBalance_min_max
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: TransactionSummary_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: TransactionSummary is not null
+      name: TransactionSummary_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: TransactionSummary_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: TransactionSummary >= -4631832.883051444712504744530 and TransactionSummary
+        <= 5152887.776931444712504744530
+      name: TransactionSummary_min_max
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: CurrentPeriodBalance_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CurrentPeriodBalance is not null
+      name: CurrentPeriodBalance_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: CurrentPeriodBalance_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CurrentPeriodBalance >= -10472661.53280651652649044991 and CurrentPeriodBalance
+        <= 11067975.19728651652649044991
+      name: CurrentPeriodBalance_min_max
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: DifferenceAmount_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: DifferenceAmount is not null
+      name: DifferenceAmount_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: DifferenceAmount_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: DifferenceAmount >= -4907662.313387783674672245979 and DifferenceAmount
+        <= 5450547.159207783674672245979
+      name: DifferenceAmount_min_max
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: DifferencePercent_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: DifferencePercent >= -9789.256193833885826752521098 and DifferencePercent
+        <= 9628.483153833885826752521098
+      name: DifferencePercent_min_max
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: CreatedAt_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CreatedAt >= '2023-06-18T00:00:00.000000+0000' and CreatedAt <=
+        '2024-11-18T00:00:00.000000+0000'
+      name: CreatedAt_min_max
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: ValidFrom_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ValidFrom is not null
+      name: ValidFrom_is_not_null
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: ValidFrom_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ValidFrom >= '2023-06-18T00:00:00.000000+0000' and ValidFrom <=
+        '2024-11-18T00:00:00.000000+0000'
+      name: ValidFrom_min_max
+- table_name: de_prd.gold.audit_generalledgercompleteness
+  name: ValidTo_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ValidTo is not null
+      name: ValidTo_is_not_null

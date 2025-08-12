@@ -1,0 +1,108 @@
+- table_name: de_prd.gold.wkdy_ref_task
+  name: task_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: task_key is not null
+      name: task_key_is_not_null
+- table_name: de_prd.gold.wkdy_ref_task
+  name: project_task_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_task_name is not null
+      name: project_task_name_is_not_null
+- table_name: de_prd.gold.wkdy_ref_task
+  name: project_task_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_task_wid is not null
+      name: project_task_wid_is_not_null
+- table_name: de_prd.gold.wkdy_ref_task
+  name: scd_record_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scd_record_id is not null
+      name: scd_record_id_is_not_null
+- table_name: de_prd.gold.wkdy_ref_task
+  name: is_star_historical_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_star_historical is not null
+      name: is_star_historical_is_not_null
+- table_name: de_prd.gold.wkdy_ref_task
+  name: start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: start_date is not null
+      name: start_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_task
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_task
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_task
+  name: reporting_start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_start_date is not null
+      name: reporting_start_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_task
+  name: reporting_end_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_end_date is not null
+      name: reporting_end_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_task
+  name: is_active_record_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_active_record is not null
+      name: is_active_record_is_not_null
+- table_name: de_prd.gold.wkdy_ref_task
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null

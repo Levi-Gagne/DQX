@@ -1,0 +1,46 @@
+- table_name: de_prd.gold.wkdy_dim_customergroup
+  name: customer_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_wid is not null
+      name: customer_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_customergroup
+  name: customer_group_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_group is not null
+      name: customer_group_is_not_null
+- table_name: de_prd.gold.wkdy_dim_customergroup
+  name: customer_group_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_group in ('CRM Sync', 'SEC Client', 'Female Owned', 'Private
+        Equity', 'Global or Intl Ownership', 'Minority Owned', 'Govt Contractor')
+      name: customer_group_is_in
+- table_name: de_prd.gold.wkdy_dim_customergroup
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_customergroup
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null

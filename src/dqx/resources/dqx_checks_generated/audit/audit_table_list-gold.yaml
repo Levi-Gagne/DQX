@@ -1,0 +1,30 @@
+# src/dqx/resources/dqx_checks_generated/outlaw/outlaw_table_list-gold.yaml
+
+# QUERY TO REPRODUCE LIST
+# ----------------------------------------
+#SELECT table_name
+#FROM de_prd.information_schema.tables
+#WHERE table_schema = 'gold'
+#  AND table_name LIKE 'audit_%';
+
+table_name:
+  - audit_trialbalance
+  - audit_trialbalancedetail_ast_test
+  - audit_trialbalanceversion
+  - audit_generalledgerdetail
+  - audit_trialbalancedetail
+  - audit_savedlog
+  - audit_engineb_summary
+  - audit_storedprocedurelog
+  - audit_engineb_errors
+  - audit_trialbalancepriorperiodcomparison
+  - audit_generalledgerversion
+  - audit_generalledgercompleteness
+  - audit_generalledgercompletenessv7
+  - audit_engineb_activity
+  - audit_generalledgersummaryv7
+  - audit_trialbalancepriorperiodcomparisonv7
+  - audit_processing_control_tb_rerun
+  - audit_generalledger
+  - audit_generalledgersummary
+  - audit_processing_control_gl_rerun

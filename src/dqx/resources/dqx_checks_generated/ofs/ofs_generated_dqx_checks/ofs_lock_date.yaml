@@ -1,0 +1,100 @@
+- table_name: de_prd.gold.ofs_lock_date
+  name: row_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: row_id is not null
+      name: row_id_is_not_null
+- table_name: de_prd.gold.ofs_lock_date
+  name: row_id_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: row_id >= 1 and row_id <= 3
+      name: row_id_min_max
+- table_name: de_prd.gold.ofs_lock_date
+  name: year_season_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: year_season is not null
+      name: year_season_is_not_null
+- table_name: de_prd.gold.ofs_lock_date
+  name: lock_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: lock_date is not null
+      name: lock_date_is_not_null
+- table_name: de_prd.gold.ofs_lock_date
+  name: lock_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: lock_date >= '2024-07-22T00:00:00.000000+0000' and lock_date <=
+        '2025-01-31T00:00:00.000000+0000'
+      name: lock_date_min_max
+- table_name: de_prd.gold.ofs_lock_date
+  name: formatted_lock_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: formatted_lock_date is not null
+      name: formatted_lock_date_is_not_null
+- table_name: de_prd.gold.ofs_lock_date
+  name: formatted_lock_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: formatted_lock_date >= '2024-07-22' and formatted_lock_date <= '2025-01-30'
+      name: formatted_lock_date_min_max
+- table_name: de_prd.gold.ofs_lock_date
+  name: budget_year_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: budget_year is not null
+      name: budget_year_is_not_null
+- table_name: de_prd.gold.ofs_lock_date
+  name: budget_year_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: budget_year >= 2024 and budget_year <= 2025
+      name: budget_year_min_max
+- table_name: de_prd.gold.ofs_lock_date
+  name: budget_season_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: budget_season is not null
+      name: budget_season_is_not_null
+- table_name: de_prd.gold.ofs_lock_date
+  name: budget_season_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: budget_season >= 2 and budget_season <= 3
+      name: budget_season_min_max

@@ -1,0 +1,17 @@
+# src/dqx/resources/dqx_checks_generated/ofs/ofs_table_list-gold.yaml
+
+# QUERY TO REPRODUCE LIST
+# ----------------------------------------
+#SELECT table_name
+#FROM de_prd.information_schema.tables
+#WHERE table_schema = 'gold'
+#  AND table_name LIKE 'ofs_%';
+
+table_name:
+  - ofs_cost_center_change
+  - ofs_iso_period
+  - ofs_lock_date
+  - ofs_budget_control
+  - ofs_fact_standard_budget
+  - ofs_office_change
+  - ofs_worker_budget_audit

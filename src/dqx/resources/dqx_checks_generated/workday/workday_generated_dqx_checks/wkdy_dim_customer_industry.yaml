@@ -1,0 +1,192 @@
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: customer_industry_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_key is not null
+      name: customer_industry_key_is_not_null
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: sic_code_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: sic_code is not null
+      name: sic_code_is_not_null
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: sic_code_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: sic_code_name is not null
+      name: sic_code_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: customer_industry_level_4_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_level_4 is not null and trim(customer_industry_level_4)
+        <> ''
+      name: customer_industry_level_4_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: customer_industry_level_3_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_level_3 is not null and trim(customer_industry_level_3)
+        <> ''
+      name: customer_industry_level_3_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: customer_industry_level_2_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_level_2 in ('Health Care', 'Industrials', 'Service
+        Industries', 'Public Sector', 'Financial Services and Real Estate', 'Other
+        Industries')
+      name: customer_industry_level_2_is_in
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: customer_industry_level_2_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_level_2 is not null and trim(customer_industry_level_2)
+        <> ''
+      name: customer_industry_level_2_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: is_inactive_industry_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_inactive_industry is not null
+      name: is_inactive_industry_is_not_null
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: included_in_all_hcm_industries_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: included_in_all_hcm_industries is not null
+      name: included_in_all_hcm_industries_is_not_null
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: included_in_all_marketing_industry_events_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: included_in_all_marketing_industry_events is not null
+      name: included_in_all_marketing_industry_events_is_not_null
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: sic_code_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: sic_code_wid is not null
+      name: sic_code_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: customer_industry_level_4_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_level_4_wid is not null and trim(customer_industry_level_4_wid)
+        <> ''
+      name: customer_industry_level_4_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: customer_industry_level_3_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_level_3_wid is not null and trim(customer_industry_level_3_wid)
+        <> ''
+      name: customer_industry_level_3_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: customer_industry_level_2_wid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_level_2_wid in ('27d8003156461002035fac9d4dee0000',
+        'f3b27e4a19521001f8bfb20de0d20000', 'c0b7358f0122100203e19aaf74230000', 'df40d028be6901c59225652dc1010544',
+        'cd0f034f81931002021a05f93cd50000', 'df40d028be6901359365642dc1010244')
+      name: customer_industry_level_2_wid_is_in
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: customer_industry_level_2_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_industry_level_2_wid is not null and trim(customer_industry_level_2_wid)
+        <> ''
+      name: customer_industry_level_2_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: _created_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date >= '2024-03-01T00:00:00.000000+0000' and _created_date
+        <= '2024-03-02T00:00:00.000000+0000'
+      name: _created_date_min_max
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: _last_updated_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date >= '2024-03-01T00:00:00.000000+0000' and _last_updated_date
+        <= '2024-10-27T00:00:00.000000+0000'
+      name: _last_updated_date_min_max
+- table_name: de_prd.gold.wkdy_dim_customer_industry
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null

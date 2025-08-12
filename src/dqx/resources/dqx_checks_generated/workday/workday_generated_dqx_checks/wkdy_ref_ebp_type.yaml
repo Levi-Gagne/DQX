@@ -1,0 +1,108 @@
+- table_name: de_prd.gold.wkdy_ref_ebp_type
+  name: ebp_type_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ebp_type_key is not null
+      name: ebp_type_key_is_not_null
+- table_name: de_prd.gold.wkdy_ref_ebp_type
+  name: ebp_type_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ebp_type_wid is not null
+      name: ebp_type_wid_is_not_null
+- table_name: de_prd.gold.wkdy_ref_ebp_type
+  name: ebp_type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ebp_type is not null
+      name: ebp_type_is_not_null
+- table_name: de_prd.gold.wkdy_ref_ebp_type
+  name: scd_record_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scd_record_id is not null
+      name: scd_record_id_is_not_null
+- table_name: de_prd.gold.wkdy_ref_ebp_type
+  name: start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: start_date is not null
+      name: start_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_ebp_type
+  name: reporting_start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_start_date is not null
+      name: reporting_start_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_ebp_type
+  name: reporting_end_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_end_date is not null
+      name: reporting_end_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_ebp_type
+  name: is_active_record_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_active_record is not null
+      name: is_active_record_is_not_null
+- table_name: de_prd.gold.wkdy_ref_ebp_type
+  name: is_star_historical_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_star_historical is not null
+      name: is_star_historical_is_not_null
+- table_name: de_prd.gold.wkdy_ref_ebp_type
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_ebp_type
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_ref_ebp_type
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null

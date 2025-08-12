@@ -1,0 +1,73 @@
+- table_name: de_prd.gold.ais_kpi_metric_detail
+  name: kpi_metric_detail_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: kpi_metric_detail_id is not null
+      name: kpi_metric_detail_id_is_not_null
+- table_name: de_prd.gold.ais_kpi_metric_detail
+  name: kpi_metric_detail_id_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: kpi_metric_detail_id >= 7 and kpi_metric_detail_id <= 114
+      name: kpi_metric_detail_id_min_max
+- table_name: de_prd.gold.ais_kpi_metric_detail
+  name: kpi_metric_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: kpi_metric_name is not null
+      name: kpi_metric_name_is_not_null
+- table_name: de_prd.gold.ais_kpi_metric_detail
+  name: kpi_metric_format_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: kpi_metric_format is not null and trim(kpi_metric_format) <> ''
+      name: kpi_metric_format_is_not_null_or_empty
+- table_name: de_prd.gold.ais_kpi_metric_detail
+  name: kpi_metric_type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: kpi_metric_type is not null
+      name: kpi_metric_type_is_not_null
+- table_name: de_prd.gold.ais_kpi_metric_detail
+  name: kpi_metric_description_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: kpi_metric_description is not null and trim(kpi_metric_description)
+        <> ''
+      name: kpi_metric_description_is_not_null_or_empty
+- table_name: de_prd.gold.ais_kpi_metric_detail
+  name: kpi_metric_reason_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: kpi_metric_reason is not null and trim(kpi_metric_reason) <> ''
+      name: kpi_metric_reason_is_not_null_or_empty
+- table_name: de_prd.gold.ais_kpi_metric_detail
+  name: created_at_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: created_at is not null
+      name: created_at_is_not_null

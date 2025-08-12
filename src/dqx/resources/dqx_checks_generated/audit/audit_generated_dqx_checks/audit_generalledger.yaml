@@ -1,0 +1,137 @@
+- table_name: de_prd.gold.audit_generalledger
+  name: GeneralLedgerID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: GeneralLedgerID is not null
+      name: GeneralLedgerID_is_not_null
+- table_name: de_prd.gold.audit_generalledger
+  name: GeneralLedgerID_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: GeneralLedgerID >= 22 and GeneralLedgerID <= 3096
+      name: GeneralLedgerID_min_max
+- table_name: de_prd.gold.audit_generalledger
+  name: ProjectID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ProjectID is not null
+      name: ProjectID_is_not_null
+- table_name: de_prd.gold.audit_generalledger
+  name: ClientID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ClientID is not null
+      name: ClientID_is_not_null
+- table_name: de_prd.gold.audit_generalledger
+  name: Period_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Period is not null
+      name: Period_is_not_null
+- table_name: de_prd.gold.audit_generalledger
+  name: Period_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Period in ('2019', '2018', '2020', '2022', '2023', '2021', '2024',
+        '2025')
+      name: Period_is_in
+- table_name: de_prd.gold.audit_generalledger
+  name: AppDataInstanceID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: AppDataInstanceID is not null
+      name: AppDataInstanceID_is_not_null
+- table_name: de_prd.gold.audit_generalledger
+  name: CorrelationDetailID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CorrelationDetailID is not null
+      name: CorrelationDetailID_is_not_null
+- table_name: de_prd.gold.audit_generalledger
+  name: StartDate_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: StartDate is not null
+      name: StartDate_is_not_null
+- table_name: de_prd.gold.audit_generalledger
+  name: StartDate_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: StartDate >= '2021-08-08' and StartDate <= '2024-09-01'
+      name: StartDate_min_max
+- table_name: de_prd.gold.audit_generalledger
+  name: EndDate_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: EndDate is not null
+      name: EndDate_is_not_null
+- table_name: de_prd.gold.audit_generalledger
+  name: EndDate_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: EndDate >= '2022-07-28' and EndDate <= '2025-07-31'
+      name: EndDate_min_max
+- table_name: de_prd.gold.audit_generalledger
+  name: CreatedAt_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CreatedAt is not null
+      name: CreatedAt_is_not_null
+- table_name: de_prd.gold.audit_generalledger
+  name: CreatedAt_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CreatedAt >= '2023-10-29T00:00:00.000000+0000' and CreatedAt <=
+        '2025-08-10T00:00:00.000000+0000'
+      name: CreatedAt_min_max
+- table_name: de_prd.gold.audit_generalledger
+  name: ProjectWID_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ProjectWID is not null and trim(ProjectWID) <> ''
+      name: ProjectWID_is_not_null_or_empty

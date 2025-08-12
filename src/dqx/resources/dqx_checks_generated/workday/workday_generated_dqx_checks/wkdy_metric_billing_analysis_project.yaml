@@ -1,0 +1,335 @@
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: company_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company_wid is not null
+      name: company_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: company_wid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company_wid in ('31d4e51a50e201ad2baa90d343179d66')
+      name: company_wid_is_in
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: company_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company_name is not null
+      name: company_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: company_name_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company_name in ('CliftonLarsonAllen LLP')
+      name: company_name_is_in
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: customer_invoice_line_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_invoice_line_wid is not null
+      name: customer_invoice_line_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: customer_invoice_line_ref_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_invoice_line_ref_id is not null
+      name: customer_invoice_line_ref_id_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: customer_invoice_number_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_invoice_number is not null
+      name: customer_invoice_number_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: customer_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_wid is not null
+      name: customer_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: cost_center_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_wid is not null
+      name: cost_center_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: cost_center_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_name is not null
+      name: cost_center_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: project_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_wid is not null
+      name: project_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: project_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_name is not null
+      name: project_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: project_type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_type is not null
+      name: project_type_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: revenue_category_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: revenue_category is not null
+      name: revenue_category_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: invoice_amount_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: invoice_amount is not null
+      name: invoice_amount_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: invoice_amount_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: invoice_amount >= -1019.517798348470497894595610 and invoice_amount
+        <= 1311.503058348470497894595610
+      name: invoice_amount_min_max
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: prepaids_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: prepaids is not null
+      name: prepaids_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: technology_fees_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: technology_fees is not null
+      name: technology_fees_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: sales_tax_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: sales_tax is not null
+      name: sales_tax_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: hours_relieved_x_standard_rate_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: hours_relieved_x_standard_rate is not null
+      name: hours_relieved_x_standard_rate_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: gross_expenses_relieved_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: gross_expenses_relieved is not null
+      name: gross_expenses_relieved_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: gross_expenses_relieved_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: gross_expenses_relieved >= -8.00 and gross_expenses_relieved <=
+        100.6204268052327087752928492
+      name: gross_expenses_relieved_min_max
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: time_relieved_at_contract_rate_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: time_relieved_at_contract_rate is not null
+      name: time_relieved_at_contract_rate_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: billed_time_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: billed_time is not null
+      name: billed_time_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: expenses_billed_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: expenses_billed is not null
+      name: expenses_billed_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: expenses_billed_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: expenses_billed >= -8.00 and expenses_billed <= 83.82385409031002264896414999
+      name: expenses_billed_min_max
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: hours_relieved_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: hours_relieved is not null
+      name: hours_relieved_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: is_star_historical_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_star_historical is not null
+      name: is_star_historical_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: cost_center_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_key is not null
+      name: cost_center_key_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: project_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_key is not null
+      name: project_key_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: project_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: project_key >= 1561484637 and project_key <= 1634006405
+      name: project_key_min_max
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: customer_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_key is not null
+      name: customer_key_is_not_null
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: customer_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customer_key >= 518795518 and customer_key <= 525810236
+      name: customer_key_min_max
+- table_name: de_prd.gold.wkdy_metric_billing_analysis_project
+  name: invoice_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: invoice_date is not null
+      name: invoice_date_is_not_null

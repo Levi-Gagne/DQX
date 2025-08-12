@@ -1,0 +1,42 @@
+# src/dqx/resources/dqx_checks_generated/crm/crm_table_list-gold.yaml
+
+# QUERY TO REPRODUCE LIST
+# ----------------------------------------
+#SELECT table_name
+#FROM de_prd.information_schema.tables
+#WHERE table_schema = 'gold'
+#  AND table_name LIKE 'crm_%';
+
+table_name:
+  - crm_account_da
+  - crm_ref_role_mdm_vw
+  - crm_ref_relationship_type_vw
+  - crm_ref_salutation_mdm_vw
+  - crm_msdynmkt_marketingform_da
+  - crm_msdynmkt_marketingfieldsubmission_da
+  - crm_ref_relationship_type_mdm_vw
+  - crm_opportunity_da
+  - crm_ref_suffix_vw
+  - crm_lead_da
+  - crm_old_lead
+  - crm_contact_suffix_mdm_vw
+  - crm_account_mdm_vw
+  - crm_stringmap
+  - crm_campaign_da
+  - crm_contact_mdm_vw
+  - crm_emails_da
+  - crm_emails_summary
+  - crm_ref_suffix_mdm_vw
+  - crm_msdynmkt_journey_da
+  - crm_msdynmkt_contactpointconsent4_da
+  - crm_email_da
+  - crm_msevtmgt_eventregistration_da
+  - crm_claci_leadwebactivitytracking_da
+  - crm_appointment_da
+  - crm_activityparty_da
+  - crm_ref_salutation_vw
+  - crm_claci_webactivitytrackingutm_da
+  - crm_claci_statusaudit_da
+  - crm_contact_da
+  - crm_msdynmkt_marketingformsubmission_da
+  - crm_ref_role_vw

@@ -1,0 +1,72 @@
+- table_name: de_prd.gold.wkdy_metric_distance
+  name: starting_cost_center_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: starting_cost_center_wid is not null
+      name: starting_cost_center_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_distance
+  name: ending_cost_center_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ending_cost_center_wid is not null
+      name: ending_cost_center_wid_is_not_null
+- table_name: de_prd.gold.wkdy_metric_distance
+  name: starting_cost_center_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: starting_cost_center_name is not null
+      name: starting_cost_center_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_distance
+  name: ending_cost_center_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ending_cost_center_name is not null
+      name: ending_cost_center_name_is_not_null
+- table_name: de_prd.gold.wkdy_metric_distance
+  name: miles_away_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: miles_away is not null
+      name: miles_away_is_not_null
+- table_name: de_prd.gold.wkdy_metric_distance
+  name: minutes_away_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: minutes_away is not null
+      name: minutes_away_is_not_null
+- table_name: de_prd.gold.wkdy_metric_distance
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_metric_distance
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null

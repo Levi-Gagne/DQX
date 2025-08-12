@@ -1,0 +1,264 @@
+- table_name: de_prd.gold.ais_seamless
+  name: SeamlessID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SeamlessID is not null
+      name: SeamlessID_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: ProjectID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ProjectID is not null
+      name: ProjectID_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: CorrelationName_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CorrelationName is not null and trim(CorrelationName) <> ''
+      name: CorrelationName_is_not_null_or_empty
+- table_name: de_prd.gold.ais_seamless
+  name: CorrelationDetailID_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CorrelationDetailID is not null and trim(CorrelationDetailID) <>
+        ''
+      name: CorrelationDetailID_is_not_null_or_empty
+- table_name: de_prd.gold.ais_seamless
+  name: ClientNumber_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ClientNumber is not null
+      name: ClientNumber_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: ClientName_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ClientName is not null
+      name: ClientName_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: Period_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Period is not null
+      name: Period_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: Period_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Period in (2025, 2024, 2023)
+      name: Period_is_in
+- table_name: de_prd.gold.ais_seamless
+  name: Period_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Period >= 2023 and Period <= 2025
+      name: Period_min_max
+- table_name: de_prd.gold.ais_seamless
+  name: SeamlessOppID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SeamlessOppID is not null
+      name: SeamlessOppID_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: SeamlessOppID_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SeamlessOppID >= 92 and SeamlessOppID <= 116
+      name: SeamlessOppID_min_max
+- table_name: de_prd.gold.ais_seamless
+  name: SeamlessOppName_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SeamlessOppName is not null
+      name: SeamlessOppName_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: SeamlessOppDesc_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SeamlessOppDesc is not null
+      name: SeamlessOppDesc_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: SeamlessOppReason_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SeamlessOppReason is not null
+      name: SeamlessOppReason_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: SeamlessOppResult_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SeamlessOppResult is not null
+      name: SeamlessOppResult_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: SeamlessOppResult_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SeamlessOppResult in ('No', 'Yes')
+      name: SeamlessOppResult_is_in
+- table_name: de_prd.gold.ais_seamless
+  name: RelationshipLeaderID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: RelationshipLeaderID is not null
+      name: RelationshipLeaderID_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: RelationshipLeaderFullName_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: RelationshipLeaderFullName is not null
+      name: RelationshipLeaderFullName_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: Office_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Office is not null
+      name: Office_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: Industry_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Industry is not null and trim(Industry) <> ''
+      name: Industry_is_not_null_or_empty
+- table_name: de_prd.gold.ais_seamless
+  name: ServiceLine_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ServiceLine is not null
+      name: ServiceLine_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: ServiceLine_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ServiceLine in ('Audit')
+      name: ServiceLine_is_in
+- table_name: de_prd.gold.ais_seamless
+  name: CreatedDate_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CreatedDate is not null
+      name: CreatedDate_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: CreatedDate_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CreatedDate >= '2024-02-09T00:00:00.000000+0000' and CreatedDate
+        <= '2025-08-13T00:00:00.000000+0000'
+      name: CreatedDate_min_max
+- table_name: de_prd.gold.ais_seamless
+  name: LastUpdatedDate_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: LastUpdatedDate is not null
+      name: LastUpdatedDate_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: LastUpdatedDate_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: LastUpdatedDate >= '2024-03-05T00:00:00.000000+0000' and LastUpdatedDate
+        <= '2025-08-13T00:00:00.000000+0000'
+      name: LastUpdatedDate_min_max
+- table_name: de_prd.gold.ais_seamless
+  name: HashValue_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: HashValue is not null
+      name: HashValue_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: isDeleted_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: isDeleted is not null
+      name: isDeleted_is_not_null
+- table_name: de_prd.gold.ais_seamless
+  name: RelationshipLeaderEmail_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: RelationshipLeaderEmail is not null
+      name: RelationshipLeaderEmail_is_not_null

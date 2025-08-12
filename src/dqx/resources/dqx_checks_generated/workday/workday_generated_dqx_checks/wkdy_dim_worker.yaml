@@ -1,0 +1,1239 @@
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_key is not null
+      name: worker_key_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_key >= 623750 and worker_key <= 863463
+      name: worker_key_min_max
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: employee_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: employee_id is not null
+      name: employee_id_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: legal_first_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: legal_first_name is not null
+      name: legal_first_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: middle_name_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: middle_name is not null and trim(middle_name) <> ''
+      name: middle_name_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: middle_initial_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: middle_initial in ('')
+      name: middle_initial_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: legal_last_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: legal_last_name is not null
+      name: legal_last_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: full_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: full_name is not null
+      name: full_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: primary_work_email_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: primary_work_email is not null and trim(primary_work_email) <> ''
+      name: primary_work_email_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: job_title_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: job_title is not null
+      name: job_title_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: gender_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: gender in ('Female', 'Male', 'Decline to Answer')
+      name: gender_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: gender_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: gender is not null and trim(gender) <> ''
+      name: gender_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: ethnicity_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ethnicity in ('Asian', 'White', 'Two or More Races', 'Black or African
+        American', 'Hispanic or Latino', 'Native Hawaiian or Other Pacific Islander',
+        'I do not wish to answer.', 'American Indian or Alaska Native')
+      name: ethnicity_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: ethnicity_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ethnicity is not null and trim(ethnicity) <> ''
+      name: ethnicity_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: marital_status_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: marital_status in ('Married_United_States_of_America', 'Single_United_States_of_America',
+        'Divorced_United_States_of_America', 'Widowed_United_States_of_America', 'Separated_United_States_of_America')
+      name: marital_status_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: marital_status_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: marital_status is not null and trim(marital_status) <> ''
+      name: marital_status_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_client_serving_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_client_serving is not null
+      name: is_client_serving_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: has_cpa_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: has_cpa is not null
+      name: has_cpa_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: company_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company is not null
+      name: company_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: company_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company in ('CliftonLarsonAllen LLP')
+      name: company_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: termination_reason_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: termination_reason is not null and trim(termination_reason) <> ''
+      name: termination_reason_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: acquisition_firm_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: acquisition_firm is not null and trim(acquisition_firm) <> ''
+      name: acquisition_firm_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: employee_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: employee_type in ('Full-time', 'Intern', 'Part-time_1040-1559_Hrs/Year',
+        'Part-time_1560-2079_Hrs/Year', 'Casual', 'Retired_Principal', 'Seasonal',
+        'Part-time_Less_than_1040_Hrs/Year')
+      name: employee_type_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: employee_type_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: employee_type is not null and trim(employee_type) <> ''
+      name: employee_type_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: scheduled_weekly_hours_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduled_weekly_hours is not null
+      name: scheduled_weekly_hours_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: scheduled_weekly_hours_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduled_weekly_hours >= 5.300000 and scheduled_weekly_hours <=
+        44.230000
+      name: scheduled_weekly_hours_min_max
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: compa_ratio_fte_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: compa_ratio_fte is not null
+      name: compa_ratio_fte_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: compa_ratio_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: compa_ratio is not null
+      name: compa_ratio_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_bill_rate_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_bill_rate is not null
+      name: worker_bill_rate_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_project_leader_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_project_leader is not null
+      name: is_project_leader_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_project_biller_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_project_biller is not null
+      name: is_project_biller_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_key_contributer_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_key_contributer is not null
+      name: is_key_contributer_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: management_level_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: management_level is not null
+      name: management_level_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_partner_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_partner is not null
+      name: is_partner_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_cost_center_code_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_cost_center_code is not null
+      name: worker_cost_center_code_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_cost_center_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_cost_center_name is not null
+      name: worker_cost_center_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_cost_center_level_4_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_cost_center_level_4 is not null and trim(worker_cost_center_level_4)
+        <> ''
+      name: worker_cost_center_level_4_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_cost_center_level_3_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_cost_center_level_3 is not null and trim(worker_cost_center_level_3)
+        <> ''
+      name: worker_cost_center_level_3_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_cost_center_level_2_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_cost_center_level_2 in ('Northeast', 'Midwest', 'West', 'Firmwide',
+        'Sunbelt')
+      name: worker_cost_center_level_2_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_cost_center_level_2_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_cost_center_level_2 is not null and trim(worker_cost_center_level_2)
+        <> ''
+      name: worker_cost_center_level_2_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_hr_cost_center_code_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_hr_cost_center_code is not null
+      name: worker_hr_cost_center_code_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_hr_cost_center_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_hr_cost_center_name is not null
+      name: worker_hr_cost_center_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_hr_cost_center_level_4_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_hr_cost_center_level_4 is not null
+      name: worker_hr_cost_center_level_4_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_hr_cost_center_level_3_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_hr_cost_center_level_3 is not null
+      name: worker_hr_cost_center_level_3_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_hr_cost_center_level_2_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_hr_cost_center_level_2 is not null
+      name: worker_hr_cost_center_level_2_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_hr_cost_center_level_2_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_hr_cost_center_level_2 in ('Northeast', 'Midwest', 'West',
+        'Firmwide', 'Sunbelt', 'Unknown')
+      name: worker_hr_cost_center_level_2_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_service_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_name is not null
+      name: worker_service_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_service_line_level_4_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_line_level_4 is not null
+      name: worker_service_line_level_4_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_service_line_level_3_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_line_level_3 is not null
+      name: worker_service_line_level_3_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_service_line_level_2_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_line_level_2 is not null
+      name: worker_service_line_level_2_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_service_line_level_2_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_line_level_2 in ('Tax', 'Assurance', 'Outsourcing',
+        'Operations', 'Digital')
+      name: worker_service_line_level_2_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_industry_code_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_industry_code is not null
+      name: worker_industry_code_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_industry_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_industry_name is not null
+      name: worker_industry_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_industry_level_4_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_industry_level_4 in ('Private Equity - Industry Segment')
+      name: worker_industry_level_4_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_industry_level_4_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_industry_level_4 is not null and trim(worker_industry_level_4)
+        <> ''
+      name: worker_industry_level_4_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_industry_level_3_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_industry_level_3 is not null and trim(worker_industry_level_3)
+        <> ''
+      name: worker_industry_level_3_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_industry_level_2_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_industry_level_2 in ('Industrials', 'Public Sector', 'Financial
+        Services and Real Estate', 'Health Care', 'Service Industries')
+      name: worker_industry_level_2_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_industry_level_2_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_industry_level_2 is not null and trim(worker_industry_level_2)
+        <> ''
+      name: worker_industry_level_2_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: manager_employee_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: manager_employee_id is not null
+      name: manager_employee_id_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: manager_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: manager_name is not null
+      name: manager_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: manager_email_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: manager_email is not null
+      name: manager_email_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: career_coach_employee_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: career_coach_employee_id is not null
+      name: career_coach_employee_id_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: career_coach_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: career_coach_name is not null
+      name: career_coach_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: career_coach_email_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: career_coach_email is not null
+      name: career_coach_email_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: primary_work_location_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: primary_work_location in ('Traditional CLA Office', 'Client Site
+        (CAST or BizOps)', 'Work from Home')
+      name: primary_work_location_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: primary_work_location_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: primary_work_location is not null and trim(primary_work_location)
+        <> ''
+      name: primary_work_location_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: location_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_name is not null
+      name: location_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: location_address_line1_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_address_line1 is not null
+      name: location_address_line1_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: location_address_line2_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_address_line2 is not null and trim(location_address_line2)
+        <> ''
+      name: location_address_line2_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: location_city_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_city is not null
+      name: location_city_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: location_country_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_country is not null
+      name: location_country_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: location_country_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_country in ('US')
+      name: location_country_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: location_postal_code_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_postal_code is not null
+      name: location_postal_code_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: location_state_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_state is not null
+      name: location_state_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_gasb_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_gasb is not null
+      name: is_gasb_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_affordable_housing_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_affordable_housing is not null
+      name: is_affordable_housing_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_private_equity_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_private_equity is not null
+      name: is_private_equity_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_private_client_services_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_private_client_services is not null
+      name: is_private_client_services_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_single_audit_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_single_audit is not null
+      name: is_single_audit_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_wid is not null
+      name: worker_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: company_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company_wid is not null
+      name: company_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: company_wid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: company_wid in ('31d4e51a50e201ad2baa90d343179d66')
+      name: company_wid_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: management_level_wid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: management_level_wid in ('31d4e51a50e2017d305340eea816db2f', '31d4e51a50e20157f3217af0a816dc2f',
+        '31d4e51a50e201f6b0844beba816da2f', '31d4e51a50e201620ccb9cfaa816df2f', '31d4e51a50e20182a7ffe4f4a816dd2f',
+        '31d4e51a50e201a6a6cc4700a916e22f', '31d4e51a50e2016d552fe7e0a816d82f', '31d4e51a50e2017864ddade8a816d92f',
+        '31d4e51a50e20121e48a3ffea816e02f')
+      name: management_level_wid_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: management_level_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: management_level_wid is not null and trim(management_level_wid)
+        <> ''
+      name: management_level_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: cost_center_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_wid is not null
+      name: cost_center_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: service_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: service_wid is not null
+      name: service_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: industry_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: industry_wid is not null
+      name: industry_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: manager_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: manager_wid is not null
+      name: manager_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: career_coach_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: career_coach_wid is not null and trim(career_coach_wid) <> ''
+      name: career_coach_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: location_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_wid is not null
+      name: location_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: scd_record_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scd_record_id is not null
+      name: scd_record_id_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: scd_record_id_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scd_record_id >= 1 and scd_record_id <= 66
+      name: scd_record_id_min_max
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: start_date is not null
+      name: start_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: start_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: start_date >= '2018-07-01' and start_date <= '2024-05-01'
+      name: start_date_min_max
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: end_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: end_date is not null
+      name: end_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: end_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: end_date >= '2018-08-01' and end_date <= '2024-07-01'
+      name: end_date_min_max
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: _created_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date >= '2024-11-15T00:00:00.000000+0000' and _created_date
+        <= '2024-11-28T00:00:00.000000+0000'
+      name: _created_date_min_max
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: reporting_start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_start_date is not null
+      name: reporting_start_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: reporting_start_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_start_date >= '1969-04-06' and reporting_start_date <=
+        '2024-05-01'
+      name: reporting_start_date_min_max
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: reporting_end_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_end_date is not null
+      name: reporting_end_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: reporting_end_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: reporting_end_date >= '2018-07-31' and reporting_end_date <= '2024-06-30'
+      name: reporting_end_date_min_max
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_active_record_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_active_record is not null
+      name: is_active_record_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_star_historical_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_star_historical is not null
+      name: is_star_historical_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: cross_utilization_industry_wid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cross_utilization_industry_wid in ('31d4e51a50e201ab07a0e57c4c17b595')
+      name: cross_utilization_industry_wid_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: cross_utilization_industry_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cross_utilization_industry_wid is not null and trim(cross_utilization_industry_wid)
+        <> ''
+      name: cross_utilization_industry_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: cross_utilization_industry_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cross_utilization_industry_name is not null
+      name: cross_utilization_industry_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: cross_utilization_industry_name_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cross_utilization_industry_name in ('Nonprofit', 'Unknown')
+      name: cross_utilization_industry_name_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: cross_utilization_service_line_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cross_utilization_service_line_wid is not null and trim(cross_utilization_service_line_wid)
+        <> ''
+      name: cross_utilization_service_line_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: cross_utilization_service_line_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cross_utilization_service_line_name is not null
+      name: cross_utilization_service_line_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: cross_utilization_service_line_name_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cross_utilization_service_line_name in ('Unknown')
+      name: cross_utilization_service_line_name_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_central_biller_member_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_central_biller_member is not null
+      name: is_central_biller_member_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_credit_manager_member_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_credit_manager_member is not null
+      name: is_credit_manager_member_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_location_visible_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_location_visible is not null
+      name: is_location_visible_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: is_location_visible_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_location_visible in ('Public', 'Private')
+      name: is_location_visible_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_service_line_level_2_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_line_level_2_wid is not null
+      name: worker_service_line_level_2_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_service_line_level_2_wid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_line_level_2_wid in ('be0aaf88b66b1001234d3e4f32ac0000',
+        'dca3d765f2a51001234c6df3e2930000', 'dca3d765f2a51001234cbcdeeff10000', 'dca3d765f2a51001234d4443fbc20000',
+        '474ae1184ced1001234d87afbec90000')
+      name: worker_service_line_level_2_wid_is_in
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: hr_cost_center_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: hr_cost_center_wid is not null and trim(hr_cost_center_wid) <> ''
+      name: hr_cost_center_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: hr_sub_region_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: hr_sub_region_wid is not null and trim(hr_sub_region_wid) <> ''
+      name: hr_sub_region_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: hr_region_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: hr_region_wid is not null and trim(hr_region_wid) <> ''
+      name: hr_region_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: preferred_first_name_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: preferred_first_name is not null and trim(preferred_first_name)
+        <> ''
+      name: preferred_first_name_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: preferred_middle_name_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: preferred_middle_name is not null and trim(preferred_middle_name)
+        <> ''
+      name: preferred_middle_name_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: preferred_last_name_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: preferred_last_name is not null and trim(preferred_last_name) <>
+        ''
+      name: preferred_last_name_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: cost_center_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_key is not null
+      name: cost_center_key_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: cost_center_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_key >= -1 and cost_center_key <= 220
+      name: cost_center_key_min_max
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: hr_cost_center_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: hr_cost_center_key is not null
+      name: hr_cost_center_key_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: management_level_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: management_level_key is not null
+      name: management_level_key_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: management_level_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: management_level_key >= -1 and management_level_key <= 10
+      name: management_level_key_min_max
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_industry_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_industry_key is not null
+      name: worker_industry_key_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_service_line_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_line_key is not null
+      name: worker_service_line_key_is_not_null
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_service_line_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: worker_service_line_key >= 16 and worker_service_line_key <= 51
+      name: worker_service_line_key_min_max
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: preferred_full_name_id_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: preferred_full_name_id is not null and trim(preferred_full_name_id)
+        <> ''
+      name: preferred_full_name_id_is_not_null_or_empty

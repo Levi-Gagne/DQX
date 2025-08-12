@@ -1,0 +1,291 @@
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: rawitems_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: rawitems_key is not null
+      name: rawitems_key_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: rawitems_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: rawitems_key >= 189242174 and rawitems_key <= 189467322
+      name: rawitems_key_min_max
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: nsn_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: nsn is not null
+      name: nsn_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: wrin_prefix_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: wrin_prefix is not null
+      name: wrin_prefix_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: wrin_suffix_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: wrin_suffix is not null
+      name: wrin_suffix_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: raw_item_short_desc_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: raw_item_short_desc is not null
+      name: raw_item_short_desc_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: raw_item_long_desc_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: raw_item_long_desc is not null
+      name: raw_item_long_desc_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: prim_vendr_num_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: prim_vendr_num is not null and trim(prim_vendr_num) <> ''
+      name: prim_vendr_num_is_not_null_or_empty
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: alt_vendr_num_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: alt_vendr_num is not null and trim(alt_vendr_num) <> ''
+      name: alt_vendr_num_is_not_null_or_empty
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: activ_uom_case_qty_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: activ_uom_case_qty is not null
+      name: activ_uom_case_qty_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: activ_uom_case_qty_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: activ_uom_case_qty >= 1 and activ_uom_case_qty <= 4407
+      name: activ_uom_case_qty_min_max
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: uom_cd_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: uom_cd is not null
+      name: uom_cd_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: uom_cd_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: uom_cd in ('EA', 'CON', 'TUB', 'GAL', 'BAG', 'PKT', 'POU', 'LB',
+        'BOX')
+      name: uom_cd_is_in
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: invty_class_cd_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: invty_class_cd is not null
+      name: invty_class_cd_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: invty_class_cd_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: invty_class_cd in ('P', 'N', 'M', 'F', 'S', 'C')
+      name: invty_class_cd_is_in
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: invty_freq_cd_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: invty_freq_cd is not null
+      name: invty_freq_cd_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: invty_freq_cd_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: invty_freq_cd in ('M', 'W', 'D')
+      name: invty_freq_cd_is_in
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: uom_servg_qty_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: uom_servg_qty is not null
+      name: uom_servg_qty_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: uom_servg_qty_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: uom_servg_qty >= 1.00 and uom_servg_qty <= 280.9892769656669482355937362
+      name: uom_servg_qty_min_max
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: sleeve_unit_qty_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: sleeve_unit_qty is not null
+      name: sleeve_unit_qty_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: raw_item_stat_cd_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: raw_item_stat_cd is not null and trim(raw_item_stat_cd) <> ''
+      name: raw_item_stat_cd_is_not_null_or_empty
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: invty_catgry_type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: invty_catgry_type is not null
+      name: invty_catgry_type_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: invty_catgry_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: invty_catgry_type in ('Paper', 'Non-product Happy Meal Premiums',
+        'Non-Product Other', 'Food', 'Ops Supplies')
+      name: invty_catgry_type_is_in
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: business_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: business_date is not null
+      name: business_date_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: start_date is not null
+      name: start_date_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: end_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: end_date is not null
+      name: end_date_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: is_active_record_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_active_record is not null
+      name: is_active_record_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: _hash_value_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value in ('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')
+      name: _hash_value_is_in
+- table_name: de_prd.gold.mcdonalds_dim_rawitems_v2
+  name: raw_item_unit_amt_str_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: raw_item_unit_amt_str is not null and trim(raw_item_unit_amt_str)
+        <> ''
+      name: raw_item_unit_amt_str_is_not_null_or_empty

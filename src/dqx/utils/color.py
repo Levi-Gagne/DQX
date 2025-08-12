@@ -163,7 +163,6 @@ class Color:
     lemon_yellow     = '\033[38;2;255;250;205m'
     butternut_yellow = '\033[38;2;231;192;75m'
     colonial_cream   = '\033[38;2;253;233;16m'
-    spark            = '\033[38;2;255;218;0m'
     coronado_yellow  = '\033[38;2;255;255;0m'
     code_yellow      = '\033[33m'
 

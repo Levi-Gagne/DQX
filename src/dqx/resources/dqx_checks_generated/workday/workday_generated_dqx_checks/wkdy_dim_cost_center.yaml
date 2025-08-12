@@ -1,0 +1,436 @@
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_key is not null
+      name: cost_center_key_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_key >= 2 and cost_center_key <= 265
+      name: cost_center_key_min_max
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_code_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_code is not null
+      name: cost_center_code_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_name is not null
+      name: cost_center_name_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_level_4_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_level_4 is not null
+      name: cost_center_level_4_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_level_3_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_level_3 is not null
+      name: cost_center_level_3_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_level_2_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_level_2 is not null and trim(cost_center_level_2) <>
+        ''
+      name: cost_center_level_2_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_location_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_location is not null and trim(cost_center_location)
+        <> ''
+      name: cost_center_location_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: location_primary_address_line1_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_primary_address_line1 in ('293 Eisenhower Pkwy 2nd floor',
+        '220 South Sixth Street', '1188 Padre Dr.', '160 Fountain Parkway N.')
+      name: location_primary_address_line1_is_in
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: location_primary_address_line1_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_primary_address_line1 is not null and trim(location_primary_address_line1)
+        <> ''
+      name: location_primary_address_line1_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: location_primary_address_line2_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_primary_address_line2 in ('Suite 300', 'Suite 101', 'Suite
+        100')
+      name: location_primary_address_line2_is_in
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: location_primary_address_line2_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_primary_address_line2 is not null and trim(location_primary_address_line2)
+        <> ''
+      name: location_primary_address_line2_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: location_primary_address_line3_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_primary_address_line3 in ('Livingston, NJ 07039', 'Minneapolis,
+        MN 55402-1436', 'Salinas, CA 93901', 'St. Petersburg, FL 33716')
+      name: location_primary_address_line3_is_in
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: location_primary_address_line3_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_primary_address_line3 is not null and trim(location_primary_address_line3)
+        <> ''
+      name: location_primary_address_line3_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: location_primary_address_city_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_primary_address_city is not null and trim(location_primary_address_city)
+        <> ''
+      name: location_primary_address_city_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: location_primary_address_state_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_primary_address_state is not null and trim(location_primary_address_state)
+        <> ''
+      name: location_primary_address_state_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: location_primary_address_postal_code_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_primary_address_postal_code is not null and trim(location_primary_address_postal_code)
+        <> ''
+      name: location_primary_address_postal_code_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: location_primary_address_country_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_primary_address_country in ('USA')
+      name: location_primary_address_country_is_in
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: location_primary_address_country_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: location_primary_address_country is not null and trim(location_primary_address_country)
+        <> ''
+      name: location_primary_address_country_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: is_inactive_cost_center_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_inactive_cost_center is not null
+      name: is_inactive_cost_center_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_wid is not null
+      name: cost_center_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_location_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_location_wid is not null and trim(cost_center_location_wid)
+        <> ''
+      name: cost_center_location_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_level_4_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_level_4_wid is not null
+      name: cost_center_level_4_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_level_3_wid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_level_3_wid is not null
+      name: cost_center_level_3_wid_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_level_2_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_level_2_wid is not null and trim(cost_center_level_2_wid)
+        <> ''
+      name: cost_center_level_2_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: _created_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date >= '2024-03-01T00:00:00.000000+0000' and _created_date
+        <= '2024-11-03T00:00:00.000000+0000'
+      name: _created_date_min_max
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: _last_updated_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date >= '2025-05-29T00:00:00.000000+0000' and _last_updated_date
+        <= '2025-06-05T00:00:00.000000+0000'
+      name: _last_updated_date_min_max
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: cost_center_primary_location_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center_primary_location_wid is not null and trim(cost_center_primary_location_wid)
+        <> ''
+      name: cost_center_primary_location_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: is_star_historical_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_star_historical is not null
+      name: is_star_historical_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: mpo_worker_wid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: mpo_worker_wid is not null and trim(mpo_worker_wid) <> ''
+      name: mpo_worker_wid_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: scheduling_address_line1_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduling_address_line1 is not null and trim(scheduling_address_line1)
+        <> ''
+      name: scheduling_address_line1_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: scheduling_address_line2_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduling_address_line2 is not null and trim(scheduling_address_line2)
+        <> ''
+      name: scheduling_address_line2_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: scheduling_address_line3_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduling_address_line3 in ('Suite 2500')
+      name: scheduling_address_line3_is_in
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: scheduling_address_line3_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduling_address_line3 is not null and trim(scheduling_address_line3)
+        <> ''
+      name: scheduling_address_line3_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: scheduling_city_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduling_city is not null and trim(scheduling_city) <> ''
+      name: scheduling_city_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: scheduling_state_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduling_state is not null and trim(scheduling_state) <> ''
+      name: scheduling_state_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: scheduling_postal_zip_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduling_postal_zip is not null and trim(scheduling_postal_zip)
+        <> ''
+      name: scheduling_postal_zip_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: scheduling_country_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduling_country in ('United States')
+      name: scheduling_country_is_in
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: scheduling_country_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduling_country is not null and trim(scheduling_country) <> ''
+      name: scheduling_country_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: latitude_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: latitude >= 27.892162 and latitude <= 47.234192
+      name: latitude_min_max
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: longitude_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: longitude >= -121.890984 and longitude <= -71.024574
+      name: longitude_min_max
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: effective_date_time_location_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: effective_date_time_location is not null
+      name: effective_date_time_location_is_not_null
+- table_name: de_prd.gold.wkdy_dim_cost_center
+  name: effective_date_time_location_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: effective_date_time_location >= '2025-01-01T00:00:00.000000+0000'
+        and effective_date_time_location <= '2025-05-28T00:00:00.000000+0000'
+      name: effective_date_time_location_min_max

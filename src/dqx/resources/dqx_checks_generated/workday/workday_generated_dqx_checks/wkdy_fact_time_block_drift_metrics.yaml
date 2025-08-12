@@ -1,0 +1,261 @@
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: window_start_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: window.start is not null
+      name: window_start_is_not_null
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: window_start_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: window.start >= '2025-04-10T00:00:00.000000+0000' and window.start
+        <= '2025-05-09T00:00:00.000000+0000'
+      name: window_start_min_max
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: window_end_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: window.end is not null
+      name: window_end_is_not_null
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: window_end_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: window.end >= '2025-04-11T00:00:00.000000+0000' and window.end <=
+        '2025-05-10T00:00:00.000000+0000'
+      name: window_end_min_max
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: granularity_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: granularity is not null
+      name: granularity_is_not_null
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: granularity_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: granularity in ('1 day')
+      name: granularity_is_in
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: monitor_version_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: monitor_version is not null
+      name: monitor_version_is_not_null
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: monitor_version_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: monitor_version in (0)
+      name: monitor_version_is_in
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: slice_key_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: slice_key is not null and trim(slice_key) <> ''
+      name: slice_key_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: slice_value_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: slice_value is not null and trim(slice_value) <> ''
+      name: slice_value_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: column_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: column_name is not null
+      name: column_name_is_not_null
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: data_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: data_type in ('date', 'string', 'decimal(18,2)', 'boolean', 'decimal(12,6)',
+        'timestamp', 'bigint')
+      name: data_type_is_in
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: data_type_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: data_type is not null and trim(data_type) <> ''
+      name: data_type_is_not_null_or_empty
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: window_cmp_start_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: window_cmp.start is not null
+      name: window_cmp_start_is_not_null
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: window_cmp_start_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: window_cmp.start >= '2025-04-09T00:00:00.000000+0000' and window_cmp.start
+        <= '2025-05-08T00:00:00.000000+0000'
+      name: window_cmp_start_min_max
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: window_cmp_end_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: window_cmp.end is not null
+      name: window_cmp_end_is_not_null
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: window_cmp_end_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: window_cmp.end >= '2025-04-10T00:00:00.000000+0000' and window_cmp.end
+        <= '2025-05-09T00:00:00.000000+0000'
+      name: window_cmp_end_min_max
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: drift_type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: drift_type is not null
+      name: drift_type_is_not_null
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: drift_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: drift_type in ('CONSECUTIVE')
+      name: drift_type_is_in
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: count_delta_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: count_delta is not null
+      name: count_delta_is_not_null
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: count_delta_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: count_delta >= -33029 and count_delta <= 35246
+      name: count_delta_min_max
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: avg_delta_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: avg_delta >= -30919932.08305053 and avg_delta <= 32232849.02231053
+      name: avg_delta_min_max
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: percent_null_delta_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: percent_null_delta >= -3.251899680249694 and percent_null_delta
+        <= 3.342582755068239
+      name: percent_null_delta_min_max
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: percent_zeros_delta_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: percent_zeros_delta >= -1.6150686362940632 and percent_zeros_delta
+        <= 1.608427676758299
+      name: percent_zeros_delta_min_max
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: percent_distinct_delta_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: percent_distinct_delta >= -9.333355323519436 and percent_distinct_delta
+        <= 9.39075326190102
+      name: percent_distinct_delta_min_max
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: non_null_columns_delta_added_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: non_null_columns_delta.added in (0)
+      name: non_null_columns_delta_added_is_in
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: non_null_columns_delta_missing_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: non_null_columns_delta.missing in (0)
+      name: non_null_columns_delta_missing_is_in
+- table_name: de_prd.gold.wkdy_fact_time_block_drift_metrics
+  name: population_stability_index_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: population_stability_index >= 0.00046814709460054596 and population_stability_index
+        <= 8.923730877346854
+      name: population_stability_index_min_max

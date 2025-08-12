@@ -1,0 +1,207 @@
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: deals_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deals_key is not null
+      name: deals_key_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: deals_key_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deals_key >= 7 and deals_key <= 55686
+      name: deals_key_min_max
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: current_version_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: current_version is not null
+      name: current_version_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: deal_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deal_id is not null
+      name: deal_id_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: deal_type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deal_type is not null
+      name: deal_type_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: deal_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deal_type in ('native', 'external', 'externalWord')
+      name: deal_type_is_in
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: deal_url_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: deal_url is not null
+      name: deal_url_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: name is not null
+      name: name_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: parent_deal_id_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: parent_deal_id is not null and trim(parent_deal_id) <> ''
+      name: parent_deal_id_is_not_null_or_empty
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: signed_date_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: signed_date is not null and trim(signed_date) <> ''
+      name: signed_date_is_not_null_or_empty
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: source_team_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: source_team is not null
+      name: source_team_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: source_template_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: source_template is not null
+      name: source_template_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: source_template_key_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: source_template_key is not null
+      name: source_template_key_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: status_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: status is not null
+      name: status_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: status_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: status in ('Done', 'Signing', 'Setup', 'Review')
+      name: status_is_in
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: created_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: created >= '2023-11-03T00:00:00.000000+0000' and created <= '2024-10-15T00:00:00.000000+0000'
+      name: created_min_max
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: _is_deleted_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _is_deleted is not null
+      name: _is_deleted_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: _created_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _created_date is not null
+      name: _created_date_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: _last_updated_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _last_updated_date is not null
+      name: _last_updated_date_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: _effective_start_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: __effective_start_date is not null
+      name: _effective_start_date_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: _hash_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: _hash_value is not null
+      name: _hash_value_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: updated_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: updated is not null
+      name: updated_is_not_null
+- table_name: de_prd.gold.outlaw_dim_deals
+  name: updated_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: updated >= '2021-11-02T00:00:00.000000+0000' and updated <= '2024-10-15T00:00:00.000000+0000'
+      name: updated_min_max
