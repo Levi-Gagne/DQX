@@ -9,6 +9,22 @@
     function: is_unique
     arguments:
       columns: [project_key]
+  # SQL (violation rows only; counts all rows in duplicate groups, excludes NULLs):
+  # SELECT COUNT(*) AS violation_count
+  # FROM (
+  #   SELECT project_key,
+  #          COUNT(*) OVER (PARTITION BY project_key) AS kcnt
+  #   FROM de_prd.gold.wkdy_dim_project
+  # ) t
+  # WHERE project_key IS NOT NULL AND kcnt > 1;
+  # -- Inspect rows:
+  # SELECT *
+  # FROM (
+  #   SELECT t.*,
+  #          COUNT(*) OVER (PARTITION BY project_key) AS kcnt
+  #   FROM de_prd.gold.wkdy_dim_project t
+  # ) x
+  # WHERE project_key IS NOT NULL AND kcnt > 1;
 
 # 2) project_key must not be null
 - table_name: de_prd.gold.wkdy_dim_project
@@ -19,6 +35,12 @@
     function: is_not_null
     arguments:
       column: project_key
+  # SQL (violation rows only):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_project
+  # WHERE project_key IS NULL;
+  # -- Inspect:
+  # SELECT * FROM de_prd.gold.wkdy_dim_project WHERE project_key IS NULL;
 
 # 3) project_status must not be null
 - table_name: de_prd.gold.wkdy_dim_project
@@ -29,6 +51,12 @@
     function: is_not_null
     arguments:
       column: project_status
+  # SQL (violation rows only):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_project
+  # WHERE project_status IS NULL;
+  # -- Inspect:
+  # SELECT * FROM de_prd.gold.wkdy_dim_project WHERE project_status IS NULL;
 
 # 4) project_status must be one of the allowed values
 - table_name: de_prd.gold.wkdy_dim_project
@@ -45,6 +73,16 @@
         - Pending Close
         - Schedule Pending
         - Suspended
+  # SQL (violation rows only; exact match, case-sensitive):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_project
+  # WHERE project_status IS NOT NULL
+  #   AND project_status NOT IN ('Active','Closed','Pending Close','Schedule Pending','Suspended');
+  # -- Inspect:
+  # SELECT *
+  # FROM de_prd.gold.wkdy_dim_project
+  # WHERE project_status IS NOT NULL
+  #   AND project_status NOT IN ('Active','Closed','Pending Close','Schedule Pending','Suspended');
 
 # 5) project_type_name must be present and not 'Unknown'
 - table_name: de_prd.gold.wkdy_dim_project
@@ -55,9 +93,20 @@
     function: sql_expression
     arguments:
       expression: "project_type_name is not null AND project_type_name != 'Unknown'"
+  # SQL (violation rows only; NULL or exactly 'Unknown'):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_project
+  # WHERE project_type_name IS NULL
+  #    OR project_type_name = 'Unknown';
+  # -- Inspect:
+  # SELECT *
+  # FROM de_prd.gold.wkdy_dim_project
+  # WHERE project_type_name IS NULL
+  #    OR project_type_name = 'Unknown';
 
 # COMMETED OUT: 'email' is not a valid column in wkdy_dim_project
-#- name: email_is_not_valid
+#- table_name: de_prd.gold.wkdy_dim_project
+#  name: email_is_not_valid
 #  criticality: error
 #  run_config_name: default
 #  check:
@@ -65,6 +114,13 @@
 #    arguments:
 #      column: email
 #      regex: "^(.+)@(.+)$"
+#  # SQL (violation rows only; simple email shape):
+#  # SELECT COUNT(*) AS violation_count
+#  # FROM de_prd.gold.wkdy_dim_project
+#  # WHERE email IS NOT NULL AND email NOT RLIKE '^(.+)@(.+)$';
+#  # -- Inspect:
+#  # SELECT * FROM de_prd.gold.wkdy_dim_project
+#  # WHERE email IS NOT NULL AND email NOT RLIKE '^(.+)@(.+)$';
 
 # 6) start_date must be <= end_date (with wide defaults)
 - table_name: de_prd.gold.wkdy_dim_project
@@ -75,6 +131,16 @@
     function: sql_expression
     arguments:
       expression: "coalesce(project_start_date, '1900-01-01') <= coalesce(project_end_date, '9999-12-31')"
+  # SQL (violation rows only; cast to DATE for clean typing):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_project
+  # WHERE COALESCE(CAST(project_start_date AS DATE), DATE '1900-01-01')
+  #     > COALESCE(CAST(project_end_date   AS DATE), DATE '9999-12-31');
+  # -- Inspect:
+  # SELECT project_start_date, project_end_date, *
+  # FROM de_prd.gold.wkdy_dim_project
+  # WHERE COALESCE(CAST(project_start_date AS DATE), DATE '1900-01-01')
+  #     > COALESCE(CAST(project_end_date   AS DATE), DATE '9999-12-31');
 
 # 7) first_activity_date must be <= last_activity_date (with wide defaults)
 - table_name: de_prd.gold.wkdy_dim_project
@@ -85,6 +151,16 @@
     function: sql_expression
     arguments:
       expression: "coalesce(first_activity_date, '1900-01-01') <= coalesce(last_activity_date, '9999-12-31')"
+  # SQL (violation rows only):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_project
+  # WHERE COALESCE(CAST(first_activity_date AS DATE), DATE '1900-01-01')
+  #     > COALESCE(CAST(last_activity_date  AS DATE), DATE '9999-12-31');
+  # -- Inspect:
+  # SELECT first_activity_date, last_activity_date, *
+  # FROM de_prd.gold.wkdy_dim_project
+  # WHERE COALESCE(CAST(first_activity_date AS DATE), DATE '1900-01-01')
+  #     > COALESCE(CAST(last_activity_date  AS DATE), DATE '9999-12-31');
 
 # 8) _created_date must be <= _last_updated_date (with wide defaults)
 - table_name: de_prd.gold.wkdy_dim_project
@@ -95,3 +171,13 @@
     function: sql_expression
     arguments:
       expression: "coalesce(_created_date, '1900-01-01') <= coalesce(_last_updated_date, '9999-12-31')"
+  # SQL (violation rows only):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_project
+  # WHERE COALESCE(CAST(_created_date      AS DATE), DATE '1900-01-01')
+  #     > COALESCE(CAST(_last_updated_date AS DATE), DATE '9999-12-31');
+  # -- Inspect:
+  # SELECT _created_date, _last_updated_date, *
+  # FROM de_prd.gold.wkdy_dim_project
+  # WHERE COALESCE(CAST(_created_date      AS DATE), DATE '1900-01-01')
+  #     > COALESCE(CAST(_last_updated_date AS DATE), DATE '9999-12-31');
