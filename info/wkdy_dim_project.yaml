@@ -1,0 +1,72 @@
+# wkdy_dim_project.yaml
+
+- name: project_key_is_not_unique
+  criticality: error
+  check:
+    function: is_unique
+    arguments:
+      columns: [project_key]
+
+- name: project_key_is_null
+  criticality: error
+  check:
+    function: is_not_null
+    arguments:
+      column: project_key
+
+- name: project_status_is_null
+  criticality: error
+  check:
+    function: is_not_null
+    arguments:
+      column: project_status
+
+- name: project_status_is_new_value
+  criticality: error
+  check:
+    function: is_in_list
+    arguments:
+      column: project_status
+      allowed:
+        - Active
+        - Closed
+        - Pending Close
+        - Schedule Pending
+        - Suspended
+
+- name: project_type_is_not_null_or_unknown
+  criticality: error
+  check:
+    function: sql_expression
+    arguments:
+      expression: "project_type_name is not null AND project_type_name != 'Unknown'"
+
+# COMMETED OUT: 'email' is not a valid column in wkdy_dim_project
+#- name: email_is_not_valid
+#  criticality: error
+#  check:
+#    function: regex_match
+#    arguments:
+#      column: email
+#      regex: "^(.+)@(.+)$"
+
+- name: project_start_after_end_date
+  criticality: error
+  check:
+    function: sql_expression
+    arguments:
+      expression: "coalesce(project_start_date, '1900-01-01') <= coalesce(project_end_date, '9999-12-31')"
+
+- name: first_activity_date_after_last_activity_date
+  criticality: error
+  check:
+    function: sql_expression
+    arguments:
+      expression: "coalesce(first_activity_date, '1900-01-01') <= coalesce(last_activity_date, '9999-12-31')"
+
+- name: created_date_after_last_updated_date
+  criticality: error
+  check:
+    function: sql_expression
+    arguments:
+      expression: "coalesce(_created_date, '1900-01-01') <= coalesce(_last_updated_date, '9999-12-31')"

@@ -1,0 +1,22 @@
+# dqx/info/two_rules_test.yaml
+
+# Row-level: Filter rows where 'result_state'='FAILED' & Annotate where 'state'='TERMINATED'
+- table_name: dq_prd.monitoring.job_run_audit
+  name: failed_state_is_terminated
+  criticality: error
+  run_config_name: default
+  filter: "result_state = 'FAILED'"
+  check:
+    function: sql_expression
+    arguments:
+      expression: "state = 'TERMINATED'"
+
+# Dataset-level: composite uniqueness (one run per job+start_time)
+- table_name: dq_prd.monitoring.job_run_audit
+  name: unique_job_id_start_time
+  criticality: error
+  run_config_name: default
+  check:
+    function: is_unique
+    arguments:
+      columns: [job_id, start_time]

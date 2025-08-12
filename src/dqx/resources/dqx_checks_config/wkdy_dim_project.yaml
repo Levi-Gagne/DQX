@@ -58,13 +58,17 @@
 
 # email should match pattern (basic email format)
 - table_name: de_prd.gold.wkdy_dim_project
-  name: email_is_not_valid
+  name: any_email_has_invalid_format
   criticality: warn
   run_config_name: default
   check:
     function: regex_match
+    for_each_column:
+      - project_leader_email
+      - project_biller_email
+      - customer_leader_email
+      - customer_biller_email
     arguments:
-      column: email
       regex: "^(.+)@(.+)$"
 
 # project_start_date must be <= project_end_date

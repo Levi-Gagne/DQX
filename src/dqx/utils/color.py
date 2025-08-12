@@ -242,6 +242,7 @@ class Color:
     deep_pink       = "\033[38;2;255;20;147m"
     misty_rose      = "\033[38;2;255;228;225m"
     beige           = "\033[38;2;245;245;220m"
+    saffron         = "\033[38;2;251;197;90m"
 
     # -- Additional / Misc --
     python           = '\033[38;2;75;139;190m'

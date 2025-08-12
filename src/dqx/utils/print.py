@@ -4,6 +4,8 @@ import sys
 from typing import Optional, Dict, Any
 from pyspark.sql import SparkSession
 
+from utils.color import Color
+
 # dbutils may not exist under Spark Connect / SQL Warehouse
 try:
     from databricks.sdk.runtime import dbutils  # noqa: F401
@@ -72,16 +74,16 @@ def print_notebook_env(spark: SparkSession, local_timezone: str = "America/Chica
         notebook_path = get_notebook_path()
         times = get_current_times(local_timezone)
 
-        print("=" * 60)
-        print(f"Python version    : {python_version}")
-        print(f"Spark version     : {spark_version}")
-        print(f"Notebook path     : {notebook_path}")
-        print(f"Cluster name      : {cluster_name}")
-        print(f"Cluster ID        : {cluster_id}")
-        print(f"Executor memory   : {executor_memory}")
-        print(f"Local time ({local_timezone}): {times['local_time']}")
-        print(f"UTC time          : {times['utc_time']}")
-        print("=" * 60)
+        print(f"{Color.saffron}={Color.r}" * 60)
+        print(f"{C.Color}{Color.python}Python version    :{Color.r} {python_version}")
+        print(f"{C.Color}{Color.spark}Spark version     :{Color.r} {spark_version}")
+        print(f"{C.Color}{Color.spark}Notebook path     :{Color.r} {notebook_path}")
+        print(f"{C.Color}{Color.spark}Cluster name      :{Color.r} {cluster_name}")
+        print(f"{C.Color}{Color.spark}Cluster ID        :{Color.r} {cluster_id}")
+        print(f"{C.Color}{Color.spark}Executor memory   :{Color.r} {executor_memory}")
+        print(f"{C.Color}{Color.spark}Local time ({local_timezone}):{Color.r} {times['local_time']}")
+        print(f"{C.Color}{Color.spark}UTC time          : {times['utc_time']}")
+        print(f"{Color.saffron}={Color.r}" * 60)
 
         return {
             "cluster_id": cluster_id,
