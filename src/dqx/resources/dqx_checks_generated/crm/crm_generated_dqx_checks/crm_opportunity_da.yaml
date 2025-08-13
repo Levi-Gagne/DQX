@@ -1,0 +1,537 @@
+- table_name: de_prd.gold.crm_opportunity_da
+  name: opportunityid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: opportunityid is not null
+      name: opportunityid_is_not_null
+- table_name: de_prd.gold.crm_opportunity_da
+  name: statuscode_opportunity_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_opportunity is not null
+      name: statuscode_opportunity_is_not_null
+- table_name: de_prd.gold.crm_opportunity_da
+  name: statuscode_opportunity_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_opportunity >= 1 and statuscode_opportunity <= 858040033
+      name: statuscode_opportunity_min_max
+- table_name: de_prd.gold.crm_opportunity_da
+  name: statuscode_displayname_opportunity_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_opportunity is not null
+      name: statuscode_displayname_opportunity_is_not_null
+- table_name: de_prd.gold.crm_opportunity_da
+  name: statecode_opportunity_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_opportunity is not null
+      name: statecode_opportunity_is_not_null
+- table_name: de_prd.gold.crm_opportunity_da
+  name: statecode_opportunity_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_opportunity in (2, 1, 0)
+      name: statecode_opportunity_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: statecode_displaynameopportunity_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displaynameopportunity is not null
+      name: statecode_displaynameopportunity_is_not_null
+- table_name: de_prd.gold.crm_opportunity_da
+  name: statecode_displaynameopportunity_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displaynameopportunity in ('Lost', 'Won', 'Open')
+      name: statecode_displaynameopportunity_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_reasonwon_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_reasonwon in (100000015, 100000006, 100000011)
+      name: cla_reasonwon_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_reasonwon_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_reasonwon >= 100000006 and cla_reasonwon <= 100000015
+      name: cla_reasonwon_min_max
+- table_name: de_prd.gold.crm_opportunity_da
+  name: prioritycode_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: prioritycode is not null
+      name: prioritycode_is_not_null
+- table_name: de_prd.gold.crm_opportunity_da
+  name: prioritycode_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: prioritycode in (1)
+      name: prioritycode_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_opportunitytype_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_opportunitytype in (858040001, 858040000)
+      name: cla_opportunitytype_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_opportunitytype_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_opportunitytype >= 858040000 and cla_opportunitytype <= 858040001
+      name: cla_opportunitytype_min_max
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_industrycode_opportunity_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_industrycode_opportunity >= 858040000 and cla_industrycode_opportunity
+        <= 858040030
+      name: cla_industrycode_opportunity_min_max
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_websitereferral_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_websitereferral in (858040003, 858040002, 858040011, 858040006,
+        858040013, 858040008, 858040014)
+      name: cla_websitereferral_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_websitereferral_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_websitereferral >= 858040002 and cla_websitereferral <= 858040013
+      name: cla_websitereferral_min_max
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_starmarket_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_starmarket in (858040008, 858040007, 858040005, 858040003, 858040006,
+        858040004, 858040002)
+      name: cla_starmarket_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_starmarket_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_starmarket >= 858040002 and cla_starmarket <= 858040008
+      name: cla_starmarket_min_max
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_growthnetwork_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_growthnetwork >= 858040000 and cla_growthnetwork <= 858040014
+      name: cla_growthnetwork_min_max
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_opportunityoffice_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_opportunityoffice >= 581039763 and cla_opportunityoffice <=
+        858040166
+      name: cla_opportunityoffice_min_max
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_subindustry_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_subindustry >= 858040000 and cla_subindustry <= 858040184
+      name: cla_subindustry_min_max
+- table_name: de_prd.gold.crm_opportunity_da
+  name: owninguser_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owninguser is not null
+      name: owninguser_is_not_null
+- table_name: de_prd.gold.crm_opportunity_da
+  name: parentaccountid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: parentaccountid is not null and trim(parentaccountid) <> ''
+      name: parentaccountid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_contactid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_contactid is not null and trim(cla_contactid) <> ''
+      name: cla_contactid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: contactid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: contactid is not null and trim(contactid) <> ''
+      name: contactid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: pricelevelid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: pricelevelid in ('3f044a65-8d61-e111-bbd5-78e7d1620f15')
+      name: pricelevelid_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: pricelevelid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: pricelevelid is not null and trim(pricelevelid) <> ''
+      name: pricelevelid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_contactreferral_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_contactreferral is not null and trim(cla_contactreferral) <>
+        ''
+      name: cla_contactreferral_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_proposalcoordinator_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_proposalcoordinator is not null and trim(cla_proposalcoordinator)
+        <> ''
+      name: cla_proposalcoordinator_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: campaignid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: campaignid is not null and trim(campaignid) <> ''
+      name: campaignid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: parentcontactid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: parentcontactid is not null and trim(parentcontactid) <> ''
+      name: parentcontactid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_crllookup_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_crllookup is not null and trim(cla_crllookup) <> ''
+      name: cla_crllookup_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_bdaid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_bdaid in ('5e0e2064-6ccc-e111-b4f7-78e3b510fde9', '7302fd5d-6ccc-e111-b4f7-78e3b510fde9',
+        '0dea8df8-af79-e611-80f7-5065f38b6141', 'e90327ff-e4cc-e111-b4f7-78e3b510fde9',
+        '9891825b-31cf-e511-80e8-3863bb2e5390', 'cb94d9b7-052e-e911-a99d-000d3a161ff6',
+        '7a77e2a7-fd7d-e711-811a-e0071b6aa0a1')
+      name: cla_bdaid_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_bdaid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_bdaid is not null and trim(cla_bdaid) <> ''
+      name: cla_bdaid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: accountid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: accountid is not null and trim(accountid) <> ''
+      name: accountid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_region_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_region in ('d63fa1d7-f9a9-e311-8be0-78e3b5102ea7', 'b44cb5e1-c76b-e111-82cb-5c260afc36d8',
+        '8f871582-5751-eb11-a813-000d3a1abe26', '13f2e3e9-c76b-e111-82cb-5c260afc36d8',
+        'c52c8c6f-5751-eb11-a813-000d3a1abe26', '1da689b9-6c5b-eb11-a812-000d3a8b304d')
+      name: cla_region_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_region_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_region is not null and trim(cla_region) <> ''
+      name: cla_region_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: createdby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby is not null
+      name: createdby_is_not_null
+- table_name: de_prd.gold.crm_opportunity_da
+  name: ownerid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid is not null
+      name: ownerid_is_not_null
+- table_name: de_prd.gold.crm_opportunity_da
+  name: customerid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: customerid is not null
+      name: customerid_is_not_null
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_contractstartdate_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_contractstartdate >= '2010-06-07T00:00:00.000000+0000' and cla_contractstartdate
+        <= '2024-09-19T00:00:00.000000+0000'
+      name: cla_contractstartdate_min_max
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_contractenddate_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_contractenddate >= '2010-12-31T00:00:00.000000+0000' and cla_contractenddate
+        <= '2024-10-01T00:00:00.000000+0000'
+      name: cla_contractenddate_min_max
+- table_name: de_prd.gold.crm_opportunity_da
+  name: description_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: description is not null and trim(description) <> ''
+      name: description_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: CreatedOn_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CreatedOn is not null
+      name: CreatedOn_is_not_null
+- table_name: de_prd.gold.crm_opportunity_da
+  name: cla_opportunityrecordurl_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_opportunityrecordurl is not null and trim(cla_opportunityrecordurl)
+        <> ''
+      name: cla_opportunityrecordurl_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: Opp_type_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Opp_type is not null
+      name: Opp_type_is_not_null
+- table_name: de_prd.gold.crm_opportunity_da
+  name: Opp_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Opp_type in ('Other', 'Website inquiry', 'Other Campaign', 'CLA
+        event (virtual)', 'CLA event (in-person)')
+      name: Opp_type_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: Type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Type in ('Sales', 'Webinar', 'Multi-Channel Marketing', 'Cross Sell',
+        'In-Person Event', 'Membership', 'Advertising', 'Sponsorship')
+      name: Type_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: Type_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Type is not null and trim(Type) <> ''
+      name: Type_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: acquisition_source_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: acquisition_source is not null and trim(acquisition_source) <> ''
+      name: acquisition_source_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: conversion_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: 'conversion_type in (''Form submission __ Contact Us: CLA: External
+        Site Contact Us Form__Unknown keywords (SSL)'', ''Form submission __ Contact
+        Us: CLA (CliftonLarsonAllen): External Site Contact Us Form__Unknown keywords
+        (SSL)'', ''Form submission __ WOTC Welcome Kit Request Form__www.claconnect.com/en/get-started/private-client-services-tax-wealth-advisory'',
+        ''Form submission __ Contact Us: CLA (CliftonLarsonAllen): External Site Contact
+        Us Form__www.claconnect.com/en'', ''Form submission __ Contact Us: CLA: External
+        Site Contact Us Form__www.claconnect.com/en/contact-us'')'
+      name: conversion_type_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: conversion_type_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: conversion_type is not null and trim(conversion_type) <> ''
+      name: conversion_type_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: campaign_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: campaign_type in ('Other Campaign', 'Sales', 'Webinar', 'Multi-Channel
+        Marketing', 'Cross Sell', 'In-Person Event', 'Membership', 'Advertising',
+        'Sponsorship')
+      name: campaign_type_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: campaign_type_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: campaign_type is not null and trim(campaign_type) <> ''
+      name: campaign_type_is_not_null_or_empty
+- table_name: de_prd.gold.crm_opportunity_da
+  name: lead_source_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: lead_source in ('Advertisement', 'Web')
+      name: lead_source_is_in
+- table_name: de_prd.gold.crm_opportunity_da
+  name: lead_source_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: lead_source is not null and trim(lead_source) <> ''
+      name: lead_source_is_not_null_or_empty

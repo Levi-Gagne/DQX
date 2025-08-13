@@ -1,0 +1,247 @@
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: TrialBalanceDetailID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: TrialBalanceDetailID is not null
+      name: TrialBalanceDetailID_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: TrialBalanceDetailID_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: TrialBalanceDetailID >= 1 and TrialBalanceDetailID <= 3304
+      name: TrialBalanceDetailID_min_max
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: TrialBalanceVersionID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: TrialBalanceVersionID is not null
+      name: TrialBalanceVersionID_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: AmountCurrency_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: AmountCurrency is not null and trim(AmountCurrency) <> ''
+      name: AmountCurrency_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: AmountEnding_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: AmountEnding is not null
+      name: AmountEnding_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: AmountEnding_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: AmountEnding >= -10113362.37916069698616862297 and AmountEnding
+        <= 10104485.03599069698616862297
+      name: AmountEnding_min_max
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: AmountLocalCurrency_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: AmountLocalCurrency is not null and trim(AmountLocalCurrency) <>
+        ''
+      name: AmountLocalCurrency_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: AmountReportingCurrency_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: AmountReportingCurrency is not null and trim(AmountReportingCurrency)
+        <> ''
+      name: AmountReportingCurrency_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: BusinessUnitCode_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: BusinessUnitCode is not null and trim(BusinessUnitCode) <> ''
+      name: BusinessUnitCode_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: GLAccountNumber_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: GLAccountNumber is not null
+      name: GLAccountNumber_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: GLAccountName_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: GLAccountName is not null and trim(GLAccountName) <> ''
+      name: GLAccountName_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: Period_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Period is not null and trim(Period) <> ''
+      name: Period_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: BudgetFlag_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: BudgetFlag is not null and trim(BudgetFlag) <> ''
+      name: BudgetFlag_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: Account_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Account in ('A. Assets', 'B. Liabilities', 'C. Equity & Reserves',
+        'D. Income', 'E. Expenses')
+      name: Account_is_in
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: Account_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Account is not null and trim(Account) <> ''
+      name: Account_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: AccountSubType_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: AccountSubType is not null
+      name: AccountSubType_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: FSCaption_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: FSCaption is not null and trim(FSCaption) <> ''
+      name: FSCaption_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: AccountName_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: AccountName is not null and trim(AccountName) <> ''
+      name: AccountName_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: Segment01_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Segment01 is not null and trim(Segment01) <> ''
+      name: Segment01_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: Segment02_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Segment02 is not null and trim(Segment02) <> ''
+      name: Segment02_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: Segment03_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Segment03 is not null and trim(Segment03) <> ''
+      name: Segment03_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: Segment04_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Segment04 in ()
+      name: Segment04_is_in
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: Segment04_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Segment04 is not null and trim(Segment04) <> ''
+      name: Segment04_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: Segment05_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Segment05 in ()
+      name: Segment05_is_in
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: Segment05_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Segment05 is not null and trim(Segment05) <> ''
+      name: Segment05_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: UserDefined1_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: UserDefined1 is not null and trim(UserDefined1) <> ''
+      name: UserDefined1_is_not_null_or_empty
+- table_name: de_prd.gold.audit_trialbalancedetail
+  name: UserDefined2_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: UserDefined2 is not null and trim(UserDefined2) <> ''
+      name: UserDefined2_is_not_null_or_empty

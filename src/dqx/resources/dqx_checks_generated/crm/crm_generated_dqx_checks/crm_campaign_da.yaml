@@ -1,0 +1,995 @@
+- table_name: de_prd.gold.crm_campaign_da
+  name: name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: name is not null
+      name: name_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: stageid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: stageid is not null and trim(stageid) <> ''
+      name: stageid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_countdisqualifiedleads_state_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_countdisqualifiedleads_state is not null
+      name: cla_countdisqualifiedleads_state_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_countdisqualifiedleads_state_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_countdisqualifiedleads_state in (1, 0)
+      name: cla_countdisqualifiedleads_state_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_wonopportunityrevenue_state_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_wonopportunityrevenue_state in (0, 1)
+      name: cla_wonopportunityrevenue_state_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: actualend_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: actualend >= '2014-05-11T00:00:00.000000+0000' and actualend <=
+        '2026-01-31T00:00:00.000000+0000'
+      name: actualend_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: modifiedon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedon is not null
+      name: modifiedon_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: modifiedon_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedon >= '2020-07-03T00:00:00.000000+0000' and modifiedon <=
+        '2025-08-06T00:00:00.000000+0000'
+      name: modifiedon_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: statecode_campaign_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_campaign is not null
+      name: statecode_campaign_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: statecode_campaign_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_campaign in (0, 1)
+      name: statecode_campaign_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: statuscode_campaign_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_campaign is not null
+      name: statuscode_campaign_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: statuscode_campaign_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_campaign in (3, 2, 0, 4, 6, 1, 5)
+      name: statuscode_campaign_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_wonopportunityrevenue_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_wonopportunityrevenue_date is not null
+      name: cla_wonopportunityrevenue_date_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_wonopportunityrevenue_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_wonopportunityrevenue_date >= '2025-01-03T00:00:00.000000+0000'
+        and cla_wonopportunityrevenue_date <= '2025-06-15T00:00:00.000000+0000'
+      name: cla_wonopportunityrevenue_date_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: proposedstart_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: proposedstart >= '2004-09-02T00:00:00.000000+0000' and proposedstart
+        <= '2025-06-19T00:00:00.000000+0000'
+      name: proposedstart_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: proposedend_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: proposedend >= '2004-09-01T00:00:00.000000+0000' and proposedend
+        <= '2026-01-01T00:00:00.000000+0000'
+      name: proposedend_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_parentcampaignname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_parentcampaignname is not null
+      name: cla_parentcampaignname_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: owningteam_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningteam is not null and trim(owningteam) <> ''
+      name: owningteam_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: modifiedonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfby is not null and trim(modifiedonbehalfby) <> ''
+      name: modifiedonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_countallleads_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_countallleads_date is not null
+      name: cla_countallleads_date_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_countallleads_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_countallleads_date >= '2025-01-03T00:00:00.000000+0000' and
+        cla_countallleads_date <= '2025-06-15T00:00:00.000000+0000'
+      name: cla_countallleads_date_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: description_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: description is not null and trim(description) <> ''
+      name: description_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_notestext_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_notestext is not null and trim(cla_notestext) <> ''
+      name: cla_notestext_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: totalcampaignactivityactualcost_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: totalcampaignactivityactualcost is not null
+      name: totalcampaignactivityactualcost_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: timezoneruleversionnumber_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: timezoneruleversionnumber in (0, 4)
+      name: timezoneruleversionnumber_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_approvedon_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_approvedon >= '2021-03-17T00:00:00.000000+0000' and cla_approvedon
+        <= '2025-05-02T00:00:00.000000+0000'
+      name: cla_approvedon_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_approvedby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_approvedby is not null and trim(cla_approvedby) <> ''
+      name: cla_approvedby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: entityimage_url_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: entityimage_url is not null and trim(entityimage_url) <> ''
+      name: entityimage_url_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: lw_hubspotformid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: lw_hubspotformid is not null and trim(lw_hubspotformid) <> ''
+      name: lw_hubspotformid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: overriddencreatedon_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: overriddencreatedon >= '2013-12-18T00:00:00.000000+0000' and overriddencreatedon
+        <= '2023-11-18T00:00:00.000000+0000'
+      name: overriddencreatedon_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_office_displayname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_office_displayname is not null and trim(cla_office_displayname)
+        <> ''
+      name: cla_office_displayname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: createdon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdon is not null
+      name: createdon_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: createdon_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdon >= '2009-01-28T00:00:00.000000+0000' and createdon <=
+        '2025-08-06T00:00:00.000000+0000'
+      name: createdon_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_servicegroup_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_servicegroup in ('eb599b23-1917-ef11-9f89-002248282c78', 'd8308290-9d18-ef11-9f89-000d3a8e687d',
+        '750ea09c-9d18-ef11-9f89-000d3a8e687d', 'f563a596-9d18-ef11-9f89-000d3a8e687d')
+      name: cla_servicegroup_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_servicegroup_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_servicegroup is not null and trim(cla_servicegroup) <> ''
+      name: cla_servicegroup_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: marketing_campaign_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: marketing_campaign_name is not null
+      name: marketing_campaign_name_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: processid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: processid in ('00000000-0000-0000-0000-000000000000')
+      name: processid_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: processid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: processid is not null and trim(processid) <> ''
+      name: processid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: tmpregardingobjectid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: tmpregardingobjectid is not null and trim(tmpregardingobjectid)
+        <> ''
+      name: tmpregardingobjectid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: istemplate_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: istemplate is not null
+      name: istemplate_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: totalactualcost_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: totalactualcost is not null
+      name: totalactualcost_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: entityimageid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: entityimageid is not null and trim(entityimageid) <> ''
+      name: entityimageid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_parentcampaign_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_parentcampaign is not null and trim(cla_parentcampaign) <> ''
+      name: cla_parentcampaign_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_starindustrysector_campaign_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_starindustrysector_campaign in (858040003, 858040002, 858040007,
+        858040004, 858040008, 858040005, 858040006)
+      name: cla_starindustrysector_campaign_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_starindustrysector_campaign_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_starindustrysector_campaign >= 858040002 and cla_starindustrysector_campaign
+        <= 858040008
+      name: cla_starindustrysector_campaign_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_integrationcampaignid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_integrationcampaignid is not null and trim(cla_integrationcampaignid)
+        <> ''
+      name: cla_integrationcampaignid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: typecode_displayname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: typecode_displayname is not null and trim(typecode_displayname)
+        <> ''
+      name: typecode_displayname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: new_numberofcontacts_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: new_numberofcontacts is not null and trim(new_numberofcontacts)
+        <> ''
+      name: new_numberofcontacts_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: lw_hubspotemailcampaignid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: lw_hubspotemailcampaignid is not null and trim(lw_hubspotemailcampaignid)
+        <> ''
+      name: lw_hubspotemailcampaignid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: othercost_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: othercost is not null
+      name: othercost_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: ownerid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid is not null
+      name: ownerid_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: Parent_Campaign_Name_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Parent_Campaign_Name is not null and trim(Parent_Campaign_Name)
+        <> ''
+      name: Parent_Campaign_Name_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: objective_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: objective is not null and trim(objective) <> ''
+      name: objective_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_office_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_office >= 578234678 and cla_office <= 858040166
+      name: cla_office_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: campaignid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: campaignid is not null
+      name: campaignid_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: traversedpath_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: traversedpath is not null and trim(traversedpath) <> ''
+      name: traversedpath_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: industrysector_displayname_campaign_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: industrysector_displayname_campaign in ('Public Sector', 'Private',
+        'Health Care', 'Other', 'Industrials', 'Financial Services and Real Estate',
+        'Service Industries')
+      name: industrysector_displayname_campaign_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: industrysector_displayname_campaign_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: industrysector_displayname_campaign is not null and trim(industrysector_displayname_campaign)
+        <> ''
+      name: industrysector_displayname_campaign_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: codename_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: codename is not null
+      name: codename_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: createdonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfby is not null and trim(createdonbehalfby) <> ''
+      name: createdonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: versionnumber_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: versionnumber is not null
+      name: versionnumber_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: versionnumber_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: versionnumber >= 14095759455 and versionnumber <= 14965979325
+      name: versionnumber_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: actualstart_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: actualstart >= '2007-05-22T00:00:00.000000+0000' and actualstart
+        <= '2025-07-25T00:00:00.000000+0000'
+      name: actualstart_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: createdby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby is not null
+      name: createdby_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: modifiedby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedby is not null
+      name: modifiedby_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_roi_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_roi >= -100.0 and cla_roi <= 1269.101988013068
+      name: cla_roi_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: statuscode_displayname_campaign_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_campaign is not null
+      name: statuscode_displayname_campaign_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: statuscode_displayname_campaign_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_campaign in ('Completed', 'Launched', 'Proposed',
+        'Canceled', 'Inactive', 'Ready To Launch', 'Suspended')
+      name: statuscode_displayname_campaign_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: industrycode_displayname_campaign_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: industrycode_displayname_campaign is not null and trim(industrycode_displayname_campaign)
+        <> ''
+      name: industrycode_displayname_campaign_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_eventid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_eventid is not null and trim(cla_eventid) <> ''
+      name: cla_eventid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_crl_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_crl is not null and trim(cla_crl) <> ''
+      name: cla_crl_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: statecode_displayname_campaign_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_campaign is not null
+      name: statecode_displayname_campaign_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: statecode_displayname_campaign_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_campaign in ('Active', 'Inactive')
+      name: statecode_displayname_campaign_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_countdisqualifiedleads_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_countdisqualifiedleads_date is not null
+      name: cla_countdisqualifiedleads_date_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_countdisqualifiedleads_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_countdisqualifiedleads_date >= '2025-01-03T00:00:00.000000+0000'
+        and cla_countdisqualifiedleads_date <= '2025-06-15T00:00:00.000000+0000'
+      name: cla_countdisqualifiedleads_date_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: promotioncodename_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: promotioncodename is not null and trim(promotioncodename) <> ''
+      name: promotioncodename_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: subindustry_displayname_campaign_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: subindustry_displayname_campaign is not null and trim(subindustry_displayname_campaign)
+        <> ''
+      name: subindustry_displayname_campaign_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: expectedrevenue_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: expectedrevenue is not null
+      name: expectedrevenue_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: campaign_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: campaign_id is not null
+      name: campaign_id_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: owninguser_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owninguser is not null
+      name: owninguser_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: importsequencenumber_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: importsequencenumber in (5304, 865, 6245, 3237)
+      name: importsequencenumber_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: importsequencenumber_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: importsequencenumber >= 865 and importsequencenumber <= 6245
+      name: importsequencenumber_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: totalactualcost_base_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: totalactualcost_base is not null
+      name: totalactualcost_base_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: exchangerate_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: exchangerate is not null
+      name: exchangerate_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_estimatedrevenuemonaghan_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_estimatedrevenuemonaghan is not null and trim(cla_estimatedrevenuemonaghan)
+        <> ''
+      name: cla_estimatedrevenuemonaghan_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_totalcostofcampaignactivitiesmonaghan_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_totalcostofcampaignactivitiesmonaghan is not null and trim(cla_totalcostofcampaignactivitiesmonaghan)
+        <> ''
+      name: cla_totalcostofcampaignactivitiesmonaghan_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_servicelines_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_servicelines is not null and trim(cla_servicelines) <> ''
+      name: cla_servicelines_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_subservicelines_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_subservicelines is not null and trim(cla_subservicelines) <>
+        ''
+      name: cla_subservicelines_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: message_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: message is not null and trim(message) <> ''
+      name: message_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_countallleads_state_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_countallleads_state is not null
+      name: cla_countallleads_state_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_countallleads_state_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_countallleads_state in (1, 0)
+      name: cla_countallleads_state_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_countqualifiedleads_state_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_countqualifiedleads_state is not null
+      name: cla_countqualifiedleads_state_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_countqualifiedleads_state_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_countqualifiedleads_state in (1, 0)
+      name: cla_countqualifiedleads_state_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: pricelistid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: pricelistid in ('3f044a65-8d61-e111-bbd5-78e7d1620f15')
+      name: pricelistid_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: pricelistid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: pricelistid is not null and trim(pricelistid) <> ''
+      name: pricelistid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_countqualifiedleads_date_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_countqualifiedleads_date is not null
+      name: cla_countqualifiedleads_date_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_countqualifiedleads_date_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_countqualifiedleads_date >= '2025-01-03T00:00:00.000000+0000'
+        and cla_countqualifiedleads_date <= '2025-06-15T00:00:00.000000+0000'
+      name: cla_countqualifiedleads_date_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_account_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_account is not null and trim(cla_account) <> ''
+      name: cla_account_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: industrycode_campaign_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: industrycode_campaign >= 858040000 and industrycode_campaign <=
+        858040030
+      name: industrycode_campaign_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: emailaddress_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: emailaddress is not null and trim(emailaddress) <> ''
+      name: emailaddress_is_not_null_or_empty
+- table_name: de_prd.gold.crm_campaign_da
+  name: typecode_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: typecode >= 1 and typecode <= 858040007
+      name: typecode_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: owningbusinessunit_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit is not null
+      name: owningbusinessunit_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: owningbusinessunit_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit in ('b65718c2-e995-e111-aff1-78e7d1620f15', '1a4311e6-8f1b-e111-bfbd-78e7d1620f70')
+      name: owningbusinessunit_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: subindustry_campaign_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: subindustry_campaign >= 858040000 and subindustry_campaign <= 858040186
+      name: subindustry_campaign_min_max
+- table_name: de_prd.gold.crm_campaign_da
+  name: transactioncurrencyid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: transactioncurrencyid is not null
+      name: transactioncurrencyid_is_not_null
+- table_name: de_prd.gold.crm_campaign_da
+  name: transactioncurrencyid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: transactioncurrencyid in ('7f141068-4c36-e111-8e05-78e7d1620f15')
+      name: transactioncurrencyid_is_in
+- table_name: de_prd.gold.crm_campaign_da
+  name: cla_legacyid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_legacyid is not null and trim(cla_legacyid) <> ''
+      name: cla_legacyid_is_not_null_or_empty

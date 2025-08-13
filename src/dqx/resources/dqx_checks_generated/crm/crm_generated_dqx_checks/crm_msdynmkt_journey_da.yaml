@@ -1,0 +1,710 @@
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_journeyid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_journeyid is not null
+      name: msdynmkt_journeyid_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: statecode_journey_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_journey is not null
+      name: statecode_journey_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: statecode_displayname_journey_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_journey is not null
+      name: statecode_displayname_journey_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: statuscode_journey_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_journey is not null
+      name: statuscode_journey_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: statuscode_journey_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_journey >= 1 and statuscode_journey <= 8
+      name: statuscode_journey_min_max
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: statuscode_displayname_journey_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_journey is not null
+      name: statuscode_displayname_journey_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: createdby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby is not null
+      name: createdby_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: SinkModifiedOn_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SinkModifiedOn is not null
+      name: SinkModifiedOn_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: SinkModifiedOn_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SinkModifiedOn >= '2025-07-15T00:00:00.000000+0000' and SinkModifiedOn
+        <= '2025-08-13T00:00:00.000000+0000'
+      name: SinkModifiedOn_min_max
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: modifiedby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedby is not null
+      name: modifiedby_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: createdonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfby is not null and trim(createdonbehalfby) <> ''
+      name: createdonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: modifiedonbehalfby_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfby in ('bb3e7029-d170-ef11-a671-0022481f1b92', 'ca416377-cf70-ef11-a670-000d3a150a8b')
+      name: modifiedonbehalfby_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: modifiedonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfby is not null and trim(modifiedonbehalfby) <> ''
+      name: modifiedonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: createdbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyname is not null
+      name: createdbyname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: createdbyyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyyominame is not null
+      name: createdbyyominame_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: createdonbehalfbyname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyname is not null and trim(createdonbehalfbyname)
+        <> ''
+      name: createdonbehalfbyname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: createdonbehalfbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyyominame is not null and trim(createdonbehalfbyyominame)
+        <> ''
+      name: createdonbehalfbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: modifiedbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyname is not null
+      name: modifiedbyname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: modifiedbyyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyyominame is not null
+      name: modifiedbyyominame_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: modifiedonbehalfbyname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyname in ('Dynamics Marketing Customer Experience
+        Platform PROD', '# D365 CustomerProfile')
+      name: modifiedonbehalfbyname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: modifiedonbehalfbyname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyname is not null and trim(modifiedonbehalfbyname)
+        <> ''
+      name: modifiedonbehalfbyname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: modifiedonbehalfbyyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyyominame in ('Dynamics Marketing Customer Experience
+        Platform PROD', '# D365 CustomerProfile')
+      name: modifiedonbehalfbyyominame_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: modifiedonbehalfbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyyominame is not null and trim(modifiedonbehalfbyyominame)
+        <> ''
+      name: modifiedonbehalfbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: ownerid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid is not null
+      name: ownerid_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: owneridname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridname is not null
+      name: owneridname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: owneridyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridyominame is not null
+      name: owneridyominame_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: owningbusinessunit_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit is not null
+      name: owningbusinessunit_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: owningbusinessunit_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit in ('b65718c2-e995-e111-aff1-78e7d1620f15')
+      name: owningbusinessunit_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: owninguser_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owninguser is not null
+      name: owninguser_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: owningteam_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningteam is not null and trim(owningteam) <> ''
+      name: owningteam_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: owningbusinessunitname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunitname is not null
+      name: owningbusinessunitname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: owningbusinessunitname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunitname in ('Standard Accounts')
+      name: owningbusinessunitname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: SinkCreatedOn_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SinkCreatedOn is not null
+      name: SinkCreatedOn_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: SinkCreatedOn_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SinkCreatedOn >= '2025-07-15T00:00:00.000000+0000' and SinkCreatedOn
+        <= '2025-08-13T00:00:00.000000+0000'
+      name: SinkCreatedOn_min_max
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: timezoneruleversionnumber_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: timezoneruleversionnumber in (0, 4)
+      name: timezoneruleversionnumber_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_name is not null
+      name: msdynmkt_name_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_baseversionjourneyid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_baseversionjourneyid is not null and trim(msdynmkt_baseversionjourneyid)
+        <> ''
+      name: msdynmkt_baseversionjourneyid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_issupersededbylaterversion_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_issupersededbylaterversion is not null
+      name: msdynmkt_issupersededbylaterversion_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_issupersededbylaterversion_displayname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_issupersededbylaterversion_displayname is not null
+      name: msdynmkt_issupersededbylaterversion_displayname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_issupersededbylaterversion_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_issupersededbylaterversion_displayname in ('No', 'Yes')
+      name: msdynmkt_issupersededbylaterversion_displayname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_journeyjson_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_journeyjson is not null
+      name: msdynmkt_journeyjson_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_journeyjsonbackup_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: 'msdynmkt_journeyjsonbackup in (''{"type":2,"typeName":"event","exitCriteria":{"exitEvents":[]},"contentVersion":"1.0.0.0","goal":null,"trigger":{"type":"Event","parameters":{"frequency":5,"reeligibilityInterval":0,"startTime":"2025-07-01T16:45:00.000Z"},"audience":"","exclusionSegments":[],"eventName":"msdynmkt_realtimemarketingformsubmitted","isProfileRequired":true},"actions":{"b92ac5eb-451d-4baf-9cd9-649f5483a61c":{"id":"b92ac5eb-451d-4baf-9cd9-649f5483a61c","type":"EventTrigger","displayName":"","parameters":{"persistedUIState":{"description":"
+        ","friendlyName":"Edit Lead Field in Record","name":"msdynmkt_copyofeditleadfield_090655228","previewText":"Edit
+        Lead Field in Record","targetEntity":"lead","metadataId":"2c3c4955-7abd-4e61-ab40-9cbabf7bb752","errors":[]},"eventName":"msdynmkt_copyofeditleadfield_090655228","placeholderBindings":{"msdynmkt_sourcevalue1":{"title":"Source
+        Value 1","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"companyname","outputType":"string"},"touched":true},"msdynmkt_sourcevalue2":{"type":["null","string"],"title":"Source
+        Value 2","touched":true,"binding":{"source":"ConstantValueDataSource","inputs":{"value":{"value":"Website
+        inquiry"}},"outputType":"string"}},"msdynmkt_sourcevalue3":{"title":"Source
+        Value 3","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"recordId":{"value":null,"binding":{"source":"EventDataSource","inputs":{"sourceType":{"value":"msdynmkt_realtimemarketingformsubmitted"}},"outputPath":"msdynmkt_sourceentity","outputType":"lookup"}}},"outputPath":"msdynmkt_name","outputType":"string"},"touched":true},"msdynmkt_updatefield":{"type":["null","object"],"title":"Update
+        Field","touched":true,"binding":{"source":"ConstantValueDataSource","inputs":{"value":{"value":"{\\"logicalName\\":\\"claci_entityfielddata\\",\\"id\\":\\"54028ee7-4547-f011-877a-7c1e52687dfa\\"}"}},"outputType":"lookup"},"defaultValue":{"entityLogicalName":"claci_entityfielddata","entityPrimaryIdAttribute":"claci_entityfielddataid","outputType":"lookup"}}}},"runAfter":{}},"f456d940-05bf-4a03-8535-fa1079fad434":{"id":"f456d940-05bf-4a03-8535-fa1079fad434","type":"ConditionV2","displayName":"MQL
+        generating form?","parameters":{"branches":[{"label":"Form generates MQLs","actions":{"76045a98-edc7-46e8-abb6-5290489388df":{"id":"76045a98-edc7-46e8-abb6-5290489388df","type":"Email","displayName":"","parameters":{"persistedUIState":{"cachedEmailEntity":{"msdynmkt_name":"New
+        Lead Notification Email","msdynmkt_subject":"Lead - {{FirstName}} {{LastName}}
+        has been assigned to you","statecode":0,"statuscode":2,"createdon":"2025-06-10T17:29:01Z","modifiedon":"2025-07-01T16:50:34Z"},"links":[{"name":"cla--well-get-you-there","value":"cla--well-get-you-there","urls":["https://www.claconnect.com"]},{"name":"_unnamedlink-3","value":"_unnamedlink-3","urls":["https://www.linkedin.com/company/cliftonlarsonallen"]},{"name":"_unnamedlink-4","value":"_unnamedlink-4","urls":["https://twitter.com/CLAconnect"]},{"name":"_unnamedlink-5","value":"_unnamedlink-5","urls":["https://www.facebook.com/CliftonLarsonAllen"]},{"name":"_unnamedlink-6","value":"_unnamedlink-6","urls":["https://www.youtube.com/user/CliftonLarsonAllen"]},{"name":"_unnamedlink-7","value":"_unnamedlink-7","urls":["https://www.instagram.com/lifeatcla"]},{"name":"cpas","value":"cpas","urls":["https://www.claconnect.com/en/services"]},{"name":"consultants","value":"consultants","urls":["https://www.claconnect.com/services"]},{"name":"wealth-advisors","value":"wealth-advisors","urls":["https://www.claconnect.com/services"]},{"name":"client-login","value":"client-login","urls":["https://www.claconnect.com/en/general/client-login"]},{"name":"contact","value":"contact","urls":["https://www.claconnect.com/contact-us"]},{"name":"claconnectcom","value":"claconnectcom","urls":["https://www.claconnect.com"]},{"name":"cliftonlarsonallen-llp","value":"cliftonlarsonallen-llp","urls":["https://www.claconnect.com/en/general/privacy-policy"]},{"name":"cla-global-limited","value":"cla-global-limited","urls":["https://www.claglobal.com/email-disclaimer/"]},{"name":"cliftonlarsonallen-wealth-advisors-llc","value":"cliftonlarsonallen-wealth-advisors-llc","urls":["http://www.claconnect.com/general/wealth-advisors-disclosures"]}]},"recipient":{"title":null,"defaultValue":null,"type":["null","string"],"category":"general","isInternal":true,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"claci_opportunityleaderemailaddress","outputType":"unspecified"},"touched":true},"quietTimeSettingsSelectedOption":"IgnoreQuietTime","quietTimeSettingsId":"","contentId":"27763d64-2046-f011-877a-7c1e525b6a39","messageDesignation":534120001,"complianceSettingsId":"ce031461-2f21-f011-998a-7c1e527e6bd4","purposeId":"d0031461-2f21-f011-998a-7c1e527e6bd4","topicId":null,"placeholderBindings":{"CampaignName":{"title":"CampaignName","defaultValue":"None
+        / N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"campaign"},"sourcePrimaryIdName":{"value":"campaignid"},"recordsetType":{"value":"campaigns"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"campaignid","outputType":"lookup"}}},"outputPath":"name","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"Companyaddress_4":{"title":"Companyaddress_4","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"LegalDataSource","inputs":{"sourceType":{"value":"Default"}},"outputPath":"companyaddress","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"CompanyName":{"title":"CompanyName","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"companyname","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"ConversionPoint":{"title":"ConversionPoint","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"cla_conversionpoint","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"CountryRegion":{"title":"CountryRegion","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"address1_country","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"CreatedOn":{"title":"CreatedOn","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"format":"date-time","binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"}},"outputPath":"createdon","outputType":"dateTime"},"touched":true,"formatDetails":{"locale":"en-US","valueFormat":{"pattern":"dddd,
+        MMMM d, yyyy h:mm tt","timeZoneId":"UTC","valueFormatType":"DateTimeFormat","dateTimeBehavior":"userLocal"}},"predefinedPlaceholderId":null},"Description":{"title":"Description","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"description","outputType":"memo"},"touched":true,"predefinedPlaceholderId":null},"DirectDial":{"title":"DirectDial","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"telephone3","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"Email":{"title":"Email","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"touched":true,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"type":["string"],"value":"lead"}},"outputPath":"emailaddress1","outputType":"string"},"predefinedPlaceholderId":"4c277211-dde3-42d8-8319-65dae8ee20b1"},"FirstName":{"title":"FirstName","defaultValue":"Unknown","type":["null","string"],"category":"general","binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"type":["string"],"value":"lead"}},"outputPath":"firstname","outputType":"string"},"predefinedPlaceholderId":"a9c334e2-3313-4da9-b053-faeadab55674"},"LastName":{"title":"LastName","defaultValue":"Unknown","type":["null","string"],"category":"general","isInternal":false,"touched":true,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"type":["string"],"value":"lead"}},"outputPath":"lastname","outputType":"string"},"predefinedPlaceholderId":"9145056e-cd3d-4db3-a3a8-817932e3c9c0"},"Name1":{"title":"Name1","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_name","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"PageURL":{"title":"PageURL","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"}},"outputPath":"msdynmkt_pageurl","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"PrimaryIndustry":{"title":"PrimaryIndustry","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"cla_primaryindustry","outputType":"picklist","outputFormat":"caption"},"touched":true,"predefinedPlaceholderId":null},"ReferrerURL":{"title":"ReferrerURL","defaultValue":"None","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"claci_referrerurl","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"StateProvince":{"title":"StateProvince","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"cla_address1stateorprovince","outputType":"picklist","outputFormat":"caption"},"touched":true,"predefinedPlaceholderId":null},"SubmittedValues":{"title":"SubmittedValues","defaultValue":"None
+        / not applicable","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"},"filterConditionExpression":{"value":{"type":"UnaryOperator","operand":{"title":null,"defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"touched":false,"binding":{"source":"#filter_base","outputPath":"msdynmkt_submittedvalues","outputType":"string"}},"operator":4}}},"outputPath":"msdynmkt_submittedvalues","outputType":"string"},"touched":true,"predefinedPlaceholderId":null}},"placeholderBindingsOriginal":{"CampaignName":{"title":"CampaignName","defaultValue":"None
+        / N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"campaign"},"sourcePrimaryIdName":{"value":"campaignid"},"recordsetType":{"value":"campaigns"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"campaignid","outputType":"lookup"}}},"outputPath":"name","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"Companyaddress_4":{"title":"Companyaddress_4","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"LegalDataSource","inputs":{"sourceType":{"value":"Default"}},"outputPath":"companyaddress","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"CompanyName":{"title":"CompanyName","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"companyname","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"ConversionPoint":{"title":"ConversionPoint","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"cla_conversionpoint","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"CountryRegion":{"title":"CountryRegion","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"address1_country","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"CreatedOn":{"title":"CreatedOn","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"format":"date-time","binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"}},"outputPath":"createdon","outputType":"dateTime"},"touched":true,"formatDetails":{"locale":"en-US","valueFormat":{"pattern":"dddd,
+        MMMM d, yyyy h:mm tt","timeZoneId":"UTC","valueFormatType":"DateTimeFormat","dateTimeBehavior":"userLocal"}},"predefinedPlaceholderId":null},"Description":{"title":"Description","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"description","outputType":"memo"},"touched":true,"predefinedPlaceholderId":null},"DirectDial":{"title":"DirectDial","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"telephone3","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"Email":{"title":"Email","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"touched":true,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"type":["string"],"value":"lead"}},"outputPath":"emailaddress1","outputType":"string"},"predefinedPlaceholderId":"4c277211-dde3-42d8-8319-65dae8ee20b1"},"FirstName":{"title":"FirstName","defaultValue":"Unknown","type":["null","string"],"category":"general","binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"type":["string"],"value":"lead"}},"outputPath":"firstname","outputType":"string"},"predefinedPlaceholderId":"a9c334e2-3313-4da9-b053-faeadab55674"},"LastName":{"title":"LastName","defaultValue":"Unknown","type":["null","string"],"category":"general","isInternal":false,"touched":true,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"type":["string"],"value":"lead"}},"outputPath":"lastname","outputType":"string"},"predefinedPlaceholderId":"9145056e-cd3d-4db3-a3a8-817932e3c9c0"},"Name1":{"title":"Name1","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_name","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"PageURL":{"title":"PageURL","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"}},"outputPath":"msdynmkt_pageurl","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"PrimaryIndustry":{"title":"PrimaryIndustry","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"cla_primaryindustry","outputType":"picklist","outputFormat":"caption"},"touched":true,"predefinedPlaceholderId":null},"ReferrerURL":{"title":"ReferrerURL","defaultValue":"None","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"claci_referrerurl","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"StateProvince":{"title":"StateProvince","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"cla_address1stateorprovince","outputType":"picklist","outputFormat":"caption"},"touched":true,"predefinedPlaceholderId":null},"SubmittedValues":{"title":"SubmittedValues","defaultValue":"None
+        / not applicable","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"},"filterConditionExpression":{"value":{"type":"UnaryOperator","operand":{"title":null,"defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"touched":false,"binding":{"source":"#filter_base","outputPath":"msdynmkt_submittedvalues","outputType":"string"}},"operator":4}}},"outputPath":"msdynmkt_submittedvalues","outputType":"string"},"touched":true,"predefinedPlaceholderId":null}},"contentReadyToSend":true},"runAfter":{"19d24a2d-65e4-4ee5-bc1e-504126f4f1c9":{"result":"Success"}}},"bff264ff-8b66-4d0d-b303-8f7815468ba2":{"id":"bff264ff-8b66-4d0d-b303-8f7815468ba2","type":"EventTrigger","displayName":"","parameters":{"persistedUIState":{"description":"
+        ","friendlyName":"Set Lead to MQL","name":"msdynmkt_setleadtomql_191842364","previewText":"Set
+        Lead to MQL","targetEntity":"lead","metadataId":"08967279-cfc4-4a50-aa9b-07bcaaeddfef","errors":[]},"eventName":"msdynmkt_setleadtomql_191842364","placeholderBindings":{}},"runAfter":{}},"19d24a2d-65e4-4ee5-bc1e-504126f4f1c9":{"id":"19d24a2d-65e4-4ee5-bc1e-504126f4f1c9","type":"Delay","displayName":"","parameters":{"type":"Wait","count":5,"unit":1},"runAfter":{"bff264ff-8b66-4d0d-b303-8f7815468ba2":{"result":"Success"}}}},"condition":{"type":"BinaryOperator","leftOperand":{"title":null,"defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"touched":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"recordId":{"value":null,"binding":{"source":"EventDataSource","inputs":{"sourceType":{"value":"msdynmkt_realtimemarketingformsubmitted"}},"outputPath":"msdynmkt_sourceentity","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformtemplateid","outputType":"lookup"}},"rightOperand":{"type":"Static","value":"{\\"logicalName\\":\\"msdynmkt_marketingformtemplate\\",\\"id\\":\\"31a237bb-1646-f011-877a-7c1e525b6a39\\"}","valueType":7},"operator":2}},{"label":"Form
+        has a \''contact me\'' checkbox","actions":{"539c5aa2-ffd8-478a-baba-84af9c835d36":{"id":"539c5aa2-ffd8-478a-baba-84af9c835d36","type":"Email","displayName":"","parameters":{"persistedUIState":{"cachedEmailEntity":{"msdynmkt_name":"New
+        Lead Notification Email","msdynmkt_subject":"Lead - {{FirstName}} {{LastName}}
+        has been assigned to you","statecode":0,"statuscode":2,"createdon":"2025-06-10T17:29:01Z","modifiedon":"2025-07-01T16:50:34Z"},"links":[{"name":"cla--well-get-you-there","value":"cla--well-get-you-there","urls":["https://www.claconnect.com"]},{"name":"_unnamedlink-3","value":"_unnamedlink-3","urls":["https://www.linkedin.com/company/cliftonlarsonallen"]},{"name":"_unnamedlink-4","value":"_unnamedlink-4","urls":["https://twitter.com/CLAconnect"]},{"name":"_unnamedlink-5","value":"_unnamedlink-5","urls":["https://www.facebook.com/CliftonLarsonAllen"]},{"name":"_unnamedlink-6","value":"_unnamedlink-6","urls":["https://www.youtube.com/user/CliftonLarsonAllen"]},{"name":"_unnamedlink-7","value":"_unnamedlink-7","urls":["https://www.instagram.com/lifeatcla"]},{"name":"cpas","value":"cpas","urls":["https://www.claconnect.com/en/services"]},{"name":"consultants","value":"consultants","urls":["https://www.claconnect.com/services"]},{"name":"wealth-advisors","value":"wealth-advisors","urls":["https://www.claconnect.com/services"]},{"name":"client-login","value":"client-login","urls":["https://www.claconnect.com/en/general/client-login"]},{"name":"contact","value":"contact","urls":["https://www.claconnect.com/contact-us"]},{"name":"claconnectcom","value":"claconnectcom","urls":["https://www.claconnect.com"]},{"name":"cliftonlarsonallen-llp","value":"cliftonlarsonallen-llp","urls":["https://www.claconnect.com/en/general/privacy-policy"]},{"name":"cla-global-limited","value":"cla-global-limited","urls":["https://www.claglobal.com/email-disclaimer/"]},{"name":"cliftonlarsonallen-wealth-advisors-llc","value":"cliftonlarsonallen-wealth-advisors-llc","urls":["http://www.claconnect.com/general/wealth-advisors-disclosures"]}],"errors":[]},"recipient":{"title":null,"defaultValue":null,"type":["null","string"],"category":"general","isInternal":true,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"claci_opportunityleaderemailaddress","outputType":"unspecified"},"touched":true},"contentId":"27763d64-2046-f011-877a-7c1e525b6a39","messageDesignation":534120001,"complianceSettingsId":"ce031461-2f21-f011-998a-7c1e527e6bd4","purposeId":"d0031461-2f21-f011-998a-7c1e527e6bd4","topicId":null,"placeholderBindings":{"CampaignName":{"title":"CampaignName","defaultValue":"None
+        / N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"campaign"},"sourcePrimaryIdName":{"value":"campaignid"},"recordsetType":{"value":"campaigns"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"campaignid","outputType":"lookup"}}},"outputPath":"name","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"Companyaddress_4":{"title":"Companyaddress_4","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"LegalDataSource","inputs":{"sourceType":{"value":"Default"}},"outputPath":"companyaddress","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"CompanyName":{"title":"CompanyName","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"companyname","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"ConversionPoint":{"title":"ConversionPoint","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"cla_conversionpoint","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"CountryRegion":{"title":"CountryRegion","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"address1_country","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"CreatedOn":{"title":"CreatedOn","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"format":"date-time","binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"}},"outputPath":"createdon","outputType":"dateTime"},"touched":true,"formatDetails":{"locale":"en-US","valueFormat":{"pattern":"dddd,
+        MMMM d, yyyy h:mm tt","timeZoneId":"UTC","valueFormatType":"DateTimeFormat","dateTimeBehavior":"userLocal"}},"predefinedPlaceholderId":null},"Description":{"title":"Description","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"description","outputType":"memo"},"touched":true,"predefinedPlaceholderId":null},"DirectDial":{"title":"DirectDial","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"telephone3","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"Email":{"title":"Email","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"touched":true,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"type":["string"],"value":"lead"}},"outputPath":"emailaddress1","outputType":"string"},"predefinedPlaceholderId":"4c277211-dde3-42d8-8319-65dae8ee20b1"},"FirstName":{"title":"FirstName","defaultValue":"Unknown","type":["null","string"],"category":"general","binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"type":["string"],"value":"lead"}},"outputPath":"firstname","outputType":"string"},"predefinedPlaceholderId":"a9c334e2-3313-4da9-b053-faeadab55674"},"LastName":{"title":"LastName","defaultValue":"Unknown","type":["null","string"],"category":"general","isInternal":false,"touched":true,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"type":["string"],"value":"lead"}},"outputPath":"lastname","outputType":"string"},"predefinedPlaceholderId":"9145056e-cd3d-4db3-a3a8-817932e3c9c0"},"Name1":{"title":"Name1","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_name","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"PageURL":{"title":"PageURL","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"}},"outputPath":"msdynmkt_pageurl","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"PrimaryIndustry":{"title":"PrimaryIndustry","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"cla_primaryindustry","outputType":"picklist","outputFormat":"caption"},"touched":true,"predefinedPlaceholderId":null},"ReferrerURL":{"title":"ReferrerURL","defaultValue":"None","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"claci_referrerurl","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"StateProvince":{"title":"StateProvince","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"cla_address1stateorprovince","outputType":"picklist","outputFormat":"caption"},"touched":true,"predefinedPlaceholderId":null},"SubmittedValues":{"title":"SubmittedValues","defaultValue":"None
+        / not applicable","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"},"filterConditionExpression":{"value":{"type":"UnaryOperator","operand":{"title":null,"defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"touched":false,"binding":{"source":"#filter_base","outputPath":"msdynmkt_submittedvalues","outputType":"string"}},"operator":4}}},"outputPath":"msdynmkt_submittedvalues","outputType":"string"},"touched":true,"predefinedPlaceholderId":null}},"placeholderBindingsOriginal":{"CampaignName":{"title":"CampaignName","defaultValue":"None
+        / N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"campaign"},"sourcePrimaryIdName":{"value":"campaignid"},"recordsetType":{"value":"campaigns"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"campaignid","outputType":"lookup"}}},"outputPath":"name","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"Companyaddress_4":{"title":"Companyaddress_4","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"LegalDataSource","inputs":{"sourceType":{"value":"Default"}},"outputPath":"companyaddress","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"CompanyName":{"title":"CompanyName","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"companyname","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"ConversionPoint":{"title":"ConversionPoint","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"cla_conversionpoint","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"CountryRegion":{"title":"CountryRegion","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"address1_country","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"CreatedOn":{"title":"CreatedOn","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"format":"date-time","binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"}},"outputPath":"createdon","outputType":"dateTime"},"touched":true,"formatDetails":{"locale":"en-US","valueFormat":{"pattern":"dddd,
+        MMMM d, yyyy h:mm tt","timeZoneId":"UTC","valueFormatType":"DateTimeFormat","dateTimeBehavior":"userLocal"}},"predefinedPlaceholderId":null},"Description":{"title":"Description","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"description","outputType":"memo"},"touched":true,"predefinedPlaceholderId":null},"DirectDial":{"title":"DirectDial","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"telephone3","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"Email":{"title":"Email","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"touched":true,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"type":["string"],"value":"lead"}},"outputPath":"emailaddress1","outputType":"string"},"predefinedPlaceholderId":"4c277211-dde3-42d8-8319-65dae8ee20b1"},"FirstName":{"title":"FirstName","defaultValue":"Unknown","type":["null","string"],"category":"general","binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"type":["string"],"value":"lead"}},"outputPath":"firstname","outputType":"string"},"predefinedPlaceholderId":"a9c334e2-3313-4da9-b053-faeadab55674"},"LastName":{"title":"LastName","defaultValue":"Unknown","type":["null","string"],"category":"general","isInternal":false,"touched":true,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"type":["string"],"value":"lead"}},"outputPath":"lastname","outputType":"string"},"predefinedPlaceholderId":"9145056e-cd3d-4db3-a3a8-817932e3c9c0"},"Name1":{"title":"Name1","defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_name","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"PageURL":{"title":"PageURL","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"}},"outputPath":"msdynmkt_pageurl","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"PrimaryIndustry":{"title":"PrimaryIndustry","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"cla_primaryindustry","outputType":"picklist","outputFormat":"caption"},"touched":true,"predefinedPlaceholderId":null},"ReferrerURL":{"title":"ReferrerURL","defaultValue":"None","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"claci_referrerurl","outputType":"string"},"touched":true,"predefinedPlaceholderId":null},"StateProvince":{"title":"StateProvince","defaultValue":"N/A","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"cla_address1stateorprovince","outputType":"picklist","outputFormat":"caption"},"touched":true,"predefinedPlaceholderId":null},"SubmittedValues":{"title":"SubmittedValues","defaultValue":"None
+        / not applicable","type":["null","string"],"category":"general","isInternal":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"CdsProfileDataSource","inputs":{"sourceType":{"value":"lead"}},"outputPath":"msdynmkt_marketingformid","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"},"filterConditionExpression":{"value":{"type":"UnaryOperator","operand":{"title":null,"defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"touched":false,"binding":{"source":"#filter_base","outputPath":"msdynmkt_submittedvalues","outputType":"string"}},"operator":4}}},"outputPath":"msdynmkt_submittedvalues","outputType":"string"},"touched":true,"predefinedPlaceholderId":null}},"contentReadyToSend":true,"quietTimeSettingsSelectedOption":"IgnoreQuietTime","quietTimeSettingsId":""},"runAfter":{"7ea38864-8cf2-47bf-84bc-c8b9107f29e6":{"result":"Success"}}},"80c9ab80-2252-4994-8af9-d380b610147f":{"id":"80c9ab80-2252-4994-8af9-d380b610147f","type":"EventTrigger","displayName":"","parameters":{"persistedUIState":{"description":"
+        ","friendlyName":"Set Lead to MQL","name":"msdynmkt_setleadtomql_191842364","previewText":"Set
+        Lead to MQL","targetEntity":"lead","metadataId":"08967279-cfc4-4a50-aa9b-07bcaaeddfef","errors":[]},"eventName":"msdynmkt_setleadtomql_191842364","placeholderBindings":{}},"runAfter":{}},"7ea38864-8cf2-47bf-84bc-c8b9107f29e6":{"id":"7ea38864-8cf2-47bf-84bc-c8b9107f29e6","type":"Delay","displayName":"","parameters":{"type":"Wait","count":5,"unit":1},"runAfter":{"80c9ab80-2252-4994-8af9-d380b610147f":{"result":"Success"}}}},"condition":{"type":"Grouping","conditionType":1,"expressions":[{"type":"BinaryOperator","leftOperand":{"title":null,"defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"touched":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"recordId":{"value":null,"binding":{"source":"EventDataSource","inputs":{"sourceType":{"value":"msdynmkt_realtimemarketingformsubmitted"}},"outputPath":"msdynmkt_sourceentity","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformtemplateid","outputType":"lookup"}},"rightOperand":{"type":"Static","value":"{\\"logicalName\\":\\"msdynmkt_marketingformtemplate\\",\\"id\\":\\"1d338f3a-6d36-f011-8c4e-7c1e52190728\\"}","valueType":7},"operator":2},{"type":"BinaryOperator","leftOperand":{"title":null,"defaultValue":null,"type":["null","string"],"category":"general","isInternal":false,"touched":false,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingformsubmission"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformsubmissionid"},"recordsetType":{"value":"msdynmkt_marketingforms"},"relatingRecordId":{"value":null,"binding":{"source":"DataverseDataSource","inputs":{"sourceType":{"value":"msdynmkt_marketingform"},"sourcePrimaryIdName":{"value":"msdynmkt_marketingformid"},"recordId":{"value":null,"binding":{"source":"EventDataSource","inputs":{"sourceType":{"value":"msdynmkt_realtimemarketingformsubmitted"}},"outputPath":"msdynmkt_sourceentity","outputType":"lookup"}}},"outputPath":"msdynmkt_marketingformid","outputType":"uniqueidentifier"}},"topCount":{"value":1},"orderBy":{"value":[{"sortDescending":true,"attributeName":"createdon"}]},"relationshipName":{"value":"msdynmkt_marketingformsubmission_marketingform"},"relatingRecordName":{"value":"msdynmkt_marketingform"},"outputMode":{"value":"firstOfMany"}},"outputPath":"msdynmkt_submittedvalues","outputType":"string"}},"rightOperand":{"type":"Static","value":"CLA
+        Contact Me Checkbox:Yes","valueType":2},"operator":1}]}}],"falseActions":{}},"runAfter":{"b92ac5eb-451d-4baf-9cd9-649f5483a61c":{"result":"Success"}}}},"targetEntityLogicalNames":["lead"],"journeyUiFeatureFlags":{"emailLinkTrackingV2":true,"clientUserAgentDetails":true,"uniqueLinkIds":true,"JourneyEntryDropoffAnalyticsEnabled":true,"JourneyMidTileDropoffAnalyticsEnabled":true},"name":"LEAD
+        ROUTING PROCESS: Edit Lead record Interest and Status Reason","frequencyCapType":0,"timeZoneCode":20,"timeZoneWindowsName":"Central
+        Standard Time","uiMetadata":{"fromCopilot":false,"creationStartTime":"2025-06-10T17:21:23.330Z","creationEndTime":"2025-06-10T17:23:34.211Z"}}'')'
+      name: msdynmkt_journeyjsonbackup_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_journeyjsonbackup_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_journeyjsonbackup is not null and trim(msdynmkt_journeyjsonbackup)
+        <> ''
+      name: msdynmkt_journeyjsonbackup_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_errordetails_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_errordetails is not null and trim(msdynmkt_errordetails)
+        <> ''
+      name: msdynmkt_errordetails_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_readytobetriggeredbysegmentrefresh_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_readytobetriggeredbysegmentrefresh is not null
+      name: msdynmkt_readytobetriggeredbysegmentrefresh_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_readytobetriggeredbysegmentrefresh_displayname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_readytobetriggeredbysegmentrefresh_displayname is not null
+      name: msdynmkt_readytobetriggeredbysegmentrefresh_displayname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_readytobetriggeredbysegmentrefresh_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_readytobetriggeredbysegmentrefresh_displayname in ('No',
+        'Yes')
+      name: msdynmkt_readytobetriggeredbysegmentrefresh_displayname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_journeyinstancepartitionenabled_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_journeyinstancepartitionenabled is not null
+      name: msdynmkt_journeyinstancepartitionenabled_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_journeyinstancepartitionenabled_displayname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_journeyinstancepartitionenabled_displayname is not null
+      name: msdynmkt_journeyinstancepartitionenabled_displayname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_journeyinstancepartitionenabled_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_journeyinstancepartitionenabled_displayname in ('Yes',
+        'No')
+      name: msdynmkt_journeyinstancepartitionenabled_displayname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_flags_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_flags in ('["ChannelResolvesDataDemandEnabled","ChannelLinksHandlingV2","EnableClientUserAgentDetails","EnableUniqueLinkIds"]')
+      name: msdynmkt_flags_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_flags_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_flags is not null and trim(msdynmkt_flags) <> ''
+      name: msdynmkt_flags_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_templateid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_templateid is not null and trim(msdynmkt_templateid) <>
+        ''
+      name: msdynmkt_templateid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_journeystarttime_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_journeystarttime >= '2025-04-16T00:00:00.000000+0000' and
+        msdynmkt_journeystarttime <= '2025-09-17T00:00:00.000000+0000'
+      name: msdynmkt_journeystarttime_min_max
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_triggertype_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_triggertype is not null
+      name: msdynmkt_triggertype_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_triggertype_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_triggertype in (2, 3, 1, 0)
+      name: msdynmkt_triggertype_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_triggertype_displayname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_triggertype_displayname is not null
+      name: msdynmkt_triggertype_displayname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_triggertype_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_triggertype_displayname in ('OneTime', 'Event', 'Ongoing',
+        'Recurring')
+      name: msdynmkt_triggertype_displayname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_versiondescription_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_versiondescription in ('Changed time to 2 p.m. CT')
+      name: msdynmkt_versiondescription_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_versiondescription_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_versiondescription is not null and trim(msdynmkt_versiondescription)
+        <> ''
+      name: msdynmkt_versiondescription_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_versionnumber_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_versionnumber is not null
+      name: msdynmkt_versionnumber_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_versionnumber_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_versionnumber >= 1 and msdynmkt_versionnumber <= 5
+      name: msdynmkt_versionnumber_min_max
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_frequencycaptype_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_frequencycaptype is not null
+      name: msdynmkt_frequencycaptype_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_frequencycaptype_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_frequencycaptype in (0, 1)
+      name: msdynmkt_frequencycaptype_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_frequencycaptype_displayname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_frequencycaptype_displayname is not null
+      name: msdynmkt_frequencycaptype_displayname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_frequencycaptype_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_frequencycaptype_displayname in ('Apply frequency cap by
+        skipping messages', 'Ignore frequency cap')
+      name: msdynmkt_frequencycaptype_displayname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_doubleoptincompliance_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_doubleoptincompliance is not null and trim(msdynmkt_doubleoptincompliance)
+        <> ''
+      name: msdynmkt_doubleoptincompliance_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_purpose_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_purpose in (721460000)
+      name: msdynmkt_purpose_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_purpose_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_purpose_displayname in ('Marketing')
+      name: msdynmkt_purpose_displayname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_purpose_displayname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_purpose_displayname is not null and trim(msdynmkt_purpose_displayname)
+        <> ''
+      name: msdynmkt_purpose_displayname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: createdon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdon is not null
+      name: createdon_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: msdynmkt_doubleoptincompliancename_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_doubleoptincompliancename is not null and trim(msdynmkt_doubleoptincompliancename)
+        <> ''
+      name: msdynmkt_doubleoptincompliancename_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_journey_da
+  name: claci_campaign_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_campaign is not null and trim(claci_campaign) <> ''
+      name: claci_campaign_is_not_null_or_empty

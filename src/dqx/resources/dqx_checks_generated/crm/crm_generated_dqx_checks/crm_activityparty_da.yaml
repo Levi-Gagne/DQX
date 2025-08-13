@@ -1,0 +1,203 @@
+- table_name: de_prd.gold.crm_activityparty_da
+  name: is_cla_user_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_cla_user is not null
+      name: is_cla_user_is_not_null
+- table_name: de_prd.gold.crm_activityparty_da
+  name: is_cla_user_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: is_cla_user in ('No', 'Yes')
+      name: is_cla_user_is_in
+- table_name: de_prd.gold.crm_activityparty_da
+  name: scheduledend_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduledend >= '2020-12-01T00:00:00.000000+0000' and scheduledend
+        <= '2025-12-11T00:00:00.000000+0000'
+      name: scheduledend_min_max
+- table_name: de_prd.gold.crm_activityparty_da
+  name: activityid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: activityid is not null
+      name: activityid_is_not_null
+- table_name: de_prd.gold.crm_activityparty_da
+  name: ownerid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid is not null
+      name: ownerid_is_not_null
+- table_name: de_prd.gold.crm_activityparty_da
+  name: partyidname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: partyidname is not null and trim(partyidname) <> ''
+      name: partyidname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_activityparty_da
+  name: internal_email_address_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: internal_email_address is not null
+      name: internal_email_address_is_not_null
+- table_name: de_prd.gold.crm_activityparty_da
+  name: internal_email_address_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: internal_email_address in ('No', 'Yes')
+      name: internal_email_address_is_in
+- table_name: de_prd.gold.crm_activityparty_da
+  name: activitypartyid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: activitypartyid is not null
+      name: activitypartyid_is_not_null
+- table_name: de_prd.gold.crm_activityparty_da
+  name: CreatedOn_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CreatedOn is not null
+      name: CreatedOn_is_not_null
+- table_name: de_prd.gold.crm_activityparty_da
+  name: instancetypecodename_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: instancetypecodename is not null
+      name: instancetypecodename_is_not_null
+- table_name: de_prd.gold.crm_activityparty_da
+  name: instancetypecodename_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: instancetypecodename in ('Not Recurring', 'Recurring Instance',
+        'Recurring Exception', 'Recurring Master')
+      name: instancetypecodename_is_in
+- table_name: de_prd.gold.crm_activityparty_da
+  name: instancetypecode_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: instancetypecode is not null
+      name: instancetypecode_is_not_null
+- table_name: de_prd.gold.crm_activityparty_da
+  name: instancetypecode_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: instancetypecode in (0, 2, 3, 1)
+      name: instancetypecode_is_in
+- table_name: de_prd.gold.crm_activityparty_da
+  name: scheduledstart_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduledstart >= '2020-12-01T00:00:00.000000+0000' and scheduledstart
+        <= '2025-12-11T00:00:00.000000+0000'
+      name: scheduledstart_min_max
+- table_name: de_prd.gold.crm_activityparty_da
+  name: partyid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: partyid is not null
+      name: partyid_is_not_null
+- table_name: de_prd.gold.crm_activityparty_da
+  name: addressused_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: addressused is not null and trim(addressused) <> ''
+      name: addressused_is_not_null_or_empty
+- table_name: de_prd.gold.crm_activityparty_da
+  name: participationtypemaskname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: participationtypemaskname is not null
+      name: participationtypemaskname_is_not_null
+- table_name: de_prd.gold.crm_activityparty_da
+  name: participationtypemaskname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: participationtypemaskname in ('To Recipient', 'Regarding', 'Owner',
+        'Sender', 'CC Recipient', 'Optional attendee', 'Required attendee', 'Customer',
+        'Organizer')
+      name: participationtypemaskname_is_in
+- table_name: de_prd.gold.crm_activityparty_da
+  name: participationtypemask_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: participationtypemask is not null
+      name: participationtypemask_is_not_null
+- table_name: de_prd.gold.crm_activityparty_da
+  name: participationtypemask_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: participationtypemask in (2, 8, 9, 1, 3, 6, 5, 11, 7)
+      name: participationtypemask_is_in
+- table_name: de_prd.gold.crm_activityparty_da
+  name: participationtypemask_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: participationtypemask >= 1 and participationtypemask <= 11
+      name: participationtypemask_min_max

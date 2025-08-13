@@ -1,0 +1,578 @@
+- table_name: de_prd.gold.crm_email_da
+  name: id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: id is not null
+      name: id_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: cla_emailid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_emailid in ('7745348', '7883869', '4662885', '7329305')
+      name: cla_emailid_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: cla_emailid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_emailid is not null and trim(cla_emailid) <> ''
+      name: cla_emailid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: createdon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdon is not null
+      name: createdon_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: createdby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby is not null
+      name: createdby_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: modifiedon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedon is not null
+      name: modifiedon_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: modifiedon_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedon >= '2021-06-04T00:00:00.000000+0000' and modifiedon <=
+        '2025-08-11T00:00:00.000000+0000'
+      name: modifiedon_min_max
+- table_name: de_prd.gold.crm_email_da
+  name: modifiedby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedby is not null
+      name: modifiedby_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: createdonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfby is not null and trim(createdonbehalfby) <> ''
+      name: createdonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: modifiedonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfby is not null and trim(modifiedonbehalfby) <> ''
+      name: modifiedonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: createdbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyname is not null
+      name: createdbyname_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: createdbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyyominame is not null and trim(createdbyyominame) <> ''
+      name: createdbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: createdonbehalfbyname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyname is not null and trim(createdonbehalfbyname)
+        <> ''
+      name: createdonbehalfbyname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: createdonbehalfbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyyominame is not null and trim(createdonbehalfbyyominame)
+        <> ''
+      name: createdonbehalfbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: modifiedbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyname is not null
+      name: modifiedbyname_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: modifiedbyyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyyominame is not null
+      name: modifiedbyyominame_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: modifiedonbehalfbyname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyname is not null and trim(modifiedonbehalfbyname)
+        <> ''
+      name: modifiedonbehalfbyname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: modifiedonbehalfbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyyominame is not null and trim(modifiedonbehalfbyyominame)
+        <> ''
+      name: modifiedonbehalfbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: ownerid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid is not null
+      name: ownerid_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: owneridname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridname is not null
+      name: owneridname_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: owneridyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridyominame is not null
+      name: owneridyominame_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: owningbusinessunit_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit is not null
+      name: owningbusinessunit_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: owningbusinessunit_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit in ('b65718c2-e995-e111-aff1-78e7d1620f15', '738cf5b7-3123-ea11-a810-000d3a1ab78a',
+        '1a4311e6-8f1b-e111-bfbd-78e7d1620f70')
+      name: owningbusinessunit_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: owninguser_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owninguser is not null
+      name: owninguser_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: owningteam_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningteam is not null and trim(owningteam) <> ''
+      name: owningteam_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: owningbusinessunitname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunitname is not null
+      name: owningbusinessunitname_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: owningbusinessunitname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunitname in ('Standard Accounts', 'Capital Market',
+        'Clifton Larson Allen')
+      name: owningbusinessunitname_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: statuscode_email_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_email is not null
+      name: statuscode_email_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: statuscode_email_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_email in (3, 1, 4)
+      name: statuscode_email_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: statuscode_email_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_email >= 2 and statuscode_email <= 4
+      name: statuscode_email_min_max
+- table_name: de_prd.gold.crm_email_da
+  name: statuscode_displayname_email_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_email is not null
+      name: statuscode_displayname_email_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: statuscode_displayname_email_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_email in ('Sent', 'Draft', 'Received')
+      name: statuscode_displayname_email_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: statecode_email_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_email is not null
+      name: statecode_email_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: statecode_email_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_email in (1, 0)
+      name: statecode_email_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: statecode_displayname_email_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_email is not null
+      name: statecode_displayname_email_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: statecode_displayname_email_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_email in ('Completed', 'Open')
+      name: statecode_displayname_email_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: importsequencenumber_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: importsequencenumber in (2933, 2931, 2930)
+      name: importsequencenumber_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: importsequencenumber_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: importsequencenumber >= 2930 and importsequencenumber <= 2933
+      name: importsequencenumber_min_max
+- table_name: de_prd.gold.crm_email_da
+  name: timezoneruleversionnumber_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: timezoneruleversionnumber is not null
+      name: timezoneruleversionnumber_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: timezoneruleversionnumber_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: timezoneruleversionnumber in (4, 0)
+      name: timezoneruleversionnumber_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: subject_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: subject is not null
+      name: subject_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: description_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: description is not null
+      name: description_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: componentstate_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: componentstate in (0)
+      name: componentstate_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: activityid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: activityid is not null
+      name: activityid_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: templateidname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: templateidname is not null and trim(templateidname) <> ''
+      name: templateidname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: createdby_entitytype_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby_entitytype is not null
+      name: createdby_entitytype_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: createdby_entitytype_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby_entitytype in ('systemuser')
+      name: createdby_entitytype_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: from_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: from is not null and trim(from) <> ''
+      name: from_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: to_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: to is not null and trim(to) <> ''
+      name: to_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: emailsendername_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: emailsendername is not null and trim(emailsendername) <> ''
+      name: emailsendername_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: activitytypecode_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: activitytypecode is not null
+      name: activitytypecode_is_not_null
+- table_name: de_prd.gold.crm_email_da
+  name: activitytypecode_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: activitytypecode in ('email')
+      name: activitytypecode_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: internetmessageheaders_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: internetmessageheaders in ('{"auto-submitted":"auto-generated"}',
+        '{"Auto-Submitted":"auto-generated"}')
+      name: internetmessageheaders_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: internetmessageheaders_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: internetmessageheaders is not null and trim(internetmessageheaders)
+        <> ''
+      name: internetmessageheaders_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: msevtmgt_webinarid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_webinarid is not null and trim(msevtmgt_webinarid) <> ''
+      name: msevtmgt_webinarid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: msevtmgt_webinartypename_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_webinartypename is not null and trim(msevtmgt_webinartypename)
+        <> ''
+      name: msevtmgt_webinartypename_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: entityimage_url_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: entityimage_url is not null and trim(entityimage_url) <> ''
+      name: entityimage_url_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: entityimageid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: entityimageid is not null and trim(entityimageid) <> ''
+      name: entityimageid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: msdynmkt_topicid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_topicid in ('fd68a47f-3221-f011-998a-7c1e527e6bd4')
+      name: msdynmkt_topicid_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: msdynmkt_topicid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_topicid is not null and trim(msdynmkt_topicid) <> ''
+      name: msdynmkt_topicid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_email_da
+  name: msevtmgt_istemplate_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_istemplate in (100000002)
+      name: msevtmgt_istemplate_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: msdynmkt_topicidname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_topicidname in ('Individual (no industry)')
+      name: msdynmkt_topicidname_is_in
+- table_name: de_prd.gold.crm_email_da
+  name: msdynmkt_topicidname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_topicidname is not null and trim(msdynmkt_topicidname)
+        <> ''
+      name: msdynmkt_topicidname_is_not_null_or_empty

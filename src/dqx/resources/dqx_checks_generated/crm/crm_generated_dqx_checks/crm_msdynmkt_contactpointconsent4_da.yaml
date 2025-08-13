@@ -1,0 +1,726 @@
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_contactpointconsent4id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_contactpointconsent4id is not null
+      name: msdynmkt_contactpointconsent4id_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: statecode_contactpointconsent4_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_contactpointconsent4 is not null
+      name: statecode_contactpointconsent4_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: statecode_contactpointconsent4_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_contactpointconsent4 in (0)
+      name: statecode_contactpointconsent4_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: statecode_displayname_contactpointconsent4_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_contactpointconsent4 is not null
+      name: statecode_displayname_contactpointconsent4_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: statecode_displayname_contactpointconsent4_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_contactpointconsent4 in ('Active')
+      name: statecode_displayname_contactpointconsent4_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: statuscode_contactpointconsent4_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_contactpointconsent4 is not null
+      name: statuscode_contactpointconsent4_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: statuscode_contactpointconsent4_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_contactpointconsent4 in (1)
+      name: statuscode_contactpointconsent4_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: statuscode_displayname_contactpointconsent4_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_contactpointconsent4 is not null
+      name: statuscode_displayname_contactpointconsent4_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: statuscode_displayname_contactpointconsent4_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_contactpointconsent4 in ('Active')
+      name: statuscode_displayname_contactpointconsent4_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: createdon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdon is not null
+      name: createdon_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: createdby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby is not null
+      name: createdby_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: createdby_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby in ('1c02bd7b-e45f-ef11-bfe2-6045bddc0b72', 'edad8b11-cf70-ef11-a670-000d3a15096c')
+      name: createdby_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: modifiedon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedon is not null
+      name: modifiedon_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: modifiedon_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedon >= '2025-06-16T00:00:00.000000+0000' and modifiedon <=
+        '2025-07-30T00:00:00.000000+0000'
+      name: modifiedon_min_max
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: modifiedby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedby is not null
+      name: modifiedby_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: modifiedby_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedby in ('1c02bd7b-e45f-ef11-bfe2-6045bddc0b72', 'edad8b11-cf70-ef11-a670-000d3a15096c',
+        '3b8b4dc8-c620-e911-a994-000d3a1618d5')
+      name: modifiedby_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: createdonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfby is not null and trim(createdonbehalfby) <> ''
+      name: createdonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: modifiedonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfby is not null and trim(modifiedonbehalfby) <> ''
+      name: modifiedonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: createdbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyname is not null
+      name: createdbyname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: createdbyname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyname in ('Priyanka Schwartz', '# D365 Consent')
+      name: createdbyname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: createdbyyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyyominame is not null
+      name: createdbyyominame_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: createdbyyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyyominame in ('Priyanka Schwartz', '# D365 Consent')
+      name: createdbyyominame_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: createdonbehalfbyname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyname is not null and trim(createdonbehalfbyname)
+        <> ''
+      name: createdonbehalfbyname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: createdonbehalfbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyyominame is not null and trim(createdonbehalfbyyominame)
+        <> ''
+      name: createdonbehalfbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: modifiedbyyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyyominame is not null
+      name: modifiedbyyominame_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: modifiedbyyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyyominame in ('Priyanka Schwartz', '# D365 Consent', 'Amanda
+        Kloskey')
+      name: modifiedbyyominame_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: modifiedonbehalfbyname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyname is not null and trim(modifiedonbehalfbyname)
+        <> ''
+      name: modifiedonbehalfbyname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: modifiedonbehalfbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyyominame is not null and trim(modifiedonbehalfbyyominame)
+        <> ''
+      name: modifiedonbehalfbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: ownerid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid is not null
+      name: ownerid_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: ownerid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid in ('1c02bd7b-e45f-ef11-bfe2-6045bddc0b72', '720e7957-6f81-ed11-81ad-000d3a12fb23')
+      name: ownerid_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: owneridname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridname is not null
+      name: owneridname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: owneridname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridname in ('Priyanka Schwartz', 'Rachel Fowler')
+      name: owneridname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: owneridyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridyominame is not null
+      name: owneridyominame_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: owneridyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridyominame in ('Priyanka Schwartz', 'Rachel Fowler')
+      name: owneridyominame_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: owningbusinessunit_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit is not null
+      name: owningbusinessunit_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: owningbusinessunit_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit in ('b65718c2-e995-e111-aff1-78e7d1620f15')
+      name: owningbusinessunit_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: owninguser_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owninguser is not null
+      name: owninguser_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: owninguser_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owninguser in ('1c02bd7b-e45f-ef11-bfe2-6045bddc0b72', '720e7957-6f81-ed11-81ad-000d3a12fb23')
+      name: owninguser_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: owningteam_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningteam is not null and trim(owningteam) <> ''
+      name: owningteam_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: owningbusinessunitname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunitname is not null
+      name: owningbusinessunitname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: owningbusinessunitname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunitname in ('Standard Accounts')
+      name: owningbusinessunitname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: timezoneruleversionnumber_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: timezoneruleversionnumber in (4)
+      name: timezoneruleversionnumber_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_contactpointvalue_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_contactpointvalue is not null
+      name: msdynmkt_contactpointvalue_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_contactpointconsenttype_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_contactpointconsenttype is not null
+      name: msdynmkt_contactpointconsenttype_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_contactpointconsenttype_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_contactpointconsenttype in (534120000, 534120001)
+      name: msdynmkt_contactpointconsenttype_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_contactpointconsenttype_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_contactpointconsenttype >= 534120000 and msdynmkt_contactpointconsenttype
+        <= 534120001
+      name: msdynmkt_contactpointconsenttype_min_max
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_contactpointconsenttype_displayname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_contactpointconsenttype_displayname is not null
+      name: msdynmkt_contactpointconsenttype_displayname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_contactpointconsenttype_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_contactpointconsenttype_displayname in ('Purpose', 'Topic')
+      name: msdynmkt_contactpointconsenttype_displayname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_contactpointtype_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_contactpointtype is not null
+      name: msdynmkt_contactpointtype_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_contactpointtype_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_contactpointtype in (534120000)
+      name: msdynmkt_contactpointtype_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_contactpointtype_displayname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_contactpointtype_displayname is not null
+      name: msdynmkt_contactpointtype_displayname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_contactpointtype_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_contactpointtype_displayname in ('Email')
+      name: msdynmkt_contactpointtype_displayname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_logicalreason_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_logicalreason is not null
+      name: msdynmkt_logicalreason_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_logicalreason_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_logicalreason in (534119999)
+      name: msdynmkt_logicalreason_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_logicalreason_displayname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_logicalreason_displayname is not null
+      name: msdynmkt_logicalreason_displayname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_logicalreason_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_logicalreason_displayname in ('No reasons')
+      name: msdynmkt_logicalreason_displayname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_migrationtimestamp_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_migrationtimestamp >= '2025-07-11T00:00:00.000000+0000'
+        and msdynmkt_migrationtimestamp <= '2025-07-24T00:00:00.000000+0000'
+      name: msdynmkt_migrationtimestamp_min_max
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: modifiedbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyname is not null
+      name: modifiedbyname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: modifiedbyname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyname in ('Priyanka Schwartz', '# D365 Consent', 'Amanda
+        Kloskey')
+      name: modifiedbyname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_purposeid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_purposeid is not null
+      name: msdynmkt_purposeid_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_purposeid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_purposeid in ('d1031461-2f21-f011-998a-7c1e527e6bd4', '31a8a1a9-3521-f011-998a-7c1e527e6bd4',
+        '62668bf3-3621-f011-998a-7c1e527e6bd4', '66c7c7b3-3121-f011-998a-7c1e527e6bd4',
+        'd2031461-2f21-f011-998a-7c1e527e6bd4')
+      name: msdynmkt_purposeid_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_source_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_source is not null
+      name: msdynmkt_source_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_source_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_source in (534120003, 534120005, 534120004)
+      name: msdynmkt_source_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_source_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_source >= 534120003 and msdynmkt_source <= 534120005
+      name: msdynmkt_source_min_max
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_source_displayname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_source_displayname is not null
+      name: msdynmkt_source_displayname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_source_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_source_displayname in ('Loaded', 'Realtime Marketing Form',
+        'Preference Center')
+      name: msdynmkt_source_displayname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_topicid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_topicid is not null and trim(msdynmkt_topicid) <> ''
+      name: msdynmkt_topicid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_uionly_value_tracking_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_uionly_value_tracking is not null
+      name: msdynmkt_uionly_value_tracking_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_uionly_value_tracking_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_uionly_value_tracking in (534120000)
+      name: msdynmkt_uionly_value_tracking_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_uionly_value_tracking_displayname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_uionly_value_tracking_displayname is not null
+      name: msdynmkt_uionly_value_tracking_displayname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_uionly_value_tracking_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_uionly_value_tracking_displayname in ('Not Set')
+      name: msdynmkt_uionly_value_tracking_displayname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_value_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_value is not null
+      name: msdynmkt_value_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_value_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_value in (534120001, 534120002)
+      name: msdynmkt_value_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_value_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_value >= 534120001 and msdynmkt_value <= 534120002
+      name: msdynmkt_value_min_max
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_value_displayname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_value_displayname is not null
+      name: msdynmkt_value_displayname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_value_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_value_displayname in ('Opted In', 'Opted Out')
+      name: msdynmkt_value_displayname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_purposeidname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_purposeidname is not null
+      name: msdynmkt_purposeidname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_purposeidname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_purposeidname in ('Article and blog', 'Event', 'Other',
+        'Digest', 'Tracking')
+      name: msdynmkt_purposeidname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_contactpointconsent4_da
+  name: msdynmkt_topicidname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_topicidname is not null and trim(msdynmkt_topicidname)
+        <> ''
+      name: msdynmkt_topicidname_is_not_null_or_empty

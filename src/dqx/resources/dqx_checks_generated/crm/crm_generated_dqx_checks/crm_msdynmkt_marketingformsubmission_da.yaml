@@ -1,0 +1,748 @@
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_marketingformsubmissionid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_marketingformsubmissionid is not null
+      name: msdynmkt_marketingformsubmissionid_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: statecode_marketingformsubmission_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_marketingformsubmission is not null
+      name: statecode_marketingformsubmission_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: statecode_marketingformsubmission_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_marketingformsubmission in (0)
+      name: statecode_marketingformsubmission_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: statecode_displayname_marketingformsubmission_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_marketingformsubmission is not null
+      name: statecode_displayname_marketingformsubmission_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: statecode_displayname_marketingformsubmission_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_marketingformsubmission in ('Active')
+      name: statecode_displayname_marketingformsubmission_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: statuscode_marketingformsubmission_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_marketingformsubmission is not null
+      name: statuscode_marketingformsubmission_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: statuscode_marketingformsubmission_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_marketingformsubmission in (575440002, 575440001, 575440000,
+        575440006)
+      name: statuscode_marketingformsubmission_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: statuscode_marketingformsubmission_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_marketingformsubmission >= 575440001 and statuscode_marketingformsubmission
+        <= 575440003
+      name: statuscode_marketingformsubmission_min_max
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: statuscode_displayname_marketingformsubmission_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_marketingformsubmission is not null
+      name: statuscode_displayname_marketingformsubmission_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: statuscode_displayname_marketingformsubmission_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_marketingformsubmission in ('Success', 'Failure',
+        'Pending', 'Warning')
+      name: statuscode_displayname_marketingformsubmission_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: createdon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdon is not null
+      name: createdon_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: createdby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby is not null
+      name: createdby_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: createdby_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby in ('93599d13-90af-462d-b6a1-46565fbc3581')
+      name: createdby_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: SinkModifiedOn_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SinkModifiedOn is not null
+      name: SinkModifiedOn_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: SinkModifiedOn_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SinkModifiedOn >= '2025-07-15T00:00:00.000000+0000' and SinkModifiedOn
+        <= '2025-08-13T00:00:00.000000+0000'
+      name: SinkModifiedOn_min_max
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: modifiedby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedby is not null
+      name: modifiedby_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: modifiedby_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedby in ('93599d13-90af-462d-b6a1-46565fbc3581', 'ec0cac2e-d070-ef11-a670-000d3a150a02',
+        '720e7957-6f81-ed11-81ad-000d3a12fb23')
+      name: modifiedby_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: createdonbehalfby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfby is not null
+      name: createdonbehalfby_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: createdonbehalfby_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfby in ('32bdc949-d070-ef11-a670-000d3a150b9b', 'ec0cac2e-d070-ef11-a670-000d3a150a02')
+      name: createdonbehalfby_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: modifiedonbehalfby_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfby in ('720e7957-6f81-ed11-81ad-000d3a12fb23', 'ec0cac2e-d070-ef11-a670-000d3a150a02')
+      name: modifiedonbehalfby_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: modifiedonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfby is not null and trim(modifiedonbehalfby) <> ''
+      name: modifiedonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: createdbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyname is not null
+      name: createdbyname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: createdbyname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyname in ('SYSTEM')
+      name: createdbyname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: createdbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyyominame is not null and trim(createdbyyominame) <> ''
+      name: createdbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: createdonbehalfbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyname is not null
+      name: createdonbehalfbyname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: createdonbehalfbyname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyname in ('# D365 Event Mgmt', '# D365 Landing Forms')
+      name: createdonbehalfbyname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: createdonbehalfbyyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyyominame is not null
+      name: createdonbehalfbyyominame_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: createdonbehalfbyyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyyominame in ('# D365 Event Mgmt', '# D365 Landing
+        Forms')
+      name: createdonbehalfbyyominame_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: modifiedbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyname is not null
+      name: modifiedbyname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: modifiedbyname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyname in ('SYSTEM', '# D365 Landing Forms', 'Rachel Fowler')
+      name: modifiedbyname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: modifiedbyyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyyominame in ('# D365 Landing Forms', 'Rachel Fowler')
+      name: modifiedbyyominame_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: modifiedbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyyominame is not null and trim(modifiedbyyominame) <> ''
+      name: modifiedbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: modifiedonbehalfbyname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyname in ('Rachel Fowler', '# D365 Landing Forms')
+      name: modifiedonbehalfbyname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: modifiedonbehalfbyname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyname is not null and trim(modifiedonbehalfbyname)
+        <> ''
+      name: modifiedonbehalfbyname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: modifiedonbehalfbyyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyyominame in ('Rachel Fowler', '# D365 Landing
+        Forms')
+      name: modifiedonbehalfbyyominame_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: modifiedonbehalfbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyyominame is not null and trim(modifiedonbehalfbyyominame)
+        <> ''
+      name: modifiedonbehalfbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: ownerid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid is not null
+      name: ownerid_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: ownerid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid in ('eba12aad-57cb-e111-b24d-78e3b5101eaa', '9891825b-31cf-e511-80e8-3863bb2e5390',
+        '720e7957-6f81-ed11-81ad-000d3a12fb23', '93599d13-90af-462d-b6a1-46565fbc3581',
+        '95af33d9-037c-e511-812d-c4346bac9934')
+      name: ownerid_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: owneridname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridname is not null
+      name: owneridname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: owneridname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridname in ('# CRM Administrator', 'Jessica Patterson', 'Rachel
+        Fowler', 'SYSTEM', 'Amanda Pinkley')
+      name: owneridname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: owneridyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridyominame is not null
+      name: owneridyominame_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: owneridyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridyominame in ('# CRM Administrator', 'Jessica Patterson',
+        'Rachel Fowler', 'Amanda Pinkley')
+      name: owneridyominame_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: owningbusinessunit_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit is not null
+      name: owningbusinessunit_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: owningbusinessunit_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit in ('b65718c2-e995-e111-aff1-78e7d1620f15', '1a4311e6-8f1b-e111-bfbd-78e7d1620f70')
+      name: owningbusinessunit_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: owninguser_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owninguser is not null
+      name: owninguser_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: owninguser_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owninguser in ('eba12aad-57cb-e111-b24d-78e3b5101eaa', '9891825b-31cf-e511-80e8-3863bb2e5390',
+        '720e7957-6f81-ed11-81ad-000d3a12fb23', '93599d13-90af-462d-b6a1-46565fbc3581',
+        '95af33d9-037c-e511-812d-c4346bac9934')
+      name: owninguser_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: owningteam_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningteam is not null and trim(owningteam) <> ''
+      name: owningteam_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: owningbusinessunitname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunitname is not null
+      name: owningbusinessunitname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: owningbusinessunitname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunitname in ('Standard Accounts', 'Clifton Larson
+        Allen')
+      name: owningbusinessunitname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: SinkCreatedOn_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SinkCreatedOn is not null
+      name: SinkCreatedOn_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: SinkCreatedOn_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SinkCreatedOn >= '2025-07-15T00:00:00.000000+0000' and SinkCreatedOn
+        <= '2025-08-13T00:00:00.000000+0000'
+      name: SinkCreatedOn_min_max
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_name is not null
+      name: msdynmkt_name_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_compliancesettings4id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_compliancesettings4id is not null
+      name: msdynmkt_compliancesettings4id_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_compliancesettings4id_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_compliancesettings4id in ('ce031461-2f21-f011-998a-7c1e527e6bd4',
+        '7f4a6355-1811-4cde-bde3-fee8c85f56b1')
+      name: msdynmkt_compliancesettings4id_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_failuredescription_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: 'msdynmkt_failuredescription in (''Submission failed to process
+        within 24 hours. You can re-try the submission processing.'', ''Exception
+        \''InvalidPluginExecutionException\'' occured: Consent submission processing
+        failed. Submission failed while attempting to write to the DataVerse table
+        msdynmkt_contactpointconsent4, CorrelationId: 3a494fb8-1753-42bd-a4af-2e993a671a9b'',
+        ''Exception \''InvalidPluginExecutionException\'' occured: Consent submission
+        processing failed., CorrelationId: db84166a-0124-4591-9c94-a409d28192d4'',
+        ''Exception \''InvalidPluginExecutionException\'' occured: Consent submission
+        processing failed., CorrelationId: 0bb35db7-2464-4cca-bf70-92b71e55dec2'')'
+      name: msdynmkt_failuredescription_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_failuredescription_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_failuredescription is not null and trim(msdynmkt_failuredescription)
+        <> ''
+      name: msdynmkt_failuredescription_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_marketingformid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_marketingformid is not null
+      name: msdynmkt_marketingformid_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_pageurl_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_pageurl is not null
+      name: msdynmkt_pageurl_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_submittedvalues_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_submittedvalues is not null and trim(msdynmkt_submittedvalues)
+        <> ''
+      name: msdynmkt_submittedvalues_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_createdentity_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_createdentity is not null
+      name: msdynmkt_createdentity_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_eventregistration_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_eventregistration is not null and trim(msdynmkt_eventregistration)
+        <> ''
+      name: msdynmkt_eventregistration_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_customerjourneyid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_customerjourneyid in ('ecaefa15-e76c-f011-bec2-7c1e521b4133',
+        'f50a6556-7e61-f011-bec2-6045bda6dbd0', 'f07b0efa-6c66-f011-bec2-000d3a1ced86',
+        '486ad1d6-b276-f011-b4cb-7c1e521b466d', '66b88947-4872-f011-bec2-7c1e5201b0e9',
+        'b6fc49c0-4967-f011-bec2-7c1e5201b0e9', 'e93493c6-125d-f011-bec1-7c1e52172205',
+        '72de0616-db68-f011-bec2-7c1e5201b0e9', '128cfd2c-be73-f011-bec2-7c1e521b4a7b')
+      name: msdynmkt_customerjourneyid_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_customerjourneyid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_customerjourneyid is not null and trim(msdynmkt_customerjourneyid)
+        <> ''
+      name: msdynmkt_customerjourneyid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_emailid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_emailid in ('3927e08f-846c-f011-bec2-7c1e52488c92', '99bcd685-d84b-f011-877a-00224826f7ab',
+        'c6a0ccd6-ea63-f011-bec2-7c1e521938c3', '3f019ae3-3372-f011-bec2-7c1e52172205',
+        '0d543821-6771-f011-bec2-7c1e5201b0e9', '623ae356-9266-f011-bec2-7c1e5201b0e9',
+        'e8f061fd-fc5c-f011-bec1-7c1e52172205', 'b4cd8361-c868-f011-bec2-7c1e52649472',
+        'fc3c6ece-df72-f011-b4cb-000d3a9c6b96')
+      name: msdynmkt_emailid_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_emailid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_emailid is not null and trim(msdynmkt_emailid) <> ''
+      name: msdynmkt_emailid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_marketingformsubmissiontype_displayname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_marketingformsubmissiontype_displayname is not null and
+        trim(msdynmkt_marketingformsubmissiontype_displayname) <> ''
+      name: msdynmkt_marketingformsubmissiontype_displayname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_contactableemail_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_contactableemail is not null
+      name: msdynmkt_contactableemail_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_linkedsubmissionid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_linkedsubmissionid is not null
+      name: msdynmkt_linkedsubmissionid_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_compliancesettings4idname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_compliancesettings4idname is not null
+      name: msdynmkt_compliancesettings4idname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_compliancesettings4idname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_compliancesettings4idname in ('CLA External Preferences',
+        'CLA communication preferences')
+      name: msdynmkt_compliancesettings4idname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_createdentityname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_createdentityname is not null
+      name: msdynmkt_createdentityname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_marketingformidname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_marketingformidname is not null
+      name: msdynmkt_marketingformidname_is_not_null
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_customerjourneyidname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: 'msdynmkt_customerjourneyidname in (''SN: GEN-215759-EMAIL-7/30/25
+        Week 7b1df9'', ''SN: ANC-215372-EVENT EBP Cybersec 22db13'', ''SN: HED-215473-EVENT
+        - Conversati 2a4003'', ''V.2 SUBSCRIPTION: Welcome email workflow + automatic
+        subscription'', ''SN: GEN-215760-EMAIL-8/6/25 Weekl 772c13'', ''SN: GEN-215758-EMAIL
+        7/23/25 Week 9412bf'', ''SN: Real Estate Blog Alert July 1 b8c28a'', ''SN:
+        TAX-215890-EMAIL Updated temp 8c8c14'', ''SN: WTH-215661-EVENT 2025 09 04
+        C 87d041'')'
+      name: msdynmkt_customerjourneyidname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_customerjourneyidname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_customerjourneyidname is not null and trim(msdynmkt_customerjourneyidname)
+        <> ''
+      name: msdynmkt_customerjourneyidname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_emailidname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: 'msdynmkt_emailidname in (''GEN-215759-EMAIL-7/30/25 Weekly Subscriber
+        Digest'', ''ANC-215372-EVENT EBP Cybersecurity Webinar'', ''HED-215473-EVENT
+        - Conversation About Fraud Waste and Abuse in Higher Education - Reminder'',
+        ''Final_Brand Refresh_CLA Subscriber Welcome (Opt-in)'', ''GEN-215760-EMAIL-8/6/25
+        Weekly Subscriber Digest'', ''GEN-215758-EMAIL 7/23/25 Weekly Subscriber Digest'',
+        ''Real Estate Blog Alert July 10'', ''TAX-215890-EMAIL Updated template OBBBA
+        Tax planning outreach'', ''WTH-215661-EVENT 2025 09 04 CLA Outlook: Markets'')'
+      name: msdynmkt_emailidname_is_in
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_emailidname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_emailidname is not null and trim(msdynmkt_emailidname)
+        <> ''
+      name: msdynmkt_emailidname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msdynmkt_marketingformsubmission_da
+  name: msdynmkt_eventregistrationname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_eventregistrationname is not null and trim(msdynmkt_eventregistrationname)
+        <> ''
+      name: msdynmkt_eventregistrationname_is_not_null_or_empty

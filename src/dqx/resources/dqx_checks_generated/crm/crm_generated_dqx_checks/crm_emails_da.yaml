@@ -1,0 +1,299 @@
+- table_name: de_prd.gold.crm_emails_da
+  name: message_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: message_id is not null
+      name: message_id_is_not_null
+- table_name: de_prd.gold.crm_emails_da
+  name: idempotency_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: idempotency_id is not null
+      name: idempotency_id_is_not_null
+- table_name: de_prd.gold.crm_emails_da
+  name: emailaddressused_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: emailaddressused is not null
+      name: emailaddressused_is_not_null
+- table_name: de_prd.gold.crm_emails_da
+  name: profile_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: profile_id is not null
+      name: profile_id_is_not_null
+- table_name: de_prd.gold.crm_emails_da
+  name: lead_id_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: lead_id is not null and trim(lead_id) <> ''
+      name: lead_id_is_not_null_or_empty
+- table_name: de_prd.gold.crm_emails_da
+  name: email_sent_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email_sent is not null
+      name: email_sent_is_not_null
+- table_name: de_prd.gold.crm_emails_da
+  name: email_sent_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email_sent in (1)
+      name: email_sent_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_sent_actual_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_sent_actual is not null
+      name: date_sent_actual_is_not_null
+- table_name: de_prd.gold.crm_emails_da
+  name: email_delivered_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email_delivered is not null
+      name: email_delivered_is_not_null
+- table_name: de_prd.gold.crm_emails_da
+  name: email_delivered_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email_delivered in (1)
+      name: email_delivered_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_delivered_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_delivered is not null
+      name: date_delivered_is_not_null
+- table_name: de_prd.gold.crm_emails_da
+  name: email_opened_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email_opened in (1)
+      name: email_opened_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_opened_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_opened is not null and trim(date_opened) <> ''
+      name: date_opened_is_not_null_or_empty
+- table_name: de_prd.gold.crm_emails_da
+  name: email_clicked_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email_clicked in (1)
+      name: email_clicked_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_clicked_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_clicked in ('2025-07-10 12:50:03.594813', '2025-07-14 17:29:13.859773',
+        '2025-07-10 19:24:26.916600', '2025-06-24 13:22:01.024495', '2025-06-20 13:11:36.015348',
+        '2025-06-27 11:59:47.020600')
+      name: date_clicked_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_clicked_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_clicked is not null and trim(date_clicked) <> ''
+      name: date_clicked_is_not_null_or_empty
+- table_name: de_prd.gold.crm_emails_da
+  name: email_blocked_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email_blocked in (1)
+      name: email_blocked_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_blocked_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_blocked is not null and trim(date_blocked) <> ''
+      name: date_blocked_is_not_null_or_empty
+- table_name: de_prd.gold.crm_emails_da
+  name: email_blocked_no_consent_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email_blocked_no_consent in (1)
+      name: email_blocked_no_consent_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_blocked_no_consent_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_blocked_no_consent is not null and trim(date_blocked_no_consent)
+        <> ''
+      name: date_blocked_no_consent_is_not_null_or_empty
+- table_name: de_prd.gold.crm_emails_da
+  name: email_blocked_duplicate_address_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email_blocked_duplicate_address in (1)
+      name: email_blocked_duplicate_address_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_blocked_duplicate_address_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_blocked_duplicate_address in ('2025-08-01 09:00:41.888525',
+        '2025-07-16 10:58:05.985605', '2025-07-14 17:27:51.585637', '2025-08-06 10:50:53.568711',
+        '2025-07-10 19:08:29.456833', '2025-07-14 17:30:52.000839', '2025-07-18 12:41:14.152014',
+        '2025-07-30 10:53:20.321936')
+      name: date_blocked_duplicate_address_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_blocked_duplicate_address_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_blocked_duplicate_address is not null and trim(date_blocked_duplicate_address)
+        <> ''
+      name: date_blocked_duplicate_address_is_not_null_or_empty
+- table_name: de_prd.gold.crm_emails_da
+  name: email_bounced_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email_bounced in (1)
+      name: email_bounced_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_bounced_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_bounced in ('2025-07-10 20:57:45', '2025-07-10 20:52:25', '2025-07-31
+        09:06:47', '2025-07-24 22:48:50', '2025-08-01 12:26:10', '2025-07-15 14:34:58',
+        '2025-07-24 22:21:04', '2025-08-04 15:14:49', '2025-07-15 18:06:21')
+      name: date_bounced_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_bounced_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_bounced is not null and trim(date_bounced) <> ''
+      name: date_bounced_is_not_null_or_empty
+- table_name: de_prd.gold.crm_emails_da
+  name: email_hard_bounced_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email_hard_bounced in (1)
+      name: email_hard_bounced_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_hard_bounced_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_hard_bounced in ('2025-07-10 20:57:45')
+      name: date_hard_bounced_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_hard_bounced_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_hard_bounced is not null and trim(date_hard_bounced) <> ''
+      name: date_hard_bounced_is_not_null_or_empty
+- table_name: de_prd.gold.crm_emails_da
+  name: email_soft_bounced_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: email_soft_bounced in (1)
+      name: email_soft_bounced_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_soft_bounced_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_soft_bounced in ('2025-07-10 20:52:25', '2025-07-31 09:06:47',
+        '2025-07-24 22:48:50', '2025-08-01 12:26:10', '2025-07-15 14:34:58', '2025-07-24
+        22:21:04', '2025-08-04 15:14:49', '2025-07-15 18:06:21')
+      name: date_soft_bounced_is_in
+- table_name: de_prd.gold.crm_emails_da
+  name: date_soft_bounced_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: date_soft_bounced is not null and trim(date_soft_bounced) <> ''
+      name: date_soft_bounced_is_not_null_or_empty

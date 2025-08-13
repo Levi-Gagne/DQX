@@ -1,0 +1,745 @@
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_eventregistrationid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_eventregistrationid is not null
+      name: msevtmgt_eventregistrationid_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: statecode_eventregistration_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_eventregistration is not null
+      name: statecode_eventregistration_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: statecode_eventregistration_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_eventregistration in (0)
+      name: statecode_eventregistration_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: statuscode_eventregistration_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_eventregistration is not null
+      name: statuscode_eventregistration_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: statuscode_eventregistration_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_eventregistration in (1)
+      name: statuscode_eventregistration_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: statuscode_displayname_eventregistration_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_eventregistration is not null
+      name: statuscode_displayname_eventregistration_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: statuscode_displayname_eventregistration_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_eventregistration in ('Registered')
+      name: statuscode_displayname_eventregistration_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: createdon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdon is not null
+      name: createdon_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: createdby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby is not null
+      name: createdby_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: createdby_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby in ('93599d13-90af-462d-b6a1-46565fbc3581', '720e7957-6f81-ed11-81ad-000d3a12fb23',
+        'c04ec10f-84e0-ee11-904d-000d3a9980fc')
+      name: createdby_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedon is not null
+      name: modifiedon_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedon_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedon >= '2025-07-09T00:00:00.000000+0000' and modifiedon <=
+        '2025-08-13T00:00:00.000000+0000'
+      name: modifiedon_min_max
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedby is not null
+      name: modifiedby_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedby_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedby in ('720e7957-6f81-ed11-81ad-000d3a12fb23', 'caf6e93a-0f20-ee11-9cbd-000d3a998cb4',
+        'c04ec10f-84e0-ee11-904d-000d3a9980fc', '93599d13-90af-462d-b6a1-46565fbc3581',
+        'eba12aad-57cb-e111-b24d-78e3b5101eaa')
+      name: modifiedby_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: createdonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfby is not null and trim(createdonbehalfby) <> ''
+      name: createdonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedonbehalfby_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfby in ('720e7957-6f81-ed11-81ad-000d3a12fb23')
+      name: modifiedonbehalfby_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfby is not null and trim(modifiedonbehalfby) <> ''
+      name: modifiedonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: createdbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyname is not null
+      name: createdbyname_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: createdbyname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyname in ('SYSTEM', 'Rachel Fowler', 'Elijah Fowlkes')
+      name: createdbyname_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: createdbyyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyyominame in ('Rachel Fowler', 'Elijah Fowlkes')
+      name: createdbyyominame_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: createdbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyyominame is not null and trim(createdbyyominame) <> ''
+      name: createdbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: createdonbehalfbyname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyname is not null and trim(createdonbehalfbyname)
+        <> ''
+      name: createdonbehalfbyname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: createdonbehalfbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyyominame is not null and trim(createdonbehalfbyyominame)
+        <> ''
+      name: createdonbehalfbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyname is not null
+      name: modifiedbyname_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedbyname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyname in ('Rachel Fowler', '# EA-Prd-Workato-DynamicsConnector',
+        'Elijah Fowlkes', 'SYSTEM', '# CRM Administrator')
+      name: modifiedbyname_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedbyyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyyominame in ('Rachel Fowler', '# EA-Prd-Workato-DynamicsConnector',
+        'Elijah Fowlkes', '# CRM Administrator')
+      name: modifiedbyyominame_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyyominame is not null and trim(modifiedbyyominame) <> ''
+      name: modifiedbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedonbehalfbyname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyname in ('Rachel Fowler')
+      name: modifiedonbehalfbyname_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedonbehalfbyname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyname is not null and trim(modifiedonbehalfbyname)
+        <> ''
+      name: modifiedonbehalfbyname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedonbehalfbyyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyyominame in ('Rachel Fowler')
+      name: modifiedonbehalfbyyominame_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: modifiedonbehalfbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyyominame is not null and trim(modifiedonbehalfbyyominame)
+        <> ''
+      name: modifiedonbehalfbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: ownerid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid is not null
+      name: ownerid_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: ownerid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid in ('eba12aad-57cb-e111-b24d-78e3b5101eaa', '720e7957-6f81-ed11-81ad-000d3a12fb23',
+        'c04ec10f-84e0-ee11-904d-000d3a9980fc', '9891825b-31cf-e511-80e8-3863bb2e5390')
+      name: ownerid_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: owneridname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridname is not null
+      name: owneridname_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: owneridname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridname in ('# CRM Administrator', 'Rachel Fowler', 'Elijah
+        Fowlkes', 'Jessica Patterson')
+      name: owneridname_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: owneridyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridyominame is not null
+      name: owneridyominame_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: owneridyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridyominame in ('# CRM Administrator', 'Rachel Fowler', 'Elijah
+        Fowlkes', 'Jessica Patterson')
+      name: owneridyominame_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: owningbusinessunit_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit is not null
+      name: owningbusinessunit_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: owningbusinessunit_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit in ('b65718c2-e995-e111-aff1-78e7d1620f15')
+      name: owningbusinessunit_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: owninguser_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owninguser is not null
+      name: owninguser_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: owninguser_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owninguser in ('eba12aad-57cb-e111-b24d-78e3b5101eaa', '720e7957-6f81-ed11-81ad-000d3a12fb23',
+        'c04ec10f-84e0-ee11-904d-000d3a9980fc', '9891825b-31cf-e511-80e8-3863bb2e5390')
+      name: owninguser_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: owningteam_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningteam is not null and trim(owningteam) <> ''
+      name: owningteam_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: owningbusinessunitname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunitname is not null
+      name: owningbusinessunitname_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: owningbusinessunitname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunitname in ('Standard Accounts')
+      name: owningbusinessunitname_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: importsequencenumber_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: importsequencenumber >= 8932 and importsequencenumber <= 9818
+      name: importsequencenumber_min_max
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: overriddencreatedon_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: overriddencreatedon >= '2025-07-10T00:00:00.000000+0000' and overriddencreatedon
+        <= '2025-08-13T00:00:00.000000+0000'
+      name: overriddencreatedon_min_max
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: timezoneruleversionnumber_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: timezoneruleversionnumber in (0)
+      name: timezoneruleversionnumber_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_contactid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_contactid is not null
+      name: msevtmgt_contactid_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_correlationid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_correlationid is not null and trim(msevtmgt_correlationid)
+        <> ''
+      name: msevtmgt_correlationid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_eventid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_eventid is not null
+      name: msevtmgt_eventid_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_iscanceled_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_iscanceled is not null
+      name: msevtmgt_iscanceled_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_memo_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_memo is not null and trim(msevtmgt_memo) <> ''
+      name: msevtmgt_memo_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_primaryrole_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_primaryrole in (100000000)
+      name: msevtmgt_primaryrole_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_publishingstate_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_publishingstate is not null
+      name: msevtmgt_publishingstate_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_publishingstate_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_publishingstate in (100000000)
+      name: msevtmgt_publishingstate_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_qrcode_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_qrcode is not null
+      name: msevtmgt_qrcode_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_registeredby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_registeredby is not null and trim(msevtmgt_registeredby)
+        <> ''
+      name: msevtmgt_registeredby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_registrationnotificationseen_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_registrationnotificationseen is not null
+      name: msevtmgt_registrationnotificationseen_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_registrationoperation_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_registrationoperation is not null and trim(msevtmgt_registrationoperation)
+        <> ''
+      name: msevtmgt_registrationoperation_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_registrationstatus_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_registrationstatus is not null and trim(msevtmgt_registrationstatus)
+        <> ''
+      name: msevtmgt_registrationstatus_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_syncedwithprovider_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_syncedwithprovider is not null
+      name: msevtmgt_syncedwithprovider_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_syncedwithprovider_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_syncedwithprovider in (100000001)
+      name: msevtmgt_syncedwithprovider_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_webinarregistrationid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_webinarregistrationid is not null and trim(msevtmgt_webinarregistrationid)
+        <> ''
+      name: msevtmgt_webinarregistrationid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_originaltimestamp_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_originaltimestamp >= '2025-07-08T00:00:00.000000+0000'
+        and msevtmgt_originaltimestamp <= '2025-08-12T00:00:00.000000+0000'
+      name: msevtmgt_originaltimestamp_min_max
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_eventregistrationticketid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_eventregistrationticketid is not null and trim(msevtmgt_eventregistrationticketid)
+        <> ''
+      name: msevtmgt_eventregistrationticketid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_registeredbyname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_registeredbyname is not null and trim(msevtmgt_registeredbyname)
+        <> ''
+      name: msevtmgt_registeredbyname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_registeredbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_registeredbyyominame is not null and trim(msevtmgt_registeredbyyominame)
+        <> ''
+      name: msevtmgt_registeredbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_contactidname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_contactidname is not null
+      name: msevtmgt_contactidname_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_contactidyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_contactidyominame is not null
+      name: msevtmgt_contactidyominame_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_eventidname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_eventidname is not null
+      name: msevtmgt_eventidname_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msdynmkt_linkedregistrationid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msdynmkt_linkedregistrationid is not null and trim(msdynmkt_linkedregistrationid)
+        <> ''
+      name: msdynmkt_linkedregistrationid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: claci_livesessions_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_livesessions in (0, 1, 2)
+      name: claci_livesessions_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: claci_ondemandduration_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_ondemandduration in (0, 85, 43)
+      name: claci_ondemandduration_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: claci_ondemandsessions_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_ondemandsessions in (0, 1)
+      name: claci_ondemandsessions_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: claci_simliveduration_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_simliveduration in (0)
+      name: claci_simliveduration_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: claci_simlivesessions_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_simlivesessions in (0)
+      name: claci_simlivesessions_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: claci_totalsessions_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_totalsessions in (0, 1, 2)
+      name: claci_totalsessions_is_in
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_createdfromapi_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_createdfromapi is not null
+      name: msevtmgt_createdfromapi_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_createdfromapi_displayname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_createdfromapi_displayname is not null
+      name: msevtmgt_createdfromapi_displayname_is_not_null
+- table_name: de_prd.gold.crm_msevtmgt_eventregistration_da
+  name: msevtmgt_createdfromapi_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: msevtmgt_createdfromapi_displayname in ('Yes', 'No')
+      name: msevtmgt_createdfromapi_displayname_is_in

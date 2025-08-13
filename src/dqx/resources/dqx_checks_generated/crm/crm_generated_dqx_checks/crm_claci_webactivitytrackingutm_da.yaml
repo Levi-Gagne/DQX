@@ -1,0 +1,440 @@
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: claci_webactivitytrackingutmid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_webactivitytrackingutmid is not null
+      name: claci_webactivitytrackingutmid_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: claci_contactwebactivitytracking_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_contactwebactivitytracking is not null and trim(claci_contactwebactivitytracking)
+        <> ''
+      name: claci_contactwebactivitytracking_is_not_null_or_empty
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: statecode_webactivitytrackingutm_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_webactivitytrackingutm is not null
+      name: statecode_webactivitytrackingutm_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: statecode_webactivitytrackingutm_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_webactivitytrackingutm in (0)
+      name: statecode_webactivitytrackingutm_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: statecode_displayname_webactivitytrackingutm_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_webactivitytrackingutm is not null
+      name: statecode_displayname_webactivitytrackingutm_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: statecode_displayname_webactivitytrackingutm_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_webactivitytrackingutm in ('Active')
+      name: statecode_displayname_webactivitytrackingutm_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: statuscode_webactivitytrackingutm_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_webactivitytrackingutm is not null
+      name: statuscode_webactivitytrackingutm_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: statuscode_webactivitytrackingutm_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_webactivitytrackingutm in (1)
+      name: statuscode_webactivitytrackingutm_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: statuscode_displayname_webactivitytrackingutm_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_webactivitytrackingutm is not null
+      name: statuscode_displayname_webactivitytrackingutm_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: statuscode_displayname_webactivitytrackingutm_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_webactivitytrackingutm in ('Active')
+      name: statuscode_displayname_webactivitytrackingutm_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: createdon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdon is not null
+      name: createdon_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: createdby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby is not null
+      name: createdby_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: createdby_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby in ('4ba3907c-1683-ee11-8179-000d3a1f5276', 'eba12aad-57cb-e111-b24d-78e3b5101eaa')
+      name: createdby_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: SinkModifiedOn_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SinkModifiedOn is not null
+      name: SinkModifiedOn_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: SinkModifiedOn_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SinkModifiedOn >= '2025-07-15T00:00:00.000000+0000' and SinkModifiedOn
+        <= '2025-08-08T00:00:00.000000+0000'
+      name: SinkModifiedOn_min_max
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: modifiedby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedby is not null
+      name: modifiedby_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: modifiedby_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedby in ('4ba3907c-1683-ee11-8179-000d3a1f5276', 'eba12aad-57cb-e111-b24d-78e3b5101eaa')
+      name: modifiedby_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: createdonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfby is not null and trim(createdonbehalfby) <> ''
+      name: createdonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: modifiedonbehalfby_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfby is not null and trim(modifiedonbehalfby) <> ''
+      name: modifiedonbehalfby_is_not_null_or_empty
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: createdbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyname is not null
+      name: createdbyname_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: createdbyname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyname in ('Adey Khader', '# CRM Administrator')
+      name: createdbyname_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: createdbyyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyyominame is not null
+      name: createdbyyominame_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: createdbyyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdbyyominame in ('Adey Khader', '# CRM Administrator')
+      name: createdbyyominame_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: createdonbehalfbyname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyname is not null and trim(createdonbehalfbyname)
+        <> ''
+      name: createdonbehalfbyname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: createdonbehalfbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdonbehalfbyyominame is not null and trim(createdonbehalfbyyominame)
+        <> ''
+      name: createdonbehalfbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: modifiedbyname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyname is not null
+      name: modifiedbyname_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: modifiedbyname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyname in ('Adey Khader', '# CRM Administrator')
+      name: modifiedbyname_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: modifiedbyyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyyominame is not null
+      name: modifiedbyyominame_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: modifiedbyyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedbyyominame in ('Adey Khader', '# CRM Administrator')
+      name: modifiedbyyominame_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: modifiedonbehalfbyname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyname is not null and trim(modifiedonbehalfbyname)
+        <> ''
+      name: modifiedonbehalfbyname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: modifiedonbehalfbyyominame_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedonbehalfbyyominame is not null and trim(modifiedonbehalfbyyominame)
+        <> ''
+      name: modifiedonbehalfbyyominame_is_not_null_or_empty
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: ownerid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid is not null
+      name: ownerid_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: ownerid_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid in ('4ba3907c-1683-ee11-8179-000d3a1f5276', 'eba12aad-57cb-e111-b24d-78e3b5101eaa')
+      name: ownerid_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: owneridname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridname is not null
+      name: owneridname_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: owneridname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridname in ('Adey Khader', '# CRM Administrator')
+      name: owneridname_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: owneridyominame_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridyominame is not null
+      name: owneridyominame_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: owneridyominame_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridyominame in ('Adey Khader', '# CRM Administrator')
+      name: owneridyominame_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: owningbusinessunit_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit is not null
+      name: owningbusinessunit_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: owningbusinessunit_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunit in ('1a4311e6-8f1b-e111-bfbd-78e7d1620f70', 'b65718c2-e995-e111-aff1-78e7d1620f15')
+      name: owningbusinessunit_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: owninguser_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owninguser is not null
+      name: owninguser_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: owninguser_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owninguser in ('4ba3907c-1683-ee11-8179-000d3a1f5276', 'eba12aad-57cb-e111-b24d-78e3b5101eaa')
+      name: owninguser_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: owningteam_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningteam is not null and trim(owningteam) <> ''
+      name: owningteam_is_not_null_or_empty
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: owningbusinessunitname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunitname is not null
+      name: owningbusinessunitname_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: owningbusinessunitname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owningbusinessunitname in ('Clifton Larson Allen', 'Standard Accounts')
+      name: owningbusinessunitname_is_in
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: SinkCreatedOn_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SinkCreatedOn is not null
+      name: SinkCreatedOn_is_not_null
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: SinkCreatedOn_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SinkCreatedOn >= '2025-07-15T00:00:00.000000+0000' and SinkCreatedOn
+        <= '2025-08-08T00:00:00.000000+0000'
+      name: SinkCreatedOn_min_max
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: claci_name_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_name is not null and trim(claci_name) <> ''
+      name: claci_name_is_not_null_or_empty
+- table_name: de_prd.gold.crm_claci_webactivitytrackingutm_da
+  name: claci_parametervalue_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_parametervalue is not null and trim(claci_parametervalue)
+        <> ''
+      name: claci_parametervalue_is_not_null_or_empty

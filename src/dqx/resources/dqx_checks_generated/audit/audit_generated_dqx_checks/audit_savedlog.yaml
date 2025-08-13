@@ -1,0 +1,64 @@
+- table_name: de_prd.gold.audit_savedlog
+  name: LogID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: LogID is not null
+      name: LogID_is_not_null
+- table_name: de_prd.gold.audit_savedlog
+  name: LogID_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: LogID >= 1750189252874 and LogID <= 1750189437934
+      name: LogID_min_max
+- table_name: de_prd.gold.audit_savedlog
+  name: DataIngestionID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: DataIngestionID is not null
+      name: DataIngestionID_is_not_null
+- table_name: de_prd.gold.audit_savedlog
+  name: LogMsg_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: LogMsg is not null
+      name: LogMsg_is_not_null
+- table_name: de_prd.gold.audit_savedlog
+  name: CreatedAt_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CreatedAt is not null
+      name: CreatedAt_is_not_null
+- table_name: de_prd.gold.audit_savedlog
+  name: CreatedAt_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: CreatedAt >= '2025-06-17T00:00:00.000000+0000' and CreatedAt <=
+        '2025-06-18T00:00:00.000000+0000'
+      name: CreatedAt_min_max
+- table_name: de_prd.gold.audit_savedlog
+  name: MsgType_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: MsgType is not null
+      name: MsgType_is_not_null

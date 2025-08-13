@@ -1,0 +1,9 @@
+- table_name: de_prd.gold.crm_ref_suffix_mdm_vw
+  name: suffix_name_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: suffix_name is not null
+      name: suffix_name_is_not_null

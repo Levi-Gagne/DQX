@@ -1,0 +1,9 @@
+- table_name: de_prd.gold.crm_ref_salutation_vw
+  name: salutation_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: salutation is not null
+      name: salutation_is_not_null

@@ -1,0 +1,66 @@
+- table_name: de_prd.gold.crm_claci_statusaudit_da
+  name: claci_relatedlead_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_relatedlead is not null and trim(claci_relatedlead) <> ''
+      name: claci_relatedlead_is_not_null_or_empty
+- table_name: de_prd.gold.crm_claci_statusaudit_da
+  name: createdon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdon is not null
+      name: createdon_is_not_null
+- table_name: de_prd.gold.crm_claci_statusaudit_da
+  name: Qualified_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Qualified >= '2025-06-12T00:00:00.000000+0000' and Qualified <=
+        '2025-08-08T00:00:00.000000+0000'
+      name: Qualified_min_max
+- table_name: de_prd.gold.crm_claci_statusaudit_da
+  name: New_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: New >= '2025-06-12T00:00:00.000000+0000' and New <= '2025-08-11T00:00:00.000000+0000'
+      name: New_min_max
+- table_name: de_prd.gold.crm_claci_statusaudit_da
+  name: SalesAccepted_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: SalesAccepted >= '2025-06-12T00:00:00.000000+0000' and SalesAccepted
+        <= '2025-08-09T00:00:00.000000+0000'
+      name: SalesAccepted_min_max
+- table_name: de_prd.gold.crm_claci_statusaudit_da
+  name: claci_statusauditid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: claci_statusauditid is not null
+      name: claci_statusauditid_is_not_null
+- table_name: de_prd.gold.crm_claci_statusaudit_da
+  name: MarketingQualified_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: MarketingQualified >= '2025-06-12T00:00:00.000000+0000' and MarketingQualified
+        <= '2025-08-08T00:00:00.000000+0000'
+      name: MarketingQualified_min_max

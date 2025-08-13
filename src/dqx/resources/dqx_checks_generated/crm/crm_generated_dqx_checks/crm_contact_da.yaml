@@ -1,0 +1,201 @@
+- table_name: de_prd.gold.crm_contact_da
+  name: contact_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: contact_id is not null
+      name: contact_id_is_not_null
+- table_name: de_prd.gold.crm_contact_da
+  name: statuscode_contact_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_contact is not null
+      name: statuscode_contact_is_not_null
+- table_name: de_prd.gold.crm_contact_da
+  name: statuscode_contact_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_contact in (1, 2)
+      name: statuscode_contact_is_in
+- table_name: de_prd.gold.crm_contact_da
+  name: statuscode_contact_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_contact >= 1 and statuscode_contact <= 2
+      name: statuscode_contact_min_max
+- table_name: de_prd.gold.crm_contact_da
+  name: statuscode_displayname_contact_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_contact is not null
+      name: statuscode_displayname_contact_is_not_null
+- table_name: de_prd.gold.crm_contact_da
+  name: statuscode_displayname_contact_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_contact in ('Active', 'Inactive')
+      name: statuscode_displayname_contact_is_in
+- table_name: de_prd.gold.crm_contact_da
+  name: statecode_contact_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_contact is not null
+      name: statecode_contact_is_not_null
+- table_name: de_prd.gold.crm_contact_da
+  name: statecode_contact_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_contact in (0, 1)
+      name: statecode_contact_is_in
+- table_name: de_prd.gold.crm_contact_da
+  name: statecode_displayname_contact_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_contact is not null
+      name: statecode_displayname_contact_is_not_null
+- table_name: de_prd.gold.crm_contact_da
+  name: statecode_displayname_contact_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_contact in ('Active', 'Inactive')
+      name: statecode_displayname_contact_is_in
+- table_name: de_prd.gold.crm_contact_da
+  name: cla_subscriptionstatus_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_subscriptionstatus in (858040001, 858040000, 858040003, 858040004)
+      name: cla_subscriptionstatus_is_in
+- table_name: de_prd.gold.crm_contact_da
+  name: cla_subscriptionstatus_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_subscriptionstatus >= 858040000 and cla_subscriptionstatus <=
+        858040004
+      name: cla_subscriptionstatus_min_max
+- table_name: de_prd.gold.crm_contact_da
+  name: createdby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby is not null
+      name: createdby_is_not_null
+- table_name: de_prd.gold.crm_contact_da
+  name: createdon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdon is not null
+      name: createdon_is_not_null
+- table_name: de_prd.gold.crm_contact_da
+  name: donotbulkemail_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: donotbulkemail is not null
+      name: donotbulkemail_is_not_null
+- table_name: de_prd.gold.crm_contact_da
+  name: donotemail_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: donotemail is not null
+      name: donotemail_is_not_null
+- table_name: de_prd.gold.crm_contact_da
+  name: donotsendmm_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: donotsendmm is not null
+      name: donotsendmm_is_not_null
+- table_name: de_prd.gold.crm_contact_da
+  name: lw_hubspotprofile_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: lw_hubspotprofile is not null and trim(lw_hubspotprofile) <> ''
+      name: lw_hubspotprofile_is_not_null_or_empty
+- table_name: de_prd.gold.crm_contact_da
+  name: originatingleadid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: originatingleadid is not null and trim(originatingleadid) <> ''
+      name: originatingleadid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_contact_da
+  name: parentcustomerid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: parentcustomerid is not null and trim(parentcustomerid) <> ''
+      name: parentcustomerid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_contact_da
+  name: cla_primaryindustry_contact_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_primaryindustry_contact is not null and trim(cla_primaryindustry_contact)
+        <> ''
+      name: cla_primaryindustry_contact_is_not_null_or_empty
+- table_name: de_prd.gold.crm_contact_da
+  name: Primary_Industry_Rollup_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: Primary_Industry_Rollup is not null and trim(Primary_Industry_Rollup)
+        <> ''
+      name: Primary_Industry_Rollup_is_not_null_or_empty

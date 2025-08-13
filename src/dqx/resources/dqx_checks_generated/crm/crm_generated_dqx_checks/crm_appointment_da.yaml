@@ -1,0 +1,494 @@
+- table_name: de_prd.gold.crm_appointment_da
+  name: appointment_id_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: appointment_id is not null
+      name: appointment_id_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: activityid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: activityid is not null
+      name: activityid_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: state_code_appoinment_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: state_code_appoinment is not null
+      name: state_code_appoinment_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: state_code_appoinment_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: state_code_appoinment in (0, 1, 3)
+      name: state_code_appoinment_is_in
+- table_name: de_prd.gold.crm_appointment_da
+  name: statecode_displayname_appoinment_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_appoinment is not null
+      name: statecode_displayname_appoinment_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: statecode_displayname_appoinment_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statecode_displayname_appoinment in ('Open', 'Completed', 'Scheduled')
+      name: statecode_displayname_appoinment_is_in
+- table_name: de_prd.gold.crm_appointment_da
+  name: statuscode_appointment_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_appointment is not null
+      name: statuscode_appointment_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: statuscode_appointment_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_appointment in (1, 3, 5, 2, 6)
+      name: statuscode_appointment_is_in
+- table_name: de_prd.gold.crm_appointment_da
+  name: statuscode_appointment_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_appointment >= 1 and statuscode_appointment <= 6
+      name: statuscode_appointment_min_max
+- table_name: de_prd.gold.crm_appointment_da
+  name: statuscode_displayname_appointment_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_appointment is not null
+      name: statuscode_displayname_appointment_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: statuscode_displayname_appointment_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: statuscode_displayname_appointment in ('Free', 'Completed', 'Busy',
+        'Tentative', 'Out of Office')
+      name: statuscode_displayname_appointment_is_in
+- table_name: de_prd.gold.crm_appointment_da
+  name: createdby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdby is not null
+      name: createdby_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: createdon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: createdon is not null
+      name: createdon_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: actualend_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: actualend >= '2021-04-21T00:00:00.000000+0000' and actualend <=
+        '2025-08-22T00:00:00.000000+0000'
+      name: actualend_min_max
+- table_name: de_prd.gold.crm_appointment_da
+  name: subject_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: subject is not null
+      name: subject_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: regardingobjectid_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: regardingobjectid is not null and trim(regardingobjectid) <> ''
+      name: regardingobjectid_is_not_null_or_empty
+- table_name: de_prd.gold.crm_appointment_da
+  name: description_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: description is not null and trim(description) <> ''
+      name: description_is_not_null_or_empty
+- table_name: de_prd.gold.crm_appointment_da
+  name: modifiedon_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedon is not null
+      name: modifiedon_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: modifiedon_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedon >= '2021-03-18T00:00:00.000000+0000' and modifiedon <=
+        '2025-08-12T00:00:00.000000+0000'
+      name: modifiedon_min_max
+- table_name: de_prd.gold.crm_appointment_da
+  name: scheduledstart_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduledstart is not null
+      name: scheduledstart_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: scheduledstart_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduledstart >= '2019-12-10T00:00:00.000000+0000' and scheduledstart
+        <= '2028-12-19T00:00:00.000000+0000'
+      name: scheduledstart_min_max
+- table_name: de_prd.gold.crm_appointment_da
+  name: scheduledend_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduledend is not null
+      name: scheduledend_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: scheduledend_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: scheduledend >= '2019-12-10T00:00:00.000000+0000' and scheduledend
+        <= '2028-12-19T00:00:00.000000+0000'
+      name: scheduledend_min_max
+- table_name: de_prd.gold.crm_appointment_da
+  name: actualstart_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: actualstart >= '2021-10-10T00:00:00.000000+0000' and actualstart
+        <= '2025-08-07T00:00:00.000000+0000'
+      name: actualstart_min_max
+- table_name: de_prd.gold.crm_appointment_da
+  name: modifiedby_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: modifiedby is not null
+      name: modifiedby_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: subcategory_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: subcategory is not null and trim(subcategory) <> ''
+      name: subcategory_is_not_null_or_empty
+- table_name: de_prd.gold.crm_appointment_da
+  name: owneridname_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owneridname is not null
+      name: owneridname_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: regardingobjectidname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: regardingobjectidname is not null and trim(regardingobjectidname)
+        <> ''
+      name: regardingobjectidname_is_not_null_or_empty
+- table_name: de_prd.gold.crm_appointment_da
+  name: originalstartdate_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: originalstartdate >= '2021-07-12T00:00:00.000000+0000' and originalstartdate
+        <= '2030-07-01T00:00:00.000000+0000'
+      name: originalstartdate_min_max
+- table_name: de_prd.gold.crm_appointment_da
+  name: activitytypecode_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: activitytypecode is not null
+      name: activitytypecode_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: activitytypecode_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: activitytypecode in ('appointment')
+      name: activitytypecode_is_in
+- table_name: de_prd.gold.crm_appointment_da
+  name: cla_internalnotes_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_internalnotes is not null and trim(cla_internalnotes) <> ''
+      name: cla_internalnotes_is_not_null_or_empty
+- table_name: de_prd.gold.crm_appointment_da
+  name: cla_subtype_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_subtype in (858040000, 858040002, 858040005, 858040004, 858040001,
+        858040008, 858040006)
+      name: cla_subtype_is_in
+- table_name: de_prd.gold.crm_appointment_da
+  name: cla_subtype_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_subtype >= 858040000 and cla_subtype <= 858040008
+      name: cla_subtype_min_max
+- table_name: de_prd.gold.crm_appointment_da
+  name: regardingobjectid_entitytype_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: regardingobjectid_entitytype in ('account', 'contact', 'lead', 'opportunity',
+        'cla_project')
+      name: regardingobjectid_entitytype_is_in
+- table_name: de_prd.gold.crm_appointment_da
+  name: regardingobjectid_entitytype_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: regardingobjectid_entitytype is not null and trim(regardingobjectid_entitytype)
+        <> ''
+      name: regardingobjectid_entitytype_is_not_null_or_empty
+- table_name: de_prd.gold.crm_appointment_da
+  name: requiredattendees_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: requiredattendees is not null and trim(requiredattendees) <> ''
+      name: requiredattendees_is_not_null_or_empty
+- table_name: de_prd.gold.crm_appointment_da
+  name: optionalattendees_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: optionalattendees is not null and trim(optionalattendees) <> ''
+      name: optionalattendees_is_not_null_or_empty
+- table_name: de_prd.gold.crm_appointment_da
+  name: regardingobjecttypecode_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: regardingobjecttypecode is not null and trim(regardingobjecttypecode)
+        <> ''
+      name: regardingobjecttypecode_is_not_null_or_empty
+- table_name: de_prd.gold.crm_appointment_da
+  name: versionnumber_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: versionnumber is not null
+      name: versionnumber_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: versionnumber_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: versionnumber >= 9859987271 and versionnumber <= 15371082019
+      name: versionnumber_min_max
+- table_name: de_prd.gold.crm_appointment_da
+  name: ownerid_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: ownerid is not null
+      name: ownerid_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: external_attendee_count_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: external_attendee_count is not null
+      name: external_attendee_count_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: internal_attendee_count_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: internal_attendee_count is not null
+      name: internal_attendee_count_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: external_meeting_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: external_meeting is not null
+      name: external_meeting_is_not_null
+- table_name: de_prd.gold.crm_appointment_da
+  name: external_meeting_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: external_meeting in ('Yes', 'No')
+      name: external_meeting_is_in
+- table_name: de_prd.gold.crm_appointment_da
+  name: account_relation_type_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: account_relation_type in ('Prospect', 'Ex-Client', 'Client')
+      name: account_relation_type_is_in
+- table_name: de_prd.gold.crm_appointment_da
+  name: account_relation_type_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: account_relation_type is not null and trim(account_relation_type)
+        <> ''
+      name: account_relation_type_is_not_null_or_empty
+- table_name: de_prd.gold.crm_appointment_da
+  name: cost_center_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cost_center is not null and trim(cost_center) <> ''
+      name: cost_center_is_not_null_or_empty
+- table_name: de_prd.gold.crm_appointment_da
+  name: owner_region_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owner_region in ('Eastern Midwest', 'West', 'Midwest', 'Firmwide',
+        'Sunbelt', 'Northeast', 'CLAWA')
+      name: owner_region_is_in
+- table_name: de_prd.gold.crm_appointment_da
+  name: owner_region_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: owner_region is not null and trim(owner_region) <> ''
+      name: owner_region_is_not_null_or_empty
+- table_name: de_prd.gold.crm_appointment_da
+  name: cla_subtype_displayname_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_subtype_displayname in ('Meeting Client', 'Meeting Prospect',
+        'Other', 'Meeting Referral Source', 'Meeting Consultant', 'Meeting Internal',
+        'Meeting Networking')
+      name: cla_subtype_displayname_is_in
+- table_name: de_prd.gold.crm_appointment_da
+  name: cla_subtype_displayname_is_not_null_or_empty
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: cla_subtype_displayname is not null and trim(cla_subtype_displayname)
+        <> ''
+      name: cla_subtype_displayname_is_not_null_or_empty

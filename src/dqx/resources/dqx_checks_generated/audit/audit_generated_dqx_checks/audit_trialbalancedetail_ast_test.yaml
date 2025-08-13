@@ -1,0 +1,128 @@
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: TrialBalanceDetailID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: TrialBalanceDetailID is not null
+      name: TrialBalanceDetailID_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: TrialBalanceDetailID_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: TrialBalanceDetailID >= 2119366 and TrialBalanceDetailID <= 21453061
+      name: TrialBalanceDetailID_min_max
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: AccountSubType_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: AccountSubType is not null
+      name: AccountSubType_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: DataIngestionID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: DataIngestionID is not null
+      name: DataIngestionID_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: DataGroupingIngestionID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: DataGroupingIngestionID is not null
+      name: DataGroupingIngestionID_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: DataGroupingIngestionID_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: DataGroupingIngestionID in ('cdm.zip')
+      name: DataGroupingIngestionID_is_in
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: TrialBalanceVersionID_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: TrialBalanceVersionID is not null
+      name: TrialBalanceVersionID_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: path_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: path is not null
+      name: path_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: last_modified_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: last_modified is not null
+      name: last_modified_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: last_modified_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: last_modified >= '2024-11-16T00:00:00.000000+0000' and last_modified
+        <= '2025-01-21T00:00:00.000000+0000'
+      name: last_modified_min_max
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: processing_time_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: processing_time is not null
+      name: processing_time_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: processing_time_min_max
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: processing_time >= '2025-04-03T00:00:00.000000+0000' and processing_time
+        <= '2025-04-04T00:00:00.000000+0000'
+      name: processing_time_min_max
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: rn_is_not_null
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: rn is not null
+      name: rn_is_not_null
+- table_name: de_prd.gold.audit_trialbalancedetail_ast_test
+  name: rn_is_in
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: rn in (1)
+      name: rn_is_in
