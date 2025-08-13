@@ -14,6 +14,7 @@ dbutils.library.restartPython()
 
 # COMMAND ----------
 
+# DBTITLE 1,Run DQX Checks & Log Results
 # Databricks notebook: 02_run_dqx_checks
 # Requires: databricks-labs-dqx==0.8.x
 
@@ -25,7 +26,7 @@ import yaml
 from databricks.sdk import WorkspaceClient
 from databricks.labs.dqx.engine import DQEngine
 from pyspark.sql import SparkSession, DataFrame, Row, functions as F, types as T
-from utils.color import Color 
+from utils.color import Color
 
 # -------------------
 # Display helpers (for nice notebook output)
@@ -40,9 +41,9 @@ def show_df(df: DataFrame, n: int = 100, truncate: bool = False) -> None:
         df.show(n, truncate=truncate)
 
 def display_section(title: str) -> None:
-    print("\n" + "═" * 80)
-    print(f"║ {title}")
-    print("═" * 80)
+    print("\n" + f"{Color.b}{Color.deep_magenta}═{Color.r}" * 80)
+    print(f"{Color.b}{Color.deep_magenta}║{Color.r} {Color.b}{Color.ghost_white}{title}{Color.r}")
+    print(f"{Color.b}{Color.deep_magenta}═{Color.r}" * 80)
 
 # -------------------
 # Config / IO helper
@@ -101,8 +102,8 @@ ROW_LOG_SCHEMA = T.StructType([
 DQX_CHECKS_LOG_METADATA: Dict[str, Any] = {
     "table": "dq_dev.dqx.checks_log",  # override with your actual FQN at create time
     "table_comment": (
-        "# DQX Row-level Check Results Log\n"
-        "- One row per source row that triggered at least one rule (error or warning).\n"
+        "## **DQX Row-level Check Results Log**\n"
+        "- One row per source row that triggered at least one rule (error or warn).\n"
         "- `check_id` contains the originating rule IDs from the config table.\n"
         "- Fingerprint columns are deterministic digests to aid de-duplication & rollups.\n"
     ),

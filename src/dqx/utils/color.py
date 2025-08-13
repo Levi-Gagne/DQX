@@ -21,7 +21,7 @@ Author: Levi Gagne
 
 class Color:
     # ---------------------------------------------------------------------
-    # Text Modifiers (SGR 0-8)
+    # Text Modifiers (SGR 0-9)
     # ---------------------------------------------------------------------
     r  = '\033[0m'   # Reset all attributes
     b  = '\033[1m'   # Bold/brighter
@@ -31,12 +31,11 @@ class Color:
     bl = '\033[5m'   # Blink (not widely supported and generally discouraged)
     rv = '\033[7m'   # Reverse (invert foreground and background colors)
     h  = '\033[8m'   # Hidden (not widely supported)
-
-    # ---------------------------------------------------------------------
-    # Additional SGR Codes (9m-29m)
-    # ---------------------------------------------------------------------
     st = '\033[9m'    # Crossed-out (strike-through; rarely supported)
 
+    # ---------------------------------------------------------------------
+    # Additional SGR Codes (10m-29m)
+    # ---------------------------------------------------------------------
     font_primary = '\033[10m'  # Primary font (default)
     font_alt1    = '\033[11m'  # Alternative font 1
     font_alt2    = '\033[12m'  # Alternative font 2

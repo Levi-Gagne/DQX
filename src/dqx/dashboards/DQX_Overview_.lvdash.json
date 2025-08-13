@@ -1,0 +1,77 @@
+{
+  "version": "1",
+  "displayName": "DQX – Quality Overview",
+  "pages": [
+    {
+      "name": "overview",
+      "displayName": "Overview",
+      "widgets": [
+        { "name": "w_kpi", "displayName": "KPI (rows vs events)", "dataset": "ds_kpi", "visualization": { "type": "table" }, "position": { "x": 0, "y": 0, "w": 8, "h": 6 } },
+        { "name": "w_by_day", "displayName": "Events by day", "dataset": "ds_by_day", "visualization": { "type": "table" }, "position": { "x": 8, "y": 0, "w": 8, "h": 6 } },
+        { "name": "w_by_check", "displayName": "Events by check", "dataset": "ds_by_check", "visualization": { "type": "table" }, "position": { "x": 0, "y": 6, "w": 8, "h": 8 } },
+        { "name": "w_by_table", "displayName": "Events by table", "dataset": "ds_by_table", "visualization": { "type": "table" }, "position": { "x": 8, "y": 6, "w": 8, "h": 8 } },
+        { "name": "w_by_column", "displayName": "Events by column", "dataset": "ds_by_column", "visualization": { "type": "table" }, "position": { "x": 0, "y": 14, "w": 8, "h": 8 } },
+        { "name": "w_by_run_cfg", "displayName": "Events by run_config", "dataset": "ds_by_run_config", "visualization": { "type": "table" }, "position": { "x": 8, "y": 14, "w": 8, "h": 8 } },
+        { "name": "w_patterns", "displayName": "Top error patterns", "dataset": "ds_error_patterns", "visualization": { "type": "table" }, "position": { "x": 0, "y": 22, "w": 8, "h": 8 } },
+        { "name": "w_top_msgs", "displayName": "Top error messages", "dataset": "ds_top_error_messages", "visualization": { "type": "table" }, "position": { "x": 8, "y": 22, "w": 8, "h": 8 } },
+        { "name": "w_detail", "displayName": "Recent events (detail)", "dataset": "ds_detail", "visualization": { "type": "table" }, "position": { "x": 0, "y": 30, "w": 16, "h": 10 } }
+      ]
+    }
+  ],
+  "datasets": [
+    {
+      "name": "ds_kpi",
+      "displayName": "KPI",
+      "dataSource": { "type": "WAREHOUSE", "warehouseId": "ca5a45e27debab49" },
+      "query": "SELECT rows_with_any_issue, rows_with_errors, rows_with_warnings, error_events, warning_events, avg_errors_per_row, avg_warnings_per_row, first_ingest_at, last_ingest_at FROM dq_dev.dqx.dashboard_kpi"
+    },
+    {
+      "name": "ds_by_day",
+      "displayName": "Events by day",
+      "dataSource": { "type": "WAREHOUSE", "warehouseId": "ca5a45e27debab49" },
+      "query": "SELECT day, error_events, warning_events FROM dq_dev.dqx.dashboard_events_by_day ORDER BY day"
+    },
+    {
+      "name": "ds_by_check",
+      "displayName": "Events by check",
+      "dataSource": { "type": "WAREHOUSE", "warehouseId": "ca5a45e27debab49" },
+      "query": "SELECT check_name, error_events, warning_events FROM dq_dev.dqx.dashboard_events_by_check ORDER BY error_events DESC, warning_events DESC"
+    },
+    {
+      "name": "ds_by_table",
+      "displayName": "Events by table",
+      "dataSource": { "type": "WAREHOUSE", "warehouseId": "ca5a45e27debab49" },
+      "query": "SELECT table_name, error_events, warning_events FROM dq_dev.dqx.dashboard_events_by_table ORDER BY error_events DESC, warning_events DESC"
+    },
+    {
+      "name": "ds_by_column",
+      "displayName": "Events by column",
+      "dataSource": { "type": "WAREHOUSE", "warehouseId": "ca5a45e27debab49" },
+      "query": "SELECT column, error_events, warning_events FROM dq_dev.dqx.dashboard_events_by_column ORDER BY error_events DESC, warning_events DESC"
+    },
+    {
+      "name": "ds_by_run_config",
+      "displayName": "Events by run_config",
+      "dataSource": { "type": "WAREHOUSE", "warehouseId": "ca5a45e27debab49" },
+      "query": "SELECT run_config_name, error_events, warning_events FROM dq_dev.dqx.dashboard_events_by_run_config ORDER BY error_events DESC, warning_events DESC"
+    },
+    {
+      "name": "ds_error_patterns",
+      "displayName": "Error patterns",
+      "dataSource": { "type": "WAREHOUSE", "warehouseId": "ca5a45e27debab49" },
+      "query": "SELECT error_pattern, rows_hit, sample_table, sample_run_config, sample_check_name, sample_message FROM dq_dev.dqx.dashboard_error_patterns ORDER BY rows_hit DESC LIMIT 200"
+    },
+    {
+      "name": "ds_top_error_messages",
+      "displayName": "Top error messages",
+      "dataSource": { "type": "WAREHOUSE", "warehouseId": "ca5a45e27debab49" },
+      "query": "SELECT message, error_events FROM dq_dev.dqx.dashboard_top_error_messages ORDER BY error_events DESC LIMIT 100"
+    },
+    {
+      "name": "ds_detail",
+      "displayName": "Events detail",
+      "dataSource": { "type": "WAREHOUSE", "warehouseId": "ca5a45e27debab49" },
+      "query": "SELECT e.table_name, e.check_name, e.message, e.function, e.filter, e.severity, e.run_time, kv.null_count, kv.empty_count, kv.zero_count FROM dq_dev.dqx.dashboard_events e LEFT JOIN dq_dev.dqx.dashboard_row_value_stats kv USING (log_id) ORDER BY e.run_time DESC LIMIT 1000"
+    }
+  ]
+}

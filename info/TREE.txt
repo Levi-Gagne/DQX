@@ -1,0 +1,249 @@
+DQX/
+├── info/
+│   ├── dqx_incremental_design.md
+│   ├── DQX_POC
+│   ├── report.md
+│   ├── two_rules_test.yaml
+│   └── wkdy_dim_project.yaml
+│
+└── src/
+    └── dqx/
+        ├── resources/
+        │   ├── dqx_checks_config_load/
+        │   │   ├── job_run_audit.yaml
+        │   │   └── wkdy_dim_project.yaml
+        │   │
+        │   ├── dqx_checks_generated/
+        │   │   ├── ais/
+        │   │   │   ├── ais_generated_dqx_checks/
+        │   │   │   │   ├── ais_kpi_metric.yaml
+        │   │   │   │   ├── ais_kpi_metric_detail.yaml
+        │   │   │   │   ├── ais_kpi_metric_log.yaml
+        │   │   │   │   ├── ais_project_smartform_answer.yaml
+        │   │   │   │   └── ais_seamless.yaml
+        │   │   │   │
+        │   │   │   └── ais_table_list-gold.yaml
+        │   │   │
+        │   │   ├── audit/
+        │   │   │   ├── audit_generated_dqx_checks/
+        │   │   │   │   ├── audit_engineb_activity.yaml
+        │   │   │   │   ├── audit_engineb_errors.yaml
+        │   │   │   │   ├── audit_engineb_summary.yaml
+        │   │   │   │   ├── audit_generalledger.yaml
+        │   │   │   │   ├── audit_generalledgercompleteness.yaml
+        │   │   │   │   ├── audit_generalledgercompletenessv7.yaml
+        │   │   │   │   ├── audit_generalledgerdetail.yaml
+        │   │   │   │   ├── audit_generalledgersummary.yaml
+        │   │   │   │   ├── audit_generalledgersummaryv7.yaml
+        │   │   │   │   ├── audit_generalledgerversion.yaml
+        │   │   │   │   ├── audit_processing_control_gl_rerun.yaml
+        │   │   │   │   ├── audit_processing_control_tb_rerun.yaml
+        │   │   │   │   ├── audit_savedlog.yaml
+        │   │   │   │   ├── audit_storedprocedurelog.yaml
+        │   │   │   │   ├── audit_trialbalance.yaml
+        │   │   │   │   ├── audit_trialbalancedetail.yaml
+        │   │   │   │   ├── audit_trialbalancedetail_ast_test.yaml
+        │   │   │   │   ├── audit_trialbalancepriorperiodcomparison.yaml
+        │   │   │   │   ├── audit_trialbalancepriorperiodcomparisonv7.yaml
+        │   │   │   │   └── audit_trialbalanceversion.yaml
+        │   │   │   │
+        │   │   │   └── audit_table_list-gold.yaml
+        │   │   │
+        │   │   ├── crm/
+        │   │   │   ├── crm_generated_dqx_checks/
+        │   │   │   │   ├── crm_account_da.yaml
+        │   │   │   │   ├── crm_account_mdm_vw.yaml
+        │   │   │   │   ├── crm_activityparty_da.yaml
+        │   │   │   │   ├── crm_appointment_da.yaml
+        │   │   │   │   ├── crm_campaign_da.yaml
+        │   │   │   │   ├── crm_claci_leadwebactivitytracking_da.yaml
+        │   │   │   │   ├── crm_claci_statusaudit_da.yaml
+        │   │   │   │   ├── crm_claci_webactivitytrackingutm_da.yaml
+        │   │   │   │   ├── crm_contact_da.yaml
+        │   │   │   │   ├── crm_contact_mdm_vw.yaml
+        │   │   │   │   ├── crm_contact_suffix_mdm_vw.yaml
+        │   │   │   │   ├── crm_email_da.yaml
+        │   │   │   │   ├── crm_emails_da.yaml
+        │   │   │   │   ├── crm_emails_summary.yaml
+        │   │   │   │   ├── crm_lead_da.yaml
+        │   │   │   │   ├── crm_msdynmkt_contactpointconsent4_da.yaml
+        │   │   │   │   ├── crm_msdynmkt_journey_da.yaml
+        │   │   │   │   ├── crm_msdynmkt_marketingfieldsubmission_da.yaml
+        │   │   │   │   ├── crm_msdynmkt_marketingform_da.yaml
+        │   │   │   │   ├── crm_msdynmkt_marketingformsubmission_da.yaml
+        │   │   │   │   ├── crm_msevtmgt_eventregistration_da.yaml
+        │   │   │   │   ├── crm_old_lead.yaml
+        │   │   │   │   ├── crm_opportunity_da.yaml
+        │   │   │   │   ├── crm_ref_relationship_type_mdm_vw.yaml
+        │   │   │   │   ├── crm_ref_relationship_type_vw.yaml
+        │   │   │   │   ├── crm_ref_role_mdm_vw.yaml
+        │   │   │   │   ├── crm_ref_role_vw.yaml
+        │   │   │   │   ├── crm_ref_salutation_mdm_vw.yaml
+        │   │   │   │   ├── crm_ref_salutation_vw.yaml
+        │   │   │   │   ├── crm_ref_suffix_mdm_vw.yaml
+        │   │   │   │   ├── crm_ref_suffix_vw.yaml
+        │   │   │   │   └── crm_stringmap.yaml
+        │   │   │   │
+        │   │   │   └── crm_table_list-gold.yaml
+        │   │   │
+        │   │   ├── mcdonalds/
+        │   │   │   ├── mcdonalds_generated_dqx_checks/
+        │   │   │   │   ├── mcdonalds_dim_foodoverbase.yaml
+        │   │   │   │   ├── mcdonalds_dim_foodoverbase_v2.yaml
+        │   │   │   │   ├── mcdonalds_dim_rawitems.yaml
+        │   │   │   │   ├── mcdonalds_dim_rawitems_v2.yaml
+        │   │   │   │   ├── mcdonalds_fact_cashless_mobile.yaml
+        │   │   │   │   ├── mcdonalds_fact_delivery.yaml
+        │   │   │   │   ├── mcdonalds_fact_ending_inventory.yaml
+        │   │   │   │   ├── mcdonalds_fact_fob.yaml
+        │   │   │   │   ├── mcdonalds_fact_gma.yaml
+        │   │   │   │   ├── mcdonalds_fact_inventory_transfers.yaml
+        │   │   │   │   ├── mcdonalds_fact_journal.yaml
+        │   │   │   │   ├── mcdonalds_fact_journal_vw.yaml
+        │   │   │   │   ├── mcdonalds_fact_tax.yaml
+        │   │   │   │   ├── mcdonalds_intacct_post_log.yaml
+        │   │   │   │   └── mcdonalds_location_mapping.yaml
+        │   │   │   │
+        │   │   │   └── mcdonalds_table_list-gold.yaml
+        │   │   │
+        │   │   ├── ofs/
+        │   │   │   ├── ofs_generated_dqx_checks/
+        │   │   │   │   ├── ofs_budget_control.yaml
+        │   │   │   │   ├── ofs_cost_center_change.yaml
+        │   │   │   │   ├── ofs_fact_standard_budget.yaml
+        │   │   │   │   ├── ofs_iso_period.yaml
+        │   │   │   │   ├── ofs_lock_date.yaml
+        │   │   │   │   ├── ofs_office_change.yaml
+        │   │   │   │   └── ofs_worker_budget_audit.yaml
+        │   │   │   │
+        │   │   │   └── ofs_table_list-gold.yaml
+        │   │   │
+        │   │   ├── outlaw/
+        │   │   │   ├── outlaw_generated_dqx_checks/
+        │   │   │   │   ├── outlaw_dim_deal_activities.yaml
+        │   │   │   │   ├── outlaw_dim_deal_multiple_entities.yaml
+        │   │   │   │   ├── outlaw_dim_deal_parties.yaml
+        │   │   │   │   ├── outlaw_dim_deal_users.yaml
+        │   │   │   │   ├── outlaw_dim_deal_variables.yaml
+        │   │   │   │   ├── outlaw_dim_deal_versions.yaml
+        │   │   │   │   ├── outlaw_dim_deals.yaml
+        │   │   │   │   ├── outlaw_dim_template.yaml
+        │   │   │   │   └── outlaw_dim_users.yaml
+        │   │   │   │
+        │   │   │   └── outlaw_table_list-gold.yaml
+        │   │   │
+        │   │   └── workday/
+        │   │       ├── workday_generated_dqx_checks/
+        │   │       │   ├── wkdy_dim_contract.yaml
+        │   │       │   ├── wkdy_dim_contract_drift_metrics.yaml
+        │   │       │   ├── wkdy_dim_contract_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_cost_center.yaml
+        │   │       │   ├── wkdy_dim_cost_center_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_customer.yaml
+        │   │       │   ├── wkdy_dim_customer_drift_metrics.yaml
+        │   │       │   ├── wkdy_dim_customer_industry.yaml
+        │   │       │   ├── wkdy_dim_customer_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_customeraddress.yaml
+        │   │       │   ├── wkdy_dim_customeraddress_drift_metrics.yaml
+        │   │       │   ├── wkdy_dim_customeraddress_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_customeremailaddress.yaml
+        │   │       │   ├── wkdy_dim_customeremailaddress_drift_metrics.yaml
+        │   │       │   ├── wkdy_dim_customeremailaddress_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_customergroup.yaml
+        │   │       │   ├── wkdy_dim_customergroup_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_customerphonenumbers.yaml
+        │   │       │   ├── wkdy_dim_customerphonenumbers_drift_metrics.yaml
+        │   │       │   ├── wkdy_dim_customerphonenumbers_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_hr_cost_center.yaml
+        │   │       │   ├── wkdy_dim_location.yaml
+        │   │       │   ├── wkdy_dim_location_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_management_level.yaml
+        │   │       │   ├── wkdy_dim_optional_project_hierarchy.yaml
+        │   │       │   ├── wkdy_dim_project.yaml
+        │   │       │   ├── wkdy_dim_project_drift_metrics.yaml
+        │   │       │   ├── wkdy_dim_project_phase.yaml
+        │   │       │   ├── wkdy_dim_project_phase_drift_metrics.yaml
+        │   │       │   ├── wkdy_dim_project_phase_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_project_plan_phase.yaml
+        │   │       │   ├── wkdy_dim_project_plan_task.yaml
+        │   │       │   ├── wkdy_dim_project_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_project_service_line.yaml
+        │   │       │   ├── wkdy_dim_project_service_line_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_project_task.yaml
+        │   │       │   ├── wkdy_dim_project_task_drift_metrics.yaml
+        │   │       │   ├── wkdy_dim_project_task_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_projectgroups.yaml
+        │   │       │   ├── wkdy_dim_projectgroups_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_vendorsupport.yaml
+        │   │       │   ├── wkdy_dim_vendorsupport_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_worker.yaml
+        │   │       │   ├── wkdy_dim_worker_drift_metrics.yaml
+        │   │       │   ├── wkdy_dim_worker_industry.yaml
+        │   │       │   ├── wkdy_dim_worker_profile_metrics.yaml
+        │   │       │   ├── wkdy_dim_worker_service_line.yaml
+        │   │       │   ├── wkdy_dim_worker_service_line_profile_metrics.yaml
+        │   │       │   ├── wkdy_engagement.yaml
+        │   │       │   ├── wkdy_fact_absence.yaml
+        │   │       │   ├── wkdy_fact_absence_current.yaml
+        │   │       │   ├── wkdy_fact_absence_current_drift_metrics.yaml
+        │   │       │   ├── wkdy_fact_absence_current_profile_metrics.yaml
+        │   │       │   ├── wkdy_fact_absence_drift_metrics.yaml
+        │   │       │   ├── wkdy_fact_absence_profile_metrics.yaml
+        │   │       │   ├── wkdy_fact_cla_worker_budget.yaml
+        │   │       │   ├── wkdy_fact_coaching_status.yaml
+        │   │       │   ├── wkdy_fact_coaching_status_drift_metrics.yaml
+        │   │       │   ├── wkdy_fact_coaching_status_profile_metrics.yaml
+        │   │       │   ├── wkdy_fact_project_hours.yaml
+        │   │       │   ├── wkdy_fact_project_hours_drift_metrics.yaml
+        │   │       │   ├── wkdy_fact_project_hours_profile_metrics.yaml
+        │   │       │   ├── wkdy_fact_time_block.yaml
+        │   │       │   ├── wkdy_fact_time_block_current.yaml
+        │   │       │   ├── wkdy_fact_time_block_current_drift_metrics.yaml
+        │   │       │   ├── wkdy_fact_time_block_current_profile_metrics.yaml
+        │   │       │   ├── wkdy_fact_time_block_drift_metrics.yaml
+        │   │       │   ├── wkdy_fact_time_block_profile_metrics.yaml
+        │   │       │   ├── wkdy_fact_worker_budget.yaml
+        │   │       │   ├── wkdy_fact_worker_budget_current.yaml
+        │   │       │   ├── wkdy_fact_worker_scheduling.yaml
+        │   │       │   ├── wkdy_metric_agr.yaml
+        │   │       │   ├── wkdy_metric_agr_current.yaml
+        │   │       │   ├── wkdy_metric_billing_analysis_project.yaml
+        │   │       │   ├── wkdy_metric_distance.yaml
+        │   │       │   ├── wkdy_metric_net_fees.yaml
+        │   │       │   ├── wkdy_metric_wip.yaml
+        │   │       │   ├── wkdy_metric_wip_historical.yaml
+        │   │       │   ├── wkdy_metric_wip_historical_sql.yaml
+        │   │       │   ├── wkdy_ref_addressusefor.yaml
+        │   │       │   ├── wkdy_ref_affordable_housing.yaml
+        │   │       │   ├── wkdy_ref_annual_revenue.yaml
+        │   │       │   ├── wkdy_ref_coop_type.yaml
+        │   │       │   ├── wkdy_ref_country_phone_code.yaml
+        │   │       │   ├── wkdy_ref_country_region.yaml
+        │   │       │   ├── wkdy_ref_customer_category.yaml
+        │   │       │   ├── wkdy_ref_customer_group.yaml
+        │   │       │   ├── wkdy_ref_customer_status.yaml
+        │   │       │   ├── wkdy_ref_customer_status_reason.yaml
+        │   │       │   ├── wkdy_ref_ebp_type.yaml
+        │   │       │   ├── wkdy_ref_franchise.yaml
+        │   │       │   ├── wkdy_ref_number_of_employees.yaml
+        │   │       │   ├── wkdy_ref_phase.yaml
+        │   │       │   ├── wkdy_ref_phone_type.yaml
+        │   │       │   ├── wkdy_ref_project_group.yaml
+        │   │       │   ├── wkdy_ref_referral_class.yaml
+        │   │       │   ├── wkdy_ref_task.yaml
+        │   │       │   └── wkdy_worker_project_mapping.yaml
+        │   │       │
+        │   │       └── workday_table_list-gold.yaml
+        │   │
+        │   └── dqx_config.yaml
+        │
+        ├── utils/
+        │   ├── __init__.py
+        │   ├── color.py
+        │   ├── print.py
+        │   └── timezone.py
+        │
+        ├── 00_generate_dqx_checks
+        ├── 01_load_dqx_checks
+        ├── 02_run_dqx_checks
+        └── 03_dashboard_dqx_checks
