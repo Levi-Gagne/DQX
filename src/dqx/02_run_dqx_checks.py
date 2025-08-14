@@ -4,6 +4,117 @@
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ## Reference
+
+# COMMAND ----------
+
+# DBTITLE 1,FLOW
+"""
+START: run_checks(dqx_cfg_yaml, created_by, time_zone, exclude_cols, coercion_mode)
+|
+|-- 0. Env banner
+|     |-- print_notebook_env(spark, local_timezone=time_zone)
+|
+|-- 1. Load config YAML
+|     |-- cfg = read_yaml(dqx_cfg_yaml)
+|     |-- checks_table  = cfg["dqx_checks_config_table_name"]
+|     |-- results_table = cfg["dqx_checks_log_table_name"]
+|     |-- rc_map        = cfg.get("run_config_name", {})
+|
+|-- 2. Ensure results table exists (Delta + comments)
+|     |-- ensure_table(results_table, DQX_CHECKS_LOG_METADATA)
+|
+|-- 3. (Optional) Count active checks for banner
+|     |-- checks_table_total = COUNT(*) FROM checks_table WHERE active = TRUE
+|
+|-- 4. Init grand trackers
+|     |-- grand_total = 0
+|     |-- all_tbl_summaries = []
+|
+|-- 5. For each run_config_name in rc_map:
+|     |-- DISPLAY section "Run config: {rc_name}"
+|     |-- read write_mode / write_opts from rc_cfg.output_config (default overwrite)
+|
+|     |-- 5.1 Load checks for this RC from config table
+|     |     |-- Filter: active=TRUE AND run_config_name='{rc_name}'
+|     |     |-- Select: table_name, name, criticality, filter, run_config_name, user_metadata, check, check_id, check_id_payload
+|     |     |-- JIT argument coercion (per rule) using _coerce_arguments(function=check.function, mode=coercion_mode)
+|     |     |-- Build minimal exec rules for DQEngine
+|     |     |-- Validate with DQEngine.validate_checks:
+|     |           |-- If batch has errors: keep only per-rule valid ones; skipped_invalid = count(bad)
+|     |     |-- by_tbl = rules grouped by table_name
+|     |     |-- cfg_id_df = mapping DF[t_tbl_norm, t_rc, t_name_norm, cfg_check_id] (computed deterministically;
+|     |                     derives check_id if missing via _canonical_rule_payload_and_id)
+|     |     |-- PRINT: checks_in_table_total, loaded, coerced, skipped_invalid
+|
+|     |-- 5.2 Apply rules per table with isolation
+|     |     |-- For each table in by_tbl:
+|     |           |-- src = spark.read.table(table)
+|     |           |-- (annot, bad_rules) = _apply_rules_isolating_failures(DQEngine, src, rules_for_table)
+|     |           |     |-- If batch fails: try each rule; drop offenders; retry with good subset
+|     |           |-- If annot is None: continue
+|     |           |-- total_rows = annot.count()
+|     |           |-- summary_row = _summarize_table(annot, table)
+|     |           |-- rc_tbl_summaries += summary_row
+|     |           |-- all_tbl_summaries += Row(run_config_name=rc_name, **summary_row)
+|     |           |-- rc_rule_hit_parts += _rules_hits_for_table(annot, table)
+|     |           |-- row_hits_df = _project_row_hits(
+|     |           |       annot, table, rc_name, created_by, exclude_cols
+|     |           |   )
+|     |           |   |-- Computes:
+|     |           |   |     row_snapshot = [{column, value}] over non-reserved cols (stringified)
+|     |           |   |     row_snapshot_fingerprint = sha256(JSON(row_snapshot))
+|     |           |   |     _errors/_warnings normalized & fingerprinted (stable across order/column changes)
+|     |           |   |     log_id = sha256(table_name || run_config_name || row_snapshot_fp || _errors_fp || _warnings_fp)
+|     |           |-- If row_hits_df has rows: out_batches += row_hits_df
+|
+|     |-- 5.3 Display per-RC summary by table (if any)
+|     |     |-- DISPLAY rc_tbl_summaries ordered by table_name
+|
+|     |-- 5.4 Build per-RC summary by rule (includes zero-hit rules)
+|     |     |-- rules_all = UNION of rc_rule_hit_parts
+|     |     |-- cfg_rules = DISTINCT rules from checks_table for this RC limited to processed tables
+|     |     |-- counts = rules_all GROUP BY (table_name, name, severity) SUM(rows_flagged)
+|     |     |-- full_rules = cfg_rules LEFT JOIN counts; NULL→0
+|     |     |-- totals_df = table_row_counts → compute pct_of_table_rows
+|     |     |-- DISPLAY full_rules
+|     |     |-- APPEND full_rules (+ run_config_name) → dq_dev.dqx.checks_log_summary_by_rule
+|
+|     |-- 5.5 If there are row-level hits:
+|     |     |-- out = UNION of out_batches
+|     |     |-- Enrich check_id(s):
+|     |     |     |-- out = _enrich_check_ids(out, cfg_id_df=cfg_id_df, checks_table=checks_table)
+|     |     |     |   |-- Join on (run_config_name, normalized rule name) and flexible table keys
+|     |     |-- Project to ROW_LOG_SCHEMA column order
+|     |     |-- rows = out.count()
+|     |     |-- WRITE out.format("delta").mode(write_mode).options(**write_opts).saveAsTable(results_table)
+|     |     |-- grand_total += rows
+|     |     |-- PRINT "[rc_name] wrote {rows} rows → {results_table}"
+|     |-- else:
+|     |     |-- PRINT "[rc_name] no row-level hits."
+|
+|-- 6. Grand rollup across all RCs (if any summaries)
+|     |-- grand_df = all_tbl_summaries (run_config_name, table_name, table_total_rows,
+|     |                                 table_total_error_rows, table_total_warning_rows,
+|     |                                 total_flagged_rows, distinct_rules_fired)
+|     |-- DISPLAY grand_df
+|     |-- OVERWRITE grand_df → dq_dev.dqx.checks_log_summary_by_table
+|
+|-- 7. Final banner
+|     |-- DISPLAY section "Grand total"
+|     |-- PRINT "TOTAL rows written: {grand_total}"
+|
+END: run_checks
+"""
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Implementation
+
+# COMMAND ----------
+
 # DBTITLE 1,Install DQX Package
 # MAGIC %pip install databricks-labs-dqx==0.8.0
 
@@ -27,6 +138,8 @@ from databricks.sdk import WorkspaceClient
 from databricks.labs.dqx.engine import DQEngine
 from pyspark.sql import SparkSession, DataFrame, Row, functions as F, types as T
 from utils.color import Color
+from utils.print import print_notebook_env
+from utils.timezone import current_time_iso
 
 # -------------------
 # Display helpers (for nice notebook output)
@@ -41,9 +154,9 @@ def show_df(df: DataFrame, n: int = 100, truncate: bool = False) -> None:
         df.show(n, truncate=truncate)
 
 def display_section(title: str) -> None:
-    print("\n" + f"{Color.b}{Color.deep_magenta}═{Color.r}" * 80)
+    print("\n" + f"{Color.b}{Color.deep_magenta}═{Color.r}" *80)
     print(f"{Color.b}{Color.deep_magenta}║{Color.r} {Color.b}{Color.ghost_white}{title}{Color.r}")
-    print(f"{Color.b}{Color.deep_magenta}═{Color.r}" * 80)
+    print(f"{Color.b}{Color.deep_magenta}═{Color.r}"* 80)
 
 # -------------------
 # Config / IO helper
@@ -102,7 +215,7 @@ ROW_LOG_SCHEMA = T.StructType([
 DQX_CHECKS_LOG_METADATA: Dict[str, Any] = {
     "table": "dq_dev.dqx.checks_log",  # override with your actual FQN at create time
     "table_comment": (
-        "## **DQX Row-level Check Results Log**\n"
+        "## __DQX Row-level Check Results Log__\n"
         "- One row per source row that triggered at least one rule (error or warn).\n"
         "- `check_id` contains the originating rule IDs from the config table.\n"
         "- Fingerprint columns are deterministic digests to aid de-duplication & rollups.\n"
@@ -164,7 +277,7 @@ def _set_column_comment_safe(spark: SparkSession, fqn: str, col_name: str, comme
     Try COMMENT ON COLUMN first; if parser complains, fall back to ALTER ... CHANGE COLUMN with type.
     """
     cat, sch, tbl = fqn.split(".")
-    escaped = _esc_sql_comment(comment)
+    escaped =_esc_sql_comment(comment)
     try:
         spark.sql(
             f"COMMENT ON COLUMN `{cat}`.`{sch}`.`{tbl}`.`{col_name}` IS '{escaped}'"
@@ -207,7 +320,7 @@ def ensure_table(full_name: str, doc: Optional[Dict[str, Any]] = None):
     spark = SparkSession.getActiveSession() or SparkSession.builder.getOrCreate()
     existed = spark.catalog.tableExists(full_name)
     if not existed:
-        cat, sch, _ = full_name.split(".")
+        cat, sch,_ = full_name.split(".")
         spark.sql(f"CREATE SCHEMA IF NOT EXISTS `{cat}`.`{sch}`")
         spark.createDataFrame([], ROW_LOG_SCHEMA).write.format("delta").mode("overwrite").saveAsTable(full_name)
     _apply_table_documentation_on_create(spark, full_name, doc or {}, just_created=(not existed))
@@ -256,7 +369,17 @@ _EXPECTED: Dict[str, Dict[str, str]] = {
                     "inclusive_min": "bool", "inclusive_max": "bool"},
     "regex_match": {"column": "str", "regex": "str"},
     "sql_expression": {"expression": "str"},
-    "sql_query": {"query": "str", "limit": "num"},
+    # FIX: align with DQX signature for sql_query (no 'limit')
+    "sql_query": {
+        "query": "str",
+        "merge_columns": "list",
+        "msg": "str",
+        "name": "str",
+        "negate": "bool",
+        "condition_column": "str",
+        "input_placeholder": "str",
+        "row_filter": "str",
+    },
     "is_not_null": {"column": "str"},
     "is_not_null_and_not_empty": {"column": "str"},
 }
@@ -302,7 +425,7 @@ def _coerce_arguments(args_map: Optional[Dict[str, str]],
                       function_name: Optional[str],
                       mode: str = "permissive") -> Tuple[Dict[str, Any], List[str]]:
     if not args_map: return {}, []
-    raw = {k: _parse_scalar(v) for k, v in args_map.items()}
+    raw = {k:_parse_scalar(v) for k, v in args_map.items()}
     spec = _EXPECTED.get((function_name or "").strip(), {})
 
     out: Dict[str, Any] = {}
@@ -320,9 +443,10 @@ def _coerce_arguments(args_map: Optional[Dict[str, str]],
         elif want == "str":
             out[k] = "" if v is None else str(v)
         else:
+            # Pass through unknown keys untouched so DQX can validate them
             out[k] = v
-    if (function_name or "").strip() == "sql_query" and ("limit" not in out or out.get("limit") in (None, 0)):
-        errs.append("sql_query requires a positive 'limit'")
+
+    # REMOVED: hard requirement for 'limit' on sql_query (not part of DQX signature)
     if mode == "strict" and errs:
         raise ValueError(f"Argument coercion failed for '{function_name}': {errs}")
     return out, errs
@@ -477,13 +601,18 @@ def _project_row_hits(df_annot: DataFrame,
 
 def _enrich_check_ids(row_log_df: DataFrame, checks_table: str) -> DataFrame:
     """
-    Attach the originating config.check_id(s) to each row_log by joining on:
-      lower(table_name), run_config_name, and lower(rule name) from _errors/_warnings.
+    Attach originating config.check_id(s) to each row_log by joining on:
+      - run_config_name
+      - normalized rule name (lowercased, trimmed)
+      - a flexible table key that can be:
+          catalog.schema.table  OR  schema.table  OR  table
+    This handles cases where the config used 1- or 2-part names while the row log
+    carries a fully-qualified 3-part FQN.
     """
     spark = SparkSession.getActiveSession() or SparkSession.builder.getOrCreate()
 
-    # Config side: (table, run_config, name) -> check_id
-    cfg = (
+    # --- Config side: (table variants, run_config, rule name) -> check_id
+    cfg_base = (
         spark.table(checks_table)
         .select(
             F.lower(F.col("table_name")).alias("t_tbl_norm"),
@@ -494,10 +623,26 @@ def _enrich_check_ids(row_log_df: DataFrame, checks_table: str) -> DataFrame:
         )
         .where(F.col("t_active") == True)
         .drop("t_active")
-        .dropDuplicates(["t_tbl_norm", "t_rc", "t_name_norm"])
+        .dropDuplicates(["t_tbl_norm", "t_rc", "t_name_norm", "cfg_check_id"])
     )
 
-    # Row log side: explode names from _errors/_warnings, normalize & join
+    cfg_with_keys = (
+        cfg_base
+        .withColumn("arr", F.array(
+            F.when(F.size(F.split("t_tbl_norm", r"\.")) >= 3,
+                   F.concat_ws(".", F.element_at(F.split("t_tbl_norm", r"\."), -3),
+                                     F.element_at(F.split("t_tbl_norm", r"\."), -2),
+                                     F.element_at(F.split("t_tbl_norm", r"\."), -1))),
+            F.when(F.size(F.split("t_tbl_norm", r"\.")) >= 2,
+                   F.concat_ws(".", F.element_at(F.split("t_tbl_norm", r"\."), -2),
+                                     F.element_at(F.split("t_tbl_norm", r"\."), -1))),
+            F.element_at(F.split("t_tbl_norm", r"\."), -1)
+        ))
+        .withColumn("cfg_tbl_key", F.explode(F.expr("filter(arr, x -> x is not null)")))
+        .drop("arr")
+    )
+
+    # --- Row-log side: explode names from _errors/_warnings, normalize & make table variants
     names = (
         row_log_df
         .select(
@@ -514,22 +659,50 @@ def _enrich_check_ids(row_log_df: DataFrame, checks_table: str) -> DataFrame:
         .select("log_id","tbl_norm","rc","name_norm")
     )
 
-    j = (
-        names.join(
-            cfg,
-            (names.tbl_norm == cfg.t_tbl_norm) &
-            (names.rc == cfg.t_rc) &
-            (names.name_norm == cfg.t_name_norm),
-            "left"
-        )
-        .groupBy("log_id")
-        .agg(F.array_sort(F.array_distinct(F.collect_list("cfg_check_id"))).alias("check_id"))
+    names_with_keys = (
+        names
+        .withColumn("arr", F.array(
+            F.when(F.size(F.split("tbl_norm", r"\.")) >= 3,
+                   F.concat_ws(".", F.element_at(F.split("tbl_norm", r"\."), -3),
+                                     F.element_at(F.split("tbl_norm", r"\."), -2),
+                                     F.element_at(F.split("tbl_norm", r"\."), -1))),
+            F.when(F.size(F.split("tbl_norm", r"\.")) >= 2,
+                   F.concat_ws(".", F.element_at(F.split("tbl_norm", r"\."), -2),
+                                     F.element_at(F.split("tbl_norm", r"\."), -1))),
+            F.element_at(F.split("tbl_norm", r"\."), -1)
+        ))
+        .withColumn("tbl_key", F.explode(F.expr("filter(arr, x -> x is not null)")))
+        .drop("arr")
     )
 
+    # --- Join on RC + rule name + any compatible table key
+    matched = (
+        names_with_keys
+        .join(
+            cfg_with_keys,
+            (names_with_keys.rc == cfg_with_keys.t_rc) &
+            (names_with_keys.name_norm == cfg_with_keys.t_name_norm) &
+            (names_with_keys.tbl_key == cfg_with_keys.cfg_tbl_key),
+            "left"
+        )
+        .where(F.col("cfg_check_id").isNotNull())
+        .groupBy("log_id")
+        .agg(
+            F.array_sort(
+                F.array_distinct(
+                    F.collect_list(F.col("cfg_check_id").cast(T.StringType()))
+                )
+            ).alias("check_id")
+        )
+    )
+
+    # --- Attach back to the row-log; default to empty array if no match
     out = (
         row_log_df.drop("check_id")
-        .join(j, "log_id", "left")
-        .withColumn("check_id", F.coalesce(F.col("check_id"), F.array().cast(T.ArrayType(T.StringType()))))
+        .join(matched, "log_id", "left")
+        .withColumn("check_id",
+                    F.coalesce(F.col("check_id"),
+                               F.array().cast(T.ArrayType(T.StringType()))))
     )
     return out
 
@@ -602,11 +775,14 @@ def _rules_hits_for_table(annot: DataFrame, table_name: str) -> DataFrame:
 def run_checks(
     dqx_cfg_yaml: str,
     created_by: str = "AdminUser",
+    time_zone: str = "America/Chicago",
     exclude_cols: Optional[List[str]] = None,
     coercion_mode: str = "permissive"  # or "strict"
 ):
     spark = SparkSession.builder.getOrCreate()
     dq = DQEngine(WorkspaceClient())
+
+    print_notebook_env(spark, local_timezone=time_zone)
 
     cfg = read_yaml(dqx_cfg_yaml)
     checks_table  = cfg["dqx_checks_config_table_name"]
@@ -789,8 +965,7 @@ def run_checks(
         printed_grand_once = True
 
     display_section("Grand total")
-    print(f"TOTAL rows written: {grand_total}")
-
+    print(f"{Color.b}{Color.ivory}TOTAL rows written: '{Color.r}{Color.b}{Color.bright_pink}{grand_total}{Color.r}{Color.b}{Color.ivory}'{Color.r}")
 
 # ---- run it ----
 run_checks(
@@ -799,184 +974,3 @@ run_checks(
     # exclude_cols=["_created_date","_last_updated_date"],
     coercion_mode="strict"   # 'strict'| 'permissive'
 )
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Validation
-
-# COMMAND ----------
-
-# === Inline DQX checks (from your wkdy_dim_project.yaml), run them, and keep ONLY errors/warnings columns added ===
-from collections import defaultdict
-import yaml
-from databricks.sdk import WorkspaceClient
-from databricks.labs.dqx.engine import DQEngine
-from pyspark.sql import functions as F
-
-# ---- 1) Define checks inline (YAML in this cell) ----
-checks_yaml = """
-- table_name: de_prd.gold.wkdy_dim_project
-  name: project_key_is_not_unique
-  criticality: error
-  run_config_name: default
-  check:
-    function: is_unique
-    arguments:
-      columns: [project_key]
-
-- table_name: de_prd.gold.wkdy_dim_project
-  name: project_key_is_null
-  criticality: error
-  run_config_name: default
-  check:
-    function: is_not_null
-    arguments:
-      column: project_key
-
-- table_name: de_prd.gold.wkdy_dim_project
-  name: project_status_is_null
-  criticality: error
-  run_config_name: default
-  check:
-    function: is_not_null
-    arguments:
-      column: project_status
-
-- table_name: de_prd.gold.wkdy_dim_project
-  name: project_status_is_new_value
-  criticality: error
-  run_config_name: default
-  check:
-    function: is_in_list
-    arguments:
-      column: project_status
-      allowed:
-        - Active
-        - Closed
-        - Pending Close
-        - Schedule Pending
-        - Suspended
-
-- table_name: de_prd.gold.wkdy_dim_project
-  name: project_type_is_not_null_or_unknown
-  criticality: error
-  run_config_name: default
-  check:
-    function: sql_expression
-    arguments:
-      expression: "project_type_name is not null AND project_type_name != 'Unknown'"
-
-- table_name: de_prd.gold.wkdy_dim_project
-  name: any_email_has_invalid_format
-  criticality: error
-  run_config_name: default
-  check:
-    function: regex_match
-    for_each_column:
-      - project_leader_email
-      - project_biller_email
-      - customer_leader_email
-      - customer_biller_email
-    arguments:
-      regex: "^(.+)@(.+)$"
-
-- table_name: de_prd.gold.wkdy_dim_project
-  name: project_start_after_end_date
-  criticality: error
-  run_config_name: default
-  check:
-    function: sql_expression
-    arguments:
-      expression: "coalesce(project_start_date, '1900-01-01') <= coalesce(project_end_date, '9999-12-31')"
-
-- table_name: de_prd.gold.wkdy_dim_project
-  name: first_activity_date_after_last_activity_date
-  criticality: error
-  run_config_name: default
-  check:
-    function: sql_expression
-    arguments:
-      expression: "coalesce(first_activity_date, '1900-01-01') <= coalesce(last_activity_date, '9999-12-31')"
-
-- table_name: de_prd.gold.wkdy_dim_project
-  name: created_date_after_last_updated_date
-  criticality: error
-  run_config_name: default
-  check:
-    function: sql_expression
-    arguments:
-      expression: "coalesce(_created_date, '1900-01-01') <= coalesce(_last_updated_date, '9999-12-31')"
-"""
-
-checks = yaml.safe_load(checks_yaml)
-if isinstance(checks, dict):
-    checks = [checks]
-
-# Group rules by table
-by_table = defaultdict(list)
-for r in checks:
-    t = r.get("table_name")
-    if t:
-        by_table[t].append(r)
-
-print(f"Loaded {sum(len(v) for v in by_table.values())} rule(s) "
-      f"across {len(by_table)} table(s): {list(by_table.keys())}")
-
-# ---- 2) Validate & apply ----
-dq = DQEngine(WorkspaceClient())
-
-# Validate once (will raise if bad)
-status = dq.validate_checks(checks)
-if getattr(status, "has_errors", False):
-    # if you prefer non-fatal, comment the raise and print status.to_string()
-    raise ValueError(status.to_string())
-
-for table, tbl_rules in by_table.items():
-    print(f"\n=== Applying {len(tbl_rules)} rule(s) to {table} ===")
-    df = spark.table(table)
-
-    annotated = dq.apply_checks_by_metadata(df, tbl_rules)
-
-    # DQX may use _error/_warning or _errors/_warnings depending on version
-    err_col = "_errors"  if "_errors"  in annotated.columns else "_error"
-    wrn_col = "_warnings" if "_warnings" in annotated.columns else "_warning"
-
-    # Add normalized columns named 'errors' and 'warnings' (keep originals too)
-    annotated = (annotated
-                 .withColumn("errors",   F.col(err_col))
-                 .withColumn("warnings", F.col(wrn_col)))
-
-    # Simple summary (no RDD usage)
-    agg = (
-        annotated
-        .select(
-            F.size(F.col(err_col)).alias("e_sz"),
-            F.size(F.col(wrn_col)).alias("w_sz"),
-        )
-        .agg(
-            F.coalesce(F.sum("e_sz"), F.lit(0)).alias("errors"),
-            F.coalesce(F.sum("w_sz"), F.lit(0)).alias("warnings"),
-        )
-        .collect()[0]
-    )
-    print(f"Hit summary -> errors={int(agg['errors'])}, warnings={int(agg['warnings'])}")
-
-    # Show only rows that have any hits, with the new columns
-    hits_only = annotated.filter(
-        (F.col(err_col).isNotNull() & (F.size(F.col(err_col)) > 0)) |
-        (F.col(wrn_col).isNotNull() & (F.size(F.col(wrn_col)) > 0))
-    )
-
-    try:
-        display(hits_only.select("*"))   # notebook
-    except NameError:
-        hits_only.select("*").show(20, truncate=False)
-
-    # OPTIONAL: persist annotated rows (with errors/warnings) to a Delta table
-    # Uncomment and set a destination if you want to save:
-    # results_table = "dq_dev.dqx.wkdy_dim_project_results"
-    # (hits_only
-    #   .select("*")   # includes 'errors' and 'warnings'
-    #   .write.format("delta").mode("overwrite").saveAsTable(results_table))
-    # print(f"Wrote {results_table}")
