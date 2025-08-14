@@ -1,4 +1,4 @@
-# CLA Data Quality Rule Guidelines for DQX
+# CLA DQX Check Creation Guidlines
 
 **Purpose:** How to author high‑quality YAML rules for Databricks DQX at CLA. This is the reference engineers will use when adding or reviewing rules. Keep rules targeted (no “matches all rows”), reproducible, and fast.
 
@@ -90,9 +90,9 @@ default:
 
 ---
 
-## 5) SQL companion pattern (must be included as comments)
+## 5) SQL companion pattern (if included, must be commented out)
 
-Add a short SQL block showing how to count/inspect **violations**. This makes rules auditable and reviewable.
+Add a short SQL block showing how to count/inspect **violations**. This makes rules auditable and reviewable. (**Recommended** but not required)
 
 **Patterns**
 
@@ -338,4 +338,4 @@ Include these under each rule as `# SQL ...` comments.
 
 ---
 
-**Questions or updates?** Ping the Data Platform team in #data-quality.
+**Questions or updates?** Ping Data Quality or - levi.gagne@claconnect.com
