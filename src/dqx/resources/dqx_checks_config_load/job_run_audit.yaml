@@ -1,16 +1,26 @@
 # resources/dqx_checks_config/job_run_audit.yaml
 
-# 1) Row-level: basic presence
+# --- Keys / presence ----------------------------------------------------------
+
 - table_name: dq_prd.monitoring.job_run_audit
-  name: run_id_is_not_null
+  name: business_fields_not_null
   criticality: error
   run_config_name: default
   check:
     function: is_not_null
-    arguments:
-      column: run_id
+    for_each_column:
+      - job_name
+      - job_id
+      - run_id
+      - start_time
+      - start_date
+      - state
+      - result_state
+      - start_time_raw
+      - run_page_url
+      - creator
+      - launched_by
 
-# 2) Dataset-level: unique key
 - table_name: dq_prd.monitoring.job_run_audit
   name: run_id_is_unique
   criticality: error
@@ -20,7 +30,35 @@
     arguments:
       columns: [run_id]
 
-# 3) Row-level: temporal ordering
+# --- Temporal correctness -----------------------------------------------------
+
+- table_name: dq_prd.monitoring.job_run_audit
+  name: start_time_not_in_future
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: "start_time <= current_timestamp()"
+
+- table_name: dq_prd.monitoring.job_run_audit
+  name: start_date_not_in_future
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: "start_date <= current_date()"
+
+- table_name: dq_prd.monitoring.job_run_audit
+  name: start_date_matches_start_time_date
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: "start_date = date(start_time)"
+
 - table_name: dq_prd.monitoring.job_run_audit
   name: end_after_or_equal_start
   criticality: error
@@ -30,7 +68,38 @@
     arguments:
       expression: "end_time IS NULL OR end_time >= start_time"
 
-# 4) Row-level + filter: conditional rule (only TERMINATED runs)
+# --- State/result logic -------------------------------------------------------
+
+- table_name: dq_prd.monitoring.job_run_audit
+  name: state_allowed_values
+  criticality: error
+  run_config_name: default
+  check:
+    function: is_in_list
+    arguments:
+      column: state
+      allowed: ["PENDING","RUNNING","TERMINATING","TERMINATED"]
+
+- table_name: dq_prd.monitoring.job_run_audit
+  name: result_state_allowed_values
+  criticality: error
+  run_config_name: default
+  check:
+    function: is_in_list
+    arguments:
+      column: result_state
+      allowed: ["SUCCESS","FAILED","CANCELED","SKIPPED","TIMEDOUT","INTERNAL_ERROR"]
+
+- table_name: dq_prd.monitoring.job_run_audit
+  name: terminated_runs_have_end_time
+  criticality: error
+  run_config_name: default
+  filter: "state = 'TERMINATED'"
+  check:
+    function: sql_expression
+    arguments:
+      expression: "end_time IS NOT NULL"
+
 - table_name: dq_prd.monitoring.job_run_audit
   name: result_state_allowed_when_terminated
   criticality: error
@@ -40,35 +109,52 @@
     function: is_in_list
     arguments:
       column: result_state
-      allowed: ["SUCCESS", "FAILED", "CANCELED", "INTERNAL_ERROR"]
+      allowed: ["SUCCESS","FAILED","CANCELED","INTERNAL_ERROR"]
 
-# 5) Row-level: apply to multiple text columns (for_each_column)
 - table_name: dq_prd.monitoring.job_run_audit
-  name: required_text_fields_not_empty
+  name: failed_runs_have_error_code
   criticality: error
   run_config_name: default
-  check:
-    function: is_not_null_and_not_empty
-    for_each_column:
-      - job_name
-      - description
-      - run_page_url
-
-# 6) Row-level + metadata: rolling recency window
-- table_name: dq_prd.monitoring.job_run_audit
-  name: start_time_within_90_days
-  criticality: error
-  run_config_name: default
+  filter: "result_state = 'FAILED'"
   check:
     function: sql_expression
     arguments:
-      expression: "start_time >= current_timestamp() - INTERVAL 90 DAYS"
-  user_metadata:
-    alert_channel: "ops"
-    playbook: "job-latency"
-    owner: "data-eng"
+      expression: "error_code IS NOT NULL AND trim(error_code) <> '' AND lower(trim(error_code)) <> 'n/a'"
 
-# 7) Row-level: regex on URL format
+- table_name: dq_prd.monitoring.job_run_audit
+  name: failed_runs_have_notifications
+  criticality: error
+  run_config_name: default
+  filter: "result_state = 'FAILED'"
+  check:
+    function: sql_expression
+    arguments:
+      expression: "(msteams_notification = 1) OR (email_notification IS NOT NULL AND trim(email_notification) <> '' AND lower(trim(email_notification)) <> 'n/a')"
+
+# --- Launch/schedule semantics ------------------------------------------------
+
+- table_name: dq_prd.monitoring.job_run_audit
+  name: launched_by_allowed_values
+  criticality: error
+  run_config_name: default
+  check:
+    function: is_in_list
+    arguments:
+      column: launched_by
+      allowed: ["MANUAL","SCHEDULED","PERIODIC","API","WORKFLOW","RETRY"]
+
+- table_name: dq_prd.monitoring.job_run_audit
+  name: periodic_runs_require_schedule
+  criticality: error
+  run_config_name: default
+  filter: "launched_by = 'PERIODIC'"
+  check:
+    function: sql_expression
+    arguments:
+      expression: "schedule_type = 'quartz_cron_expression' AND schedule IS NOT NULL AND trim(schedule) <> '' AND lower(trim(schedule)) <> 'n/a'"
+
+# --- URL / identity formatting -----------------------------------------------
+
 - table_name: dq_prd.monitoring.job_run_audit
   name: run_page_url_is_https
   criticality: error
@@ -79,17 +165,27 @@
       column: run_page_url
       regex: "^https://.+"
 
-# 8) Dataset-level: composite uniqueness (one run per job+start_time)
 - table_name: dq_prd.monitoring.job_run_audit
-  name: unique_job_id_start_time
+  name: creator_is_email_or_na
   criticality: error
   run_config_name: default
   check:
-    function: is_unique
+    function: sql_expression
     arguments:
-      columns: [job_id, start_time]
+      expression: "lower(trim(creator)) = 'n/a' OR creator RLIKE '^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$'"
 
-# 9) Row-level: numeric range on raw epoch
+- table_name: dq_prd.monitoring.job_run_audit
+  name: run_id_safe_charset
+  criticality: error
+  run_config_name: default
+  check:
+    function: regex_match
+    arguments:
+      column: run_id
+      regex: "^[A-Za-z0-9_.:\\-]+$"
+
+# --- Raw time integrity -------------------------------------------------------
+
 - table_name: dq_prd.monitoring.job_run_audit
   name: start_time_raw_is_positive
   criticality: error
@@ -100,122 +196,76 @@
       column: start_time_raw
       min_limit: 1
 
-# 10) Row-level + filter: failed runs must carry an error_code
 - table_name: dq_prd.monitoring.job_run_audit
-  name: failed_runs_have_error_code
+  name: start_time_raw_matches_start_time
   criticality: error
   run_config_name: default
-  filter: "result_state = 'FAILED'"
   check:
     function: sql_expression
     arguments:
-      expression: "error_code IS NOT NULL AND trim(error_code) <> ''"
+      # allow 60s tolerance
+      expression: "ABS(start_time_raw - unix_timestamp(start_time) * 1000) <= 60000"
 
-
-############################################################################################
-#   FAILED CHECKS: The below checks are meant for testing & should fail everytime
-############################################################################################
-
-# All of these are meant to FAIL (produce hits)
+# --- Functional consistency / dataset-level ----------------------------------
 
 - table_name: dq_prd.monitoring.job_run_audit
-  name: failed_error_code_present
+  name: job_name_maps_to_single_job_id
   criticality: error
   run_config_name: default
-  filter: "result_state = 'FAILED'"
+  check:
+    function: sql_query
+    arguments:
+      query: >
+        SELECT a.*
+        FROM {{table}} a
+        INNER JOIN (
+          SELECT job_name, MIN(job_id) AS min_id, MAX(job_id) AS max_id
+          FROM {{table}}
+          GROUP BY job_name
+          HAVING MIN(job_id) <> MAX(job_id)
+        ) b
+        ON a.job_name = b.job_name
+      limit: 1000000
+
+- table_name: dq_prd.monitoring.job_run_audit
+  name: unique_job_id_start_time
+  criticality: error
+  run_config_name: default
+  check:
+    function: is_unique
+    arguments:
+      columns: [job_id, start_time]
+
+# --- Business strings not "n/a"/empty ----------------------------------------
+
+- table_name: dq_prd.monitoring.job_run_audit
+  name: key_strings_not_na_or_empty
+  criticality: error
+  run_config_name: default
   check:
     function: sql_expression
     arguments:
-      expression: "error_code IS NOT NULL AND trim(error_code) <> '' AND lower(trim(error_code)) <> 'n/a'"
+      expression: >
+        lower(trim(job_name)) <> 'n/a' AND trim(job_name) <> '' AND
+        lower(trim(job_id)) <> 'n/a'   AND trim(job_id)   <> '' AND
+        lower(trim(run_page_url)) <> 'n/a' AND trim(run_page_url) <> ''
+
+# --- Duration formats (tolerant) ---------------------------------------------
 
 - table_name: dq_prd.monitoring.job_run_audit
-  name: failed_state_is_terminated
-  criticality: error
+  name: duration_hms_or_na
+  criticality: warn
   run_config_name: default
-  filter: "result_state = 'FAILED'"
   check:
     function: sql_expression
     arguments:
-      expression: "state = 'TERMINATED'"
+      expression: "lower(trim(duration)) = 'n/a' OR duration RLIKE '^[0-9]{1,2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,3})?$'"
 
 - table_name: dq_prd.monitoring.job_run_audit
-  name: failed_msteams_notification_configured
-  criticality: error
+  name: queue_duration_hms_or_na
+  criticality: warn
   run_config_name: default
-  filter: "result_state = 'FAILED'"
   check:
     function: sql_expression
     arguments:
-      expression: "msteams_notification IS NOT NULL AND cast(msteams_notification AS STRING) NOT IN ('0', 'n/a', '')"
-
-- table_name: dq_prd.monitoring.job_run_audit
-  name: failed_description_not_empty
-  criticality: error
-  run_config_name: default
-  filter: "result_state = 'FAILED'"
-  check:
-    function: sql_expression
-    arguments:
-      expression: "description IS NOT NULL AND trim(description) <> '' AND lower(trim(description)) <> 'n/a'"
-
-- table_name: dq_prd.monitoring.job_run_audit
-  name: failed_email_notification_present
-  criticality: error
-  run_config_name: default
-  filter: "result_state = 'FAILED'"
-  check:
-    function: sql_expression
-    arguments:
-      expression: "email_notification IS NOT NULL AND trim(email_notification) <> '' AND lower(trim(email_notification)) <> 'n/a'"
-
-- table_name: dq_prd.monitoring.job_run_audit
-  name: failed_pause_status_paused
-  criticality: error
-  run_config_name: default
-  filter: "result_state = 'FAILED'"
-  check:
-    function: sql_expression
-    arguments:
-      expression: "pause_status = 'PAUSED'"
-
-- table_name: dq_prd.monitoring.job_run_audit
-  name: failed_timezone_chicago
-  criticality: error
-  run_config_name: default
-  filter: "result_state = 'FAILED'"
-  check:
-    function: sql_expression
-    arguments:
-      expression: "timezone_id = 'America/Chicago'"
-
-- table_name: dq_prd.monitoring.job_run_audit
-  name: failed_creator_domain_claconnect
-  criticality: error
-  run_config_name: default
-  filter: "result_state = 'FAILED'"
-  check:
-    function: regex_match
-    arguments:
-      column: creator
-      regex: ".*@claconnect\\.com$"
-
-- table_name: dq_prd.monitoring.job_run_audit
-  name: failed_schedule_type_present
-  criticality: error
-  run_config_name: default
-  filter: "result_state = 'FAILED'"
-  check:
-    function: sql_expression
-    arguments:
-      expression: "schedule_type IS NOT NULL AND lower(trim(schedule_type)) <> 'n/a'"
-
-- table_name: dq_prd.monitoring.job_run_audit
-  name: failed_periodic_has_cron
-  criticality: error
-  run_config_name: default
-  filter: "result_state = 'FAILED'"
-  check:
-    function: sql_expression
-    arguments:
-      # If it's PERIODIC, require a proper cron type and a non-empty schedule
-      expression: "launched_by <> 'PERIODIC' OR (schedule_type = 'quartz_cron_expression' AND schedule IS NOT NULL AND lower(trim(schedule)) <> 'n/a')"
+      expression: "lower(trim(queue_duration)) = 'n/a' OR queue_duration RLIKE '^[0-9]{1,2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,3})?$'"
