@@ -2,7 +2,6 @@
 
 **Owner:** Levi Gagne  
 **Scope:** Build a *useful* DQ dashboard on top of `dq_dev.dqx.checks_log` with views that turn row-level booleans into actionable counts, offenders, and drilldowns.  
-**Style:** fast, correct, and usable. No BS.
 
 ---
 
