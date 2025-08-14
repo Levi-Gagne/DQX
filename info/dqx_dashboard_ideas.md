@@ -1,300 +1,125 @@
-# DQX Offender‑Aware Dashboard — Proposal & First Cut
+# DQX offender-extraction plan — **checks_log-first** dashboard
 
 **Owner:** Levi Gagne  
-**Scope:** Turn `dq_dev.dqx.checks_log` into high‑signal views + a Lakeview dashboard that surfaces *what failed*, *where*, and *why*, with “offender extraction” for common functions.
-**Last updated:** 2025-08-14 01:06 UTC
+**Scope:** Build a *useful* DQ dashboard on top of `dq_dev.dqx.checks_log` with views that turn row-level booleans into actionable counts, offenders, and drilldowns.  
+**Style:** fast, correct, and usable. No BS.
 
 ---
 
 ## TL;DR
 
-- Model the noisy `checks_log` into **three stable layers**: events → offenders → rollups.  
-- Prefer **views** while iterating; switch hot paths to **materialized views** in UC later.  
-- Use `run_time` from the error payload for timelines (not `created_at`, which is batch-level).  
-- Extract offenders for common DQX functions (`is_not_null*`, `is_in_list`, `regex_match`, `is_in_range`, `is_unique`) via SQL-only heuristics on `row_snapshot`.  
-- Keep names consistent: all analytics views are prefixed with **`dashboard_*`** in schema `dq_dev.dqx`.
-- Programmatic Lakeview: store JSON under `dashboards/DQX_Overview.lvdash.json`; create/publish from a notebook.
+- Normalize `checks_log` into three views:
+  1) `dashboard_events` — one record **per issue** (error/warn) per row, with `function`, `message`, `columns`, fingerprints, etc.  
+  2) `dashboard_row_kv` — the **row snapshot** exploded into `column,value,is_null,is_empty,is_zero` for drilldowns.  
+  3) `dashboard_kpi` & breakdowns — the simple rollups the dashboard needs now.
+
+- Add **function-aware offenders** via *thin* views:
+  - `dashboard_offenders_is_not_null` / `is_not_empty` / `is_not_null_and_not_empty`
+  - `dashboard_offenders_is_in_list`, `regex_match`, `is_in_range`, `is_not_greater_than`, `is_not_less_than`, etc.
+  - Each view emits: `event_id, table_name, run_config_name, check_name, target_column, offending_value, run_time, severity`.
+
+- For **arguments**, prefer `checks.check.check.arguments` via `check_id` join; fall back to parsing `message` when `check_id` is missing and function is `sql_expression`.
+
+- Start with **views** (cheap to iterate); we can flip selective ones to **materialized views** later once patterns stabilize.
 
 ---
 
-## Table of Contents
+## Contents
 
-1. [Source Contracts](#source-contracts)  
-2. [Design Goals](#design-goals)  
-3. [Data Model](#data-model)  
-   - 3.1 [Events](#events)  
-   - 3.2 [Row Snapshot (KV)](#row-snapshot-kv)  
-   - 3.3 [Offender Extraction](#offender-extraction)  
-   - 3.4 [Rule Catalog Join](#rule-catalog-join)  
-   - 3.5 [Rollups & KPI](#rollups--kpi)  
-4. [SQL — Views (ready to run)](#sql--views-ready-to-run)  
-5. [Function Coverage Matrix](#function-coverage-matrix)  
-6. [Performance & Ops Notes](#performance--ops-notes)  
-7. [Lakeview: Programmatic Create/Publish](#lakeview-programmatic-createpublish)  
-8. [Next Steps](#next-steps)  
-9. [References](#references)
+1. [Source & assumptions](#source--assumptions)  
+2. [Ready‑to‑run SQL: base views](#ready-to-run-sql-base-views)  
+3. [Function coverage matrix](#function-coverage-matrix) — definitions, args, fail semantics, and offender SQL patterns  
+4. [Offender extraction views (ready to run)](#offender-extraction-views-ready-to-run)  
+5. [Notes: scale & ops](#notes-scale--ops)
 
 ---
 
-## Source Contracts
+## Source & assumptions
 
-**Results sink:** `dq_dev.dqx.checks_log`  
-Key columns we actually use:
-- `log_id` (PK, deterministic hash)
-- `_errors` / `_warnings` (arrays of structs with `name, message, columns, filter, function, run_time, user_metadata`)
-- `row_snapshot` (array of `{column, value}`; values are strings)
-- `check_id` (array of rule IDs that fired) — optional mapping back to config
-- `created_at` (load time; not a good timeline signal for dashboards)
-- `table_name`, `run_config_name`
-
-**Checks catalog:** `dq_dev.dqx.checks` (flattened rule metadata)
+- **Results table**: `dq_dev.dqx.checks_log` (schema you provided). It’s row‑level: one log row per *source row* that tripped ≥1 rule; `_errors`/`_warnings` are arrays of issue structs.  
+- **Rules table**: `dq_dev.dqx.checks` (flattened config). We join by exploding `check_id` from results → `checks.check_id` to recover `function` and **arguments** when needed.  
+- **Semantics**: DQX emits booleans; a rule “fires” when the boolean condition is **violated**. We interpret “fail = true” per row for row‑level checks. Dataset‑level checks also report per row (DQX joins results back to the input).  
+- **Timestamps**: `created_at` in results is a batch write time (not event time). For trends, prefer `e.run_time` within `_errors/_warnings` if present; otherwise, fall back to `created_at`.
 
 ---
 
-## Design Goals
+## Ready‑to‑run SQL: base views
 
-- **Insight > pretty**: tell me *which rule patterns* and *which fields* are driving most pain.
-- **Row → Event**: each error/warn element becomes one **event** with a stable `event_id`.
-- **Column awareness** without reading the original table: mine `row_snapshot` KV.
-- **Low ceremony**: pure SQL for modeling; keep PySpark for dashboard creation only.
-- **Names you can grep**: everything we create starts with `dashboard_` in the `dqx` schema.
-
----
-
-## Data Model
-
-### Events
-
-- Explode `_errors` and `_warnings` to a unified `dashboard_events` with `severity IN ('ERROR','WARN')`.
-- `event_id = sha2(log_id || ':' || severity_short || ':' || position, 256)` for stability.
-- Prefer `run_time` from the event payload as the *event timestamp*.
-
-### Row Snapshot (KV)
-
-- Normalize `row_snapshot` (array of `{{column, value}}`) to `dashboard_row_kv` with convenience flags: `is_null`, `is_empty`, `is_zero` (best‑effort via `try_cast`).
-
-### Offender Extraction
-
-- `dashboard_event_offenders` adds:
-  - `offender_columns` (array<string>)
-  - `offender_values` (array<string>)
-  - `offender_count` (int)  
-- Heuristics are **function‑aware** (`e.function`) and use `e.columns` if present; else fallback to scanning all snapshot KVs. Examples:
-  - `is_not_null` → any `kv.value IS NULL` for the target column(s).
-  - `is_not_null_and_not_empty` → `NULL` or `trim(value)=''`.
-  - `is_in_list` → values **not** in the rule argument list (when we can parse).
-  - `regex_match` → values not matching supplied regex (best effort if regex appears in `message`).
-  - `is_in_range` → values outside `[min_limit,max_limit]` (parse limits when present).
-  - `is_unique` (dataset‑level) → flag duplicate groups among *violating logs only* using a derived fingerprint over the key columns from `row_snapshot`.
-
-> Everything is written to tolerate partial metadata: when `columns` is `NULL` in the event, we widen to all snapshot columns.
-
-### Rule Catalog Join
-
-- `dashboard_rules_catalog` reads from `dq_dev.dqx.checks` (id, name, criticality, table).
-- `dashboard_rules_affected` explodes `check_id` from the results log to count how often each rule fired.
-- `dashboard_events_enriched` joins events to catalog by `check_name` **or** via the exploded `check_id` bridge (best‑effort).
-
-### Rollups & KPI
-
-- Simple time series (`run_time`), top checks/tables/columns, message noise, pattern fingerprints.
-- A single summary view `dashboard_kpi` provides counts + averages for tiles.
-
----
-
-## SQL — Views (ready to run)
-
-> Unity Catalog supports **MATERIALIZED VIEW** on SQL Warehouses. While iterating, stick to regular views. When happy, flip specific `CREATE VIEW` → `CREATE MATERIALIZED VIEW` for hot paths.
+> Run this *as-is* in a Databricks notebook (SQL or PySpark with `%sql`). Views are under `dq_dev.dqx` and prefixed with `dashboard_…` so they group in the UI.
 
 ```sql
--- Catalog & schema
 USE CATALOG dq_dev;
 USE SCHEMA dqx;
 
--- ───────────────────────────────
--- 1) Events (errors & warnings)
--- ───────────────────────────────
+/* 1) Events: explode errors & warnings with stable event_id */
 CREATE OR REPLACE VIEW dashboard_errors AS
 SELECT
+  'ERROR'                 AS severity,
   l.log_id,
   l.table_name,
   l.run_config_name,
-  e.name          AS check_name,
-  e.message       AS message,
-  e.function      AS function,
-  e.filter        AS filter,
-  e.run_time      AS run_time,
-  e.user_metadata AS user_metadata,
-  e.columns       AS columns,
-  l.created_at    AS created_at,
-  l._errors_fingerprint AS errors_fingerprint,
+  e.name                  AS check_name,
+  e.message               AS message,
+  e.function              AS function,
+  e.filter                AS filter,
+  e.run_time              AS run_time,
+  e.user_metadata         AS user_metadata,
+  e.columns               AS columns,
+  l.created_at            AS created_at,
+  l._errors_fingerprint   AS errors_fingerprint,
   l.row_snapshot_fingerprint AS row_snapshot_fingerprint,
-  p.pos           AS err_pos,
+  p.pos                   AS pos,
   sha2(concat(l.log_id, ':E:', cast(p.pos AS STRING)), 256) AS event_id
 FROM dqx.checks_log l
-LATERAL VIEW OUTER posexplode(l._errors) p AS pos, e;
+LATERAL VIEW OUTER posexplode(_errors) p AS pos, e;
 
 CREATE OR REPLACE VIEW dashboard_warnings AS
 SELECT
+  'WARN'                  AS severity,
   l.log_id,
   l.table_name,
   l.run_config_name,
-  w.name          AS check_name,
-  w.message       AS message,
-  w.function      AS function,
-  w.filter        AS filter,
-  w.run_time      AS run_time,
-  w.user_metadata AS user_metadata,
-  w.columns       AS columns,
-  l.created_at    AS created_at,
+  w.name                  AS check_name,
+  w.message               AS message,
+  w.function              AS function,
+  w.filter                AS filter,
+  w.run_time              AS run_time,
+  w.user_metadata         AS user_metadata,
+  w.columns               AS columns,
+  l.created_at            AS created_at,
   l._warnings_fingerprint AS warnings_fingerprint,
   l.row_snapshot_fingerprint AS row_snapshot_fingerprint,
-  p.pos           AS warn_pos,
+  p.pos                   AS pos,
   sha2(concat(l.log_id, ':W:', cast(p.pos AS STRING)), 256) AS event_id
 FROM dqx.checks_log l
-LATERAL VIEW OUTER posexplode(l._warnings) p AS pos, w;
+LATERAL VIEW OUTER posexplode(_warnings) p AS pos, w;
 
+/* Unified events stream */
 CREATE OR REPLACE VIEW dashboard_events AS
-SELECT 'ERROR' AS severity, e.* EXCEPT(err_pos) FROM dashboard_errors e
+SELECT severity, log_id, table_name, run_config_name, check_name, message, function, filter, run_time,
+       user_metadata, columns, created_at, row_snapshot_fingerprint, event_id
+FROM dashboard_errors
 UNION ALL
-SELECT 'WARN'  AS severity, w.* EXCEPT(warn_pos) FROM dashboard_warnings w;
+SELECT severity, log_id, table_name, run_config_name, check_name, message, function, filter, run_time,
+       user_metadata, columns, created_at, row_snapshot_fingerprint, event_id
+FROM dashboard_warnings;
 
--- ───────────────────────────────
--- 2) Row snapshot normalized
--- ───────────────────────────────
+/* 2) Row snapshot KV for offenders */
 CREATE OR REPLACE VIEW dashboard_row_kv AS
 SELECT
   l.log_id,
   l.table_name,
   l.run_config_name,
   l.created_at,
-  kv.column AS column,
-  kv.value  AS value,
-  CASE WHEN kv.value IS NULL THEN TRUE ELSE FALSE END                                      AS is_null,
-  CASE WHEN kv.value IS NOT NULL AND length(trim(kv.value)) = 0 THEN TRUE ELSE FALSE END  AS is_empty,
-  CASE WHEN TRY_CAST(kv.value AS DOUBLE) = 0 THEN TRUE ELSE FALSE END                      AS is_zero
+  kv.column                         AS column,
+  kv.value                          AS value,
+  kv.value IS NULL                  AS is_null,
+  (kv.value IS NOT NULL AND length(trim(kv.value)) = 0) AS is_empty,
+  (safe_cast(kv.value AS DOUBLE) = 0) AS is_zero
 FROM dqx.checks_log l
-LATERAL VIEW OUTER explode(l.row_snapshot) s AS kv;
+LATERAL VIEW OUTER explode(row_snapshot) s AS kv;
 
--- ───────────────────────────────
--- 3) Offender extraction (function-aware)
--- ───────────────────────────────
-CREATE OR REPLACE VIEW dashboard_event_offenders AS
-WITH target_cols AS (
-  SELECT
-    e.event_id,
-    e.log_id,
-    e.check_name,
-    e.function,
-    COALESCE(e.columns, array()) AS columns
-  FROM dashboard_events e
-),
--- widen to all snapshot columns when event.columns is null/empty
-expanded AS (
-  SELECT
-    t.*,
-    CASE
-      WHEN size(t.columns) = 0 THEN COLLECT_LIST(k.column) OVER (PARTITION BY t.log_id)
-      ELSE t.columns
-    END AS target_cols
-  FROM target_cols t
-  LEFT JOIN dashboard_row_kv k
-    ON k.log_id = t.log_id
-),
--- explode targets and join to KV values
-kv_join AS (
-  SELECT
-    e.event_id, e.log_id, e.check_name, e.function,
-    tgt AS target_col,
-    k.value AS value
-  FROM expanded e
-  LATERAL VIEW explode(e.target_cols) c AS tgt
-  LEFT JOIN dashboard_row_kv k
-    ON k.log_id = e.log_id AND k.column = tgt
-)
-SELECT
-  event_id,
-  check_name,
-  function,
-  /* offenders by function */
-  ARRAY_FILTER(COLLECT_SET(target_col), c -> c IS NOT NULL)          AS offender_columns,
-  ARRAY_FILTER(COLLECT_SET(value), v -> v IS NOT NULL)               AS offender_values,
-  COUNT(*)                                                            AS offender_count
-FROM (
-  SELECT
-    k.*,
-    CASE
-      WHEN function IN ('is_not_null') THEN (value IS NULL)
-      WHEN function IN ('is_not_null_and_not_empty') THEN (value IS NULL OR length(trim(value)) = 0)
-      WHEN function IN ('is_in_range') THEN (
-        /* best-effort parse: look for min/max in message if not in arguments */
-        -- treat non-numeric as offender (parsing is deferred for now)
-        TRY_CAST(value AS DOUBLE) IS NULL
-      )
-      WHEN function IN ('regex_match') THEN (
-        -- we can't run the regex at read time without args; conservatively flag NULL/empty
-        (value IS NULL OR length(value) = 0)
-      )
-      WHEN function IN ('is_in_list') THEN (
-        -- without the allow‑list, we can only surface the actual values;
-        -- downstream UI can join to checks to display allowed set
-        value IS NULL
-      )
-      ELSE TRUE  -- default: mark the target so we can still count per‑column
-    END AS is_offender
-  FROM kv_join k
-) z
-WHERE is_offender
-GROUP BY event_id, check_name, function;
-
--- ───────────────────────────────
--- 4) Rule catalog joins & coverage
--- ───────────────────────────────
-CREATE OR REPLACE VIEW dashboard_rules_catalog AS
-SELECT
-  c.check_id,
-  c.name,
-  c.criticality,
-  c.table_name,
-  c.run_config_name,
-  c.filter,
-  c.check
-FROM dq_dev.dqx.checks c;
-
-CREATE OR REPLACE VIEW dashboard_rules_affected AS
-SELECT cid AS check_id, COUNT(*) AS rows_hit
-FROM dqx.checks_log
-LATERAL VIEW OUTER explode(check_id) t AS cid
-GROUP BY cid;
-
-CREATE OR REPLACE VIEW dashboard_events_enriched AS
-SELECT
-  e.*,
-  COALESCE(c.criticality, 'unknown') AS criticality,
-  c.check_id                         AS matched_check_id
-FROM dashboard_events e
-LEFT JOIN dashboard_rules_catalog c
-  ON lower(e.check_name) = lower(c.name);
-
--- Fallback mapping via check_id when names don't line up
-CREATE OR REPLACE VIEW dashboard_events_enriched_v2 AS
-SELECT
-  e.*,
-  COALESCE(c.criticality, 'unknown') AS criticality,
-  c.check_id                         AS matched_check_id
-FROM dashboard_events e
-LEFT JOIN (
-  SELECT l.log_id, cid AS check_id
-  FROM dqx.checks_log l
-  LATERAL VIEW OUTER explode(l.check_id) tmp AS cid
-) m
-  ON m.log_id = e.log_id
-LEFT JOIN dashboard_rules_catalog c
-  ON c.check_id = m.check_id;
-
--- ───────────────────────────────
--- 5) Rollups & KPI
--- ───────────────────────────────
+/* 3) Lightweight KPIs */
 CREATE OR REPLACE VIEW dashboard_kpi AS
 WITH base AS (
   SELECT
@@ -303,9 +128,7 @@ WITH base AS (
     SUM(CASE WHEN size(_warnings)> 0 THEN 1 ELSE 0 END) AS rows_with_warnings,
     COUNT(DISTINCT row_snapshot_fingerprint)            AS unique_rows_fingerprint,
     COUNT(DISTINCT _errors_fingerprint)                 AS unique_error_patterns,
-    COUNT(DISTINCT _warnings_fingerprint)               AS unique_warning_patterns,
-    MIN(created_at) AS first_ingest_at,
-    MAX(created_at) AS last_ingest_at
+    COUNT(DISTINCT _warnings_fingerprint)               AS unique_warning_patterns
   FROM dqx.checks_log
 ),
 evt AS (
@@ -314,20 +137,18 @@ evt AS (
     SUM(CASE WHEN severity='WARN'  THEN 1 ELSE 0 END) AS warning_events
   FROM dashboard_events
 )
-SELECT
-  b.*,
-  e.error_events,
-  e.warning_events,
-  ROUND(e.error_events / NULLIF(b.rows_with_any_issue,0), 3)  AS avg_errors_per_row,
-  ROUND(e.warning_events / NULLIF(b.rows_with_any_issue,0), 3) AS avg_warnings_per_row
+SELECT b.*, e.*,
+       ROUND(e.error_events   / NULLIF(b.rows_with_any_issue,0), 3) AS avg_errors_per_row,
+       ROUND(e.warning_events / NULLIF(b.rows_with_any_issue,0), 3) AS avg_warnings_per_row
 FROM base b CROSS JOIN evt e;
 
+/* Breakdown helpers */
 CREATE OR REPLACE VIEW dashboard_events_by_day AS
-SELECT date_trunc('day', run_time) AS day,
+SELECT coalesce(date_trunc('day', run_time), date_trunc('day', created_at)) AS day,
        SUM(CASE WHEN severity='ERROR' THEN 1 ELSE 0 END) AS error_events,
        SUM(CASE WHEN severity='WARN'  THEN 1 ELSE 0 END) AS warning_events
 FROM dashboard_events
-GROUP BY date_trunc('day', run_time)
+GROUP BY coalesce(date_trunc('day', run_time), date_trunc('day', created_at))
 ORDER BY day;
 
 CREATE OR REPLACE VIEW dashboard_events_by_table AS
@@ -337,113 +158,294 @@ SELECT table_name,
 FROM dashboard_events
 GROUP BY table_name
 ORDER BY error_events DESC, warning_events DESC;
-
-CREATE OR REPLACE VIEW dashboard_events_by_check AS
-SELECT COALESCE(check_name,'unknown') AS check_name,
-       SUM(CASE WHEN severity='ERROR' THEN 1 ELSE 0 END) AS error_events,
-       SUM(CASE WHEN severity='WARN'  THEN 1 ELSE 0 END) AS warning_events
-FROM dashboard_events
-GROUP BY COALESCE(check_name,'unknown')
-ORDER BY error_events DESC, warning_events DESC;
-
-CREATE OR REPLACE VIEW dashboard_events_by_column AS
-SELECT col AS column,
-       SUM(CASE WHEN severity='ERROR' THEN 1 ELSE 0 END) AS error_events,
-       SUM(CASE WHEN severity='WARN'  THEN 1 ELSE 0 END) AS warning_events
-FROM dashboard_events
-LATERAL VIEW OUTER explode(columns) c AS col
-GROUP BY col
-ORDER BY error_events DESC, warning_events DESC;
-
-CREATE OR REPLACE VIEW dashboard_top_error_messages AS
-SELECT message, COUNT(*) AS error_events
-FROM dashboard_errors
-GROUP BY message
-ORDER BY error_events DESC;
 ```
 
-> When ready to materialize: replace `CREATE OR REPLACE VIEW ...` with `CREATE OR REPLACE MATERIALIZED VIEW ...` for **`dashboard_events`**, **`dashboard_row_kv`**, **`dashboard_event_offenders`**, and **`dashboard_events_by_day`**.
+---
+
+## Function coverage matrix
+
+> Based on **Databricks Labs DQX** docs. I’m paraphrasing the official descriptions and listing the key arguments you’ll see in `checks.check.check.arguments` from the config table (when `check_id` links), plus how I interpret **fail** semantics and how to extract **offending values** from `row_snapshot`.\
+> Source: DQX *Quality Rules* — Row‑level & Dataset‑level checks.
+
+### Row‑level checks
+
+| Function | Official summary | Key args | “Fail” means | Offender SQL pattern |
+|---|---|---|---|---|
+| `is_not_null` | Values in `column` are **not null**. | `column` | Value **IS NULL**. | Join `dashboard_events` by `function='is_not_null'` → restrict `dashboard_row_kv` to `column` (from args if available, else any) and `is_null=true` → emit `(event_id, column, value)`. |
+| `is_not_empty` | Values in `column` are **not empty** (after trim). | `column` | Value is **empty string**. | Same join; filter `is_empty=true`. |
+| `is_not_null_and_not_empty` | Value in `column` is neither `NULL` nor **empty**. | `column` | `is_null OR is_empty`. | Filter `(is_null OR is_empty)`. |
+| `is_in_list` | Values in `column` exist in **allowed** list (array or table). | `column`, `allowed` (list) | `value NOT IN allowed` (ignoring null/empty per policy). | Parse `allowed` from config args; then `value NOT IN allowed AND NOT is_null AND NOT is_empty`. |
+| `regex_match` | Value in `column` **matches regex**. | `column`, `regex` | `NOT regexp_like(value, regex)`. | Use `NOT regexp_like(value, <regex>)` with null/empty guards. |
+| `is_in_range` | Value in `column` within [`min_limit`,`max_limit`] (numeric/date). | `column`, `min_limit`, `max_limit` | `value < min OR value > max` (respect inclusive flags if present). | Cast to DECIMAL/DATE per arg types, compare vs limits. |
+| `is_not_greater_than` | Value in `column` is **≤ limit**. | `column`, `limit` | `value > limit`. | Cast numeric/date; filter `value > limit`. |
+| `is_not_less_than` | Value in `column` is **≥ limit**. | `column`, `limit` | `value < limit`. | Cast numeric/date; filter `value < limit`. |
+| `is_equal_to` | Value in `column` equals `ref_value`/`ref_column`. | `column`, `ref_value` or `ref_column` | `value != ref`. | Compare against literal or second column pulled from KV. |
+| `is_not_equal_to` | Value in `column` **!= ref**. | `column`, `ref_value` or `ref_column` | `value == ref`. | Same as above, negated. |
+| `is_greater_than` | Value in `column` **> limit/ref**. | `column`, `limit` or `ref_column` | `value <= ref`. | Numeric/date compare. |
+| `is_less_than` | Value in `column` **< limit/ref**. | `column`, `limit` or `ref_column` | `value >= ref`. | Numeric/date compare. |
+| `is_older_than_n_days` | Value in time `column1` is at least **n days older than** `column2`. | `column1`, `column2`, `days` | `DATEDIFF(column2, column1) < days`. | Cast both as date/timestamp, compute `datediff`. |
+| `sql_expression` | Free‑form boolean **SQL expression**; fail when expression evaluates **False** (or `negate` flips). | `expression` (string), optional `negate`, `name`, `msg` | Depends on expr. | When `check_id` missing, we can only surface `message` and not auto‑derive offenders; otherwise parse the expression or join back to args. |
+
+### Dataset‑level checks
+
+| Function | Official summary | Key args | “Fail” means | Offender SQL pattern |
+|---|---|---|---|---|
+| `is_unique` | Values in `columns` are **unique** (composite key supported; nulls distinct by default). | `columns`, `nulls_distinct` | A key repeats. | Compute `COUNT(*) OVER (PARTITION BY key)`; offenders have count > 1. |
+| `is_aggr_not_greater_than` | Aggregated values **≤ limit** (count/sum/avg/min/max). | `column` (optional for `count`), `limit`, `aggr_type`, `group_by` | Aggregate > limit. | Use aggregation over `group_by` slice, flag groups violating limit. |
+| `is_aggr_not_less_than` | Aggregated values **≥ limit**. | same as above | Aggregate < limit. | Mirror of above. |
+| `is_aggr_equal` | Aggregate equals limit. | same | Aggregate != limit. | Equality compare. |
+| `is_aggr_not_equal` | Aggregate != limit. | same | Aggregate == limit. | Negated equality. |
+| `foreign_key` | Input `columns` exist in **reference** (DF or table). | `columns`, `ref_columns`, `ref_df_name`/`ref_table`, `negate` | Value missing (or present when `negate=true`). | Anti‑join against reference. |
+| `sql_query` | Custom SQL that returns a **condition column** (True = fail). | `query`, `input_placeholder`, `merge_columns`, `condition_column`, … | Rows where condition is True. | Use the provided query and merge cols. |
+| `compare_datasets` | Compare two DFs by `columns` and cell diffs; attaches a JSON diff log into `message`. | `columns`, `ref_columns`, `exclude_columns`, `ref_df_name`/`ref_table`, … | Any missing/extra/mismatched. | Parse the structured JSON in `message`→`dataset_diffs.changed` to render specifics. |
+| `is_data_fresh_per_time_window` | At least *X* records per *Y*-minute window. | `column`, `window_minutes`, `min_records_per_window`, … | Any window with fewer than min records. | Group by tumbling windows and count. |
+
+> I’ll wire offenders for these on demand; most dataset checks don’t use `row_snapshot` by design.
 
 ---
 
-## Function Coverage Matrix
+## Offender extraction views (ready to run)
 
-| Function family | Offenders we can surface today | Notes |
-|---|---|---|
-| `is_not_null` | target columns where `value IS NULL` | Straight from KV. |
-| `is_not_null_and_not_empty` | `NULL` **or** `trim(value)=''` | Text fields handled. |
-| `is_in_list` | target values (cannot compute “allowed” without args) | Display actual bad values; cross‑link to rule args in catalog for the list. |
-| `regex_match` | `NULL/empty` now; **TODO**: apply regex when available | We can parse `check.arguments.regex` once we wire args from catalog. |
-| `is_in_range` | non‑numeric values as offenders now; **TODO**: parse min/max | If args include `min_limit/max_limit`, use them to test numerically. |
-| `is_unique` (dataset) | derive duplicate fingerprint across key columns among violating logs | “Local” to violating set; still diagnostic. |
-| `sql_expression` | best‑effort: surface the target columns; treat `NULL/empty` as offenders | Full eval requires the original SQL or parsed predicates. |
+> These assume you’ll have rule arguments in `dq_dev.dqx.checks` and that **most** row‑level checks target a *single* column (common case). When `check_id` is missing, we fall back to heuristics (regex/message) only for `sql_expression`.
 
-The official DQX reference lists available **row‑level** and **dataset‑level** checks, with guidance on when to prefer dataset‑level for large group validations. See references below.
+```sql
+USE CATALOG dq_dev;
+USE SCHEMA dqx;
 
----
+/* Helper: explode check_id to join rules */
+CREATE OR REPLACE VIEW dashboard_event_rules AS
+SELECT e.*, cid AS check_id
+FROM dashboard_events e
+LATERAL VIEW OUTER explode(
+  coalesce((SELECT check_id FROM dqx.checks_log l WHERE l.log_id = e.log_id), array())
+) t AS cid;
 
-## Performance & Ops Notes
+CREATE OR REPLACE VIEW dashboard_rules_catalog AS
+SELECT check_id, name, criticality, table_name, run_config_name,
+       check.function AS rule_function,
+       check.for_each_column AS rule_for_each_column,
+       check.arguments AS rule_arguments
+FROM dq_dev.dqx.checks;
 
-- Use **`run_time`** for time series; `created_at` belongs to the batch writer and will often be identical across one load.
-- Partitioning: if you later switch to **materialized views**, UC will manage refreshes. For large tables, consider clustering your **base** table by `table_name`, `run_config_name`, and a date bucket from `run_time` for locality.
-- De‑dup is handled by `event_id` and `log_id` hashes; you can `SELECT DISTINCT` in downstream tiles if needed.
-- Null/empty detection runs purely on the stringified snapshot; add type‑aware parsing (e.g., `try_cast`) when we wire rule arguments.
+/* === 1) is_not_null === */
+CREATE OR REPLACE VIEW dashboard_offenders_is_not_null AS
+WITH targets AS (
+  SELECT er.event_id, er.log_id, er.table_name, er.run_config_name, er.check_name, er.run_time, er.severity,
+         /* prefer explicit target(s) from config, else try errors.columns, else any column */
+         coalesce(rc.rule_for_each_column, er.columns) AS target_cols
+  FROM dashboard_event_rules er
+  LEFT JOIN dashboard_rules_catalog rc USING (check_id)
+  WHERE er.function = 'is_not_null'
+)
+SELECT
+  t.event_id, t.table_name, t.run_config_name, t.check_name, t.run_time, t.severity,
+  kv.column       AS target_column,
+  kv.value        AS offending_value
+FROM targets t
+JOIN dashboard_row_kv kv ON kv.log_id = t.log_id
+WHERE (target_cols IS NULL OR array_contains(target_cols, kv.column))
+  AND kv.is_null = TRUE;
 
----
+/* === 2) is_not_empty === */
+CREATE OR REPLACE VIEW dashboard_offenders_is_not_empty AS
+WITH targets AS (
+  SELECT er.*, coalesce(rc.rule_for_each_column, er.columns) AS target_cols
+  FROM dashboard_event_rules er
+  LEFT JOIN dashboard_rules_catalog rc USING (check_id)
+  WHERE er.function = 'is_not_empty'
+)
+SELECT t.event_id, t.table_name, t.run_config_name, t.check_name, t.run_time, t.severity,
+       kv.column AS target_column, kv.value AS offending_value
+FROM targets t
+JOIN dashboard_row_kv kv ON kv.log_id = t.log_id
+WHERE (target_cols IS NULL OR array_contains(target_cols, kv.column))
+  AND kv.is_empty = TRUE;
 
-## Lakeview — Programmatic Create/Publish
+/* === 3) is_not_null_and_not_empty === */
+CREATE OR REPLACE VIEW dashboard_offenders_is_not_null_and_not_empty AS
+WITH targets AS (
+  SELECT er.*, coalesce(rc.rule_for_each_column, er.columns) AS target_cols
+  FROM dashboard_event_rules er
+  LEFT JOIN dashboard_rules_catalog rc USING (check_id)
+  WHERE er.function = 'is_not_null_and_not_empty'
+)
+SELECT t.event_id, t.table_name, t.run_config_name, t.check_name, t.run_time, t.severity,
+       kv.column AS target_column, kv.value AS offending_value
+FROM targets t
+JOIN dashboard_row_kv kv ON kv.log_id = t.log_id
+WHERE (target_cols IS NULL OR array_contains(target_cols, kv.column))
+  AND (kv.is_null OR kv.is_empty);
 
-```python
-# Run in a Databricks notebook that sits at the repo root.
-# Expects: dashboards/DQX_Overview.lvdash.json committed next to this notebook.
-%pip install -q databricks-sdk
-dbutils.library.restartPython()
+/* === 4) is_in_list === */
+CREATE OR REPLACE VIEW dashboard_offenders_is_in_list AS
+WITH args AS (
+  SELECT er.event_id, er.log_id, er.table_name, er.run_config_name, er.check_name, er.run_time, er.severity,
+         kv.column, kv.value,
+         try_from_json(rc.rule_arguments['allowed']) AS allowed_json /* string->array */
+  FROM dashboard_event_rules er
+  JOIN dashboard_row_kv kv ON kv.log_id = er.log_id
+  LEFT JOIN dashboard_rules_catalog rc USING (check_id)
+  WHERE er.function = 'is_in_list'
+)
+SELECT event_id, table_name, run_config_name, check_name, run_time, severity,
+       column AS target_column, value AS offending_value
+FROM args
+WHERE value IS NOT NULL AND length(trim(value))>0
+  AND (allowed_json IS NULL OR NOT array_contains(allowed_json, value));
 
-import os, json
-from databricks.sdk import WorkspaceClient
-from databricks.sdk.service.dashboards import Dashboard as LvDashboard
+/* === 5) regex_match === */
+CREATE OR REPLACE VIEW dashboard_offenders_regex_match AS
+WITH args AS (
+  SELECT er.event_id, er.log_id, er.table_name, er.run_config_name, er.check_name, er.run_time, er.severity,
+         kv.column, kv.value,
+         rc.rule_arguments['regex'] AS regex
+  FROM dashboard_event_rules er
+  JOIN dashboard_row_kv kv ON kv.log_id = er.log_id
+  LEFT JOIN dashboard_rules_catalog rc USING (check_id)
+  WHERE er.function = 'regex_match'
+)
+SELECT event_id, table_name, run_config_name, check_name, run_time, severity,
+       column AS target_column, value AS offending_value
+FROM args
+WHERE value IS NOT NULL AND length(trim(value))>0
+  AND (regex IS NULL OR NOT regexp_like(value, regex));
 
-WAREHOUSE_ID = "ca5a45e27debab49"
-DISPLAY_NAME = "DQX – Quality Overview"
-PARENT_PATH  = "/Users/levi.gagne@claconnect.com/DQX"  # or /Shared/DQX
+/* === 6) is_in_range === */
+CREATE OR REPLACE VIEW dashboard_offenders_is_in_range AS
+WITH args AS (
+  SELECT er.event_id, er.log_id, er.table_name, er.run_config_name, er.check_name, er.run_time, er.severity,
+         kv.column, kv.value,
+         safe_cast(rc.rule_arguments['min_limit'] AS DOUBLE) AS min_limit,
+         safe_cast(rc.rule_arguments['max_limit'] AS DOUBLE) AS max_limit
+  FROM dashboard_event_rules er
+  JOIN dashboard_row_kv kv ON kv.log_id = er.log_id
+  LEFT JOIN dashboard_rules_catalog rc USING (check_id)
+  WHERE er.function = 'is_in_range'
+)
+SELECT event_id, table_name, run_config_name, check_name, run_time, severity,
+       column AS target_column, value AS offending_value
+FROM args
+WHERE value IS NOT NULL AND try_cast(value AS DOUBLE) IS NOT NULL
+  AND (
+    (min_limit IS NOT NULL AND try_cast(value AS DOUBLE) <  min_limit) OR
+    (max_limit IS NOT NULL AND try_cast(value AS DOUBLE) >  max_limit)
+  );
 
-nb_path   = dbutils.entry_point.getDbutils().notebook().getContext().notebookPath().get()
-repo_dir  = os.path.dirname(nb_path)
-json_path = f"/Workspace{repo_dir}/dashboards/DQX_Overview.lvdash.json"
+/* === 7) is_not_greater_than === */
+CREATE OR REPLACE VIEW dashboard_offenders_is_not_greater_than AS
+WITH args AS (
+  SELECT er.event_id, er.log_id, er.table_name, er.run_config_name, er.check_name, er.run_time, er.severity,
+         kv.column, kv.value,
+         safe_cast(rc.rule_arguments['limit'] AS DOUBLE) AS limit
+  FROM dashboard_event_rules er
+  JOIN dashboard_row_kv kv ON kv.log_id = er.log_id
+  LEFT JOIN dashboard_rules_catalog rc USING (check_id)
+  WHERE er.function = 'is_not_greater_than'
+)
+SELECT event_id, table_name, run_config_name, check_name, run_time, severity,
+       column AS target_column, value AS offending_value
+FROM args
+WHERE value IS NOT NULL AND try_cast(value AS DOUBLE) IS NOT NULL
+  AND (limit IS NULL OR try_cast(value AS DOUBLE) > limit);
 
-serialized = open(json_path, "r", encoding="utf-8").read().replace("{{WAREHOUSE_ID}}", WAREHOUSE_ID)
+/* === 8) is_not_less_than === */
+CREATE OR REPLACE VIEW dashboard_offenders_is_not_less_than AS
+WITH args AS (
+  SELECT er.event_id, er.log_id, er.table_name, er.run_config_name, er.check_name, er.run_time, er.severity,
+         kv.column, kv.value,
+         safe_cast(rc.rule_arguments['limit'] AS DOUBLE) AS limit
+  FROM dashboard_event_rules er
+  JOIN dashboard_row_kv kv ON kv.log_id = er.log_id
+  LEFT JOIN dashboard_rules_catalog rc USING (check_id)
+  WHERE er.function = 'is_not_less_than'
+)
+SELECT event_id, table_name, run_config_name, check_name, run_time, severity,
+       column AS target_column, value AS offending_value
+FROM args
+WHERE value IS NOT NULL AND try_cast(value AS DOUBLE) IS NOT NULL
+  AND (limit IS NULL OR try_cast(value AS DOUBLE) < limit);
 
-w = WorkspaceClient()
-try:
-    w.workspace.get_status(PARENT_PATH)
-except Exception:
-    w.workspace.mkdirs(PARENT_PATH)
+/* === 9) is_equal_to / is_not_equal_to / is_greater_than / is_less_than ===
+     If rule_arguments contains a literal (e.g., 'ref_value'), we compare to it.
+     If rule_arguments carries 'ref_column', we lookup that column in row_snapshot. */
+CREATE OR REPLACE VIEW dashboard_offenders_value_compare AS
+WITH args AS (
+  SELECT er.event_id, er.log_id, er.table_name, er.run_config_name, er.check_name, er.run_time, er.severity, er.function,
+         kv.column AS target_column, kv.value AS left_value,
+         rc.rule_arguments['ref_value'] AS ref_value_str,
+         rc.rule_arguments['ref_column'] AS ref_column_name
+  FROM dashboard_event_rules er
+  JOIN dashboard_row_kv kv ON kv.log_id = er.log_id
+  LEFT JOIN dashboard_rules_catalog rc USING (check_id)
+  WHERE er.function IN ('is_equal_to','is_not_equal_to','is_greater_than','is_less_than')
+),
+ref AS (
+  SELECT a.*, rv.value AS ref_column_value
+  FROM args a
+  LEFT JOIN dashboard_row_kv rv
+    ON rv.log_id = a.log_id AND rv.column = a.ref_column_name
+)
+SELECT event_id, table_name, run_config_name, check_name, run_time, severity, function,
+       target_column,
+       left_value AS offending_value
+FROM ref
+WHERE
+  CASE function
+    WHEN 'is_equal_to'       THEN coalesce(left_value, '') <> coalesce(coalesce(ref_value_str, ref_column_value), '')
+    WHEN 'is_not_equal_to'   THEN coalesce(left_value, '')  = coalesce(coalesce(ref_value_str, ref_column_value), '')
+    WHEN 'is_greater_than'   THEN try_cast(left_value AS DOUBLE) <= try_cast(coalesce(ref_value_str, ref_column_value) AS DOUBLE)
+    WHEN 'is_less_than'      THEN try_cast(left_value AS DOUBLE) >= try_cast(coalesce(ref_value_str, ref_column_value) AS DOUBLE)
+  END;
 
-dash = w.lakeview.create(LvDashboard(
-    display_name=DISPLAY_NAME,
-    warehouse_id=WAREHOUSE_ID,
-    parent_path=PARENT_PATH,
-    serialized_dashboard=serialized
-))
-w.lakeview.publish(dash.dashboard_id)
+/* === 10) is_older_than_n_days === */
+CREATE OR REPLACE VIEW dashboard_offenders_is_older_than_n_days AS
+WITH args AS (
+  SELECT er.event_id, er.log_id, er.table_name, er.run_config_name, er.check_name, er.run_time, er.severity,
+         rc.rule_arguments['column1'] AS column1,
+         rc.rule_arguments['column2'] AS column2,
+         safe_cast(rc.rule_arguments['days'] AS INT) AS days
+  FROM dashboard_event_rules er
+  LEFT JOIN dashboard_rules_catalog rc USING (check_id)
+  WHERE er.function = 'is_older_than_n_days'
+),
+kv AS (
+  SELECT a.*, v1.value AS v1, v2.value AS v2
+  FROM args a
+  LEFT JOIN dashboard_row_kv v1 ON v1.log_id=a.log_id AND v1.column=a.column1
+  LEFT JOIN dashboard_row_kv v2 ON v2.log_id=a.log_id AND v2.column=a.column2
+)
+SELECT event_id, table_name, run_config_name, check_name, run_time, severity,
+       column1 AS target_column, v1 AS offending_value
+FROM kv
+WHERE datediff(to_date(v2), to_date(v1)) < coalesce(days, 0);
 
-print(f"Dashboard: {w.config.host.rstrip('/')}/dashboardsv3/{dash.dashboard_id}")
+/* === 11) sql_expression — surface only (opaque) === */
+CREATE OR REPLACE VIEW dashboard_offenders_sql_expression AS
+SELECT event_id, table_name, run_config_name, check_name, run_time, severity,
+       /* No safe generic extraction: surface message and let drilldowns use row_kv */
+       message AS expression_or_message
+FROM dashboard_events
+WHERE function = 'sql_expression';
 ```
 
-> Scheduling refresh via SDK is possible, but the current Python typings may lag the API in some runtimes. If the `create_schedule` helper isn’t present, pin a newer `databricks-sdk` or attach a schedule once via UI, then leave the rest to code.
+---
+
+## Notes: scale & ops
+
+- **Events fan‑out**: you’ll cap events by rules; that’s fine. If a rule targets N columns via `for_each_column`, `dashboard_event_rules` keeps those mappings.
+- **Arguments shape**: in config they’re `map<string,string>`. I coerce numerics with `safe_cast` and parse arrays with `try_from_json` where needed.
+- **When `check_id` is empty**: offenders views still work for *null/empty* families using heuristics on `row_snapshot`. For *value‑based* functions (`is_in_list`, ranges), argument‑driven views require the join to populate.
+- **Materialize later**: once stable, flip the heavy ones to `CREATE MATERIALIZED VIEW …` and point Lakeview tiles to those for speed.
 
 ---
 
-## Next Steps
+## Appendix — doc pointers I followed
 
-1. Wire **rule arguments** into `dashboard_event_offenders` (`min/max`, `allowed`, `regex`) by joining events to `dashboard_rules_catalog` and parsing `check.arguments`.  
-2. Add a **duplicate‑group view** for `is_unique` with group size and sample keys.  
-3. When stable, flip **hot views** to **materialized** for speed.  
-4. Add **Lakeview tiles** sourced from these views; keep tile SQL trivial (no array parsing in the dashboard).
+- Row‑level checks list, args and examples (incl. complex types and `sql_expression`).  
+- Dataset‑level checks: `is_unique`, aggregation guards, `foreign_key`, `sql_query`, `compare_datasets`, `is_data_fresh_per_time_window`.
 
----
-
-## References
-
-- DQX “Quality Rules” & row‑level checks: https://databrickslabs.github.io/dqx/docs/reference/quality_rules/#row-level-checks-reference  
-- Dataset‑level checks (incl. `foreign_key`) and guidance on row vs dataset checks: https://databrickslabs.github.io/dqx/docs/reference/quality_rules/#dataset-level-checks-reference
+```text
+DQX docs — Quality Rules
+Row-level: https://databrickslabs.github.io/dqx/docs/reference/quality_rules/#row-level-checks-reference
+Dataset-level: https://databrickslabs.github.io/dqx/docs/reference/quality_rules/#dataset-level-checks-reference
+```
