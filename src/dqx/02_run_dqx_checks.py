@@ -111,6 +111,146 @@ END: run_checks
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ### Runbook — 02_run_dqx_checks (Run DQX Checks)
+# MAGIC
+# MAGIC **Purpose**  
+# MAGIC Execute Databricks Labs DQX rules from the config table, write a row‑level results log, and produce lightweight rollups for dashboards.
+# MAGIC
+# MAGIC ---
+# MAGIC
+# MAGIC ## At a glance
+# MAGIC - **Notebook:** `02_run_dqx_checks`
+# MAGIC - **Engine:** `databricks-labs-dqx==0.8.x`
+# MAGIC - **Reads:** rules from `dq_{env}.dqx.checks_log` (Delta)
+# MAGIC - **Writes:**
+# MAGIC   - **Row log:** `dqx_checks_log_table_name` (Delta, one row per flagged source row)
+# MAGIC   - **Summary (by rule):** `dq_dev.dqx.checks_log_summary_by_rule` (append)
+# MAGIC   - **Summary (by table):** `dq_dev.dqx.checks_log_summary_by_table` (overwrite)
+# MAGIC - **Key behavior:** embeds `check_id` **inside each issue element** of `_errors`/`_warnings` (no top‑level `check_id` column). Deterministic `log_id` prevents accidental duplicates within a run.
+# MAGIC
+# MAGIC ---
+# MAGIC
+# MAGIC ## Prerequisites
+# MAGIC - Unity Catalog schemas exist and you have permission to **read source tables** and **write** to the targets above.
+# MAGIC - Rules have been loaded by **01_load_dqx_checks** into the checks config table.
+# MAGIC - Cluster/SQL warehouse with Delta support. The notebook enables `spark.databricks.delta.schema.autoMerge.enabled=true` for nested struct evolution.
+# MAGIC
+# MAGIC ---
+# MAGIC
+# MAGIC ## Inputs & Config
+# MAGIC YAML at `resources/dqx_config.yaml` (or your path) must define:
+# MAGIC ```yaml
+# MAGIC dqx_checks_config_table_name: dq_dev.dqx.checks           # rules table (from loader)
+# MAGIC dqx_checks_log_table_name:    dq_dev.dqx.checks_log       # results (row log)
+# MAGIC run_config_name:                                          # named run configs (RCs)
+# MAGIC   nightly:
+# MAGIC     output_config:
+# MAGIC       mode: overwrite                                     # overwrite|append
+# MAGIC       options: {}                                         # any DataFrameWriter options
+# MAGIC   ad_hoc:
+# MAGIC     output_config:
+# MAGIC       mode: append
+# MAGIC       options: {}
+# MAGIC ```
+# MAGIC
+# MAGIC **Rules selection per RC:** active rules where `run_config_name == <RC>` are loaded from the checks table.
+# MAGIC
+# MAGIC ---
+# MAGIC
+# MAGIC ## How to run
+# MAGIC Minimal usage in a cell:
+# MAGIC ```python
+# MAGIC # One‑time per cluster session
+# MAGIC # %pip install databricks-labs-dqx==0.8.0
+# MAGIC # dbutils.library.restartPython()
+# MAGIC
+# MAGIC run_checks(
+# MAGIC     dqx_cfg_yaml="resources/dqx_config.yaml",
+# MAGIC     created_by="AdminUser",
+# MAGIC     time_zone="America/Chicago",
+# MAGIC     exclude_cols=None,            # optional: columns to exclude from row_snapshot
+# MAGIC     coercion_mode="strict"        # "permissive" or "strict" argument coercion
+# MAGIC )
+# MAGIC ```
+# MAGIC
+# MAGIC **Parameters**
+# MAGIC - `dqx_cfg_yaml` – path to the YAML above.
+# MAGIC - `created_by` – audit field written to the row log.
+# MAGIC - `time_zone` – for banners/printing only.
+# MAGIC - `exclude_cols` – columns to omit from `row_snapshot` (e.g., large blobs).
+# MAGIC - `coercion_mode` – how strictly to coerce stringified rule arguments (`strict` recommended).
+# MAGIC
+# MAGIC ---
+# MAGIC
+# MAGIC ## What it does (flow)
+# MAGIC 1. **Environment banner** and YAML load.  
+# MAGIC 2. **Ensure row‑log table exists** (creates empty Delta table with schema & comments if missing).  
+# MAGIC 3. For each **run config (RC)** in YAML:  
+# MAGIC    a. **Load active rules** for that RC from the checks table; JIT‑coerce argument types; validate with `DQEngine`. Invalid rules are skipped (isolated).  
+# MAGIC    b. **Group by table**, read each source table, and call `DQEngine.apply_checks_by_metadata`. If a batch fails, the runner tests rules individually and drops offenders.  
+# MAGIC    c. **Project row hits** to the row‑log schema, computing:
+# MAGIC       - `row_snapshot` = `[{"column","value"}...]` over non‑reserved columns (stringified)  
+# MAGIC       - Fingerprints for `_errors`, `_warnings`, and `row_snapshot`  
+# MAGIC       - Deterministic `log_id = sha256(table_name, run_config_name, row_snapshot_fp, _errors_fp, _warnings_fp)`  
+# MAGIC    d. **Embed `check_id`** into each issue element (errors & warnings) by matching `(table, run_config_name, rule name, filter)`.  
+# MAGIC    e. **Write row log** to `dqx_checks_log_table_name` using RC’s `output_config` (default `overwrite`).  
+# MAGIC    f. **Summaries:** display per‑table rollups; build **by‑rule** counts (including zero‑hit rules) and append to `dq_dev.dqx.checks_log_summary_by_rule`.  
+# MAGIC 4. **Grand rollup (all RCs)** is written to `dq_dev.dqx.checks_log_summary_by_table` (overwrite).  
+# MAGIC 5. **Final banner** prints total rows written.
+# MAGIC
+# MAGIC ---
+# MAGIC
+# MAGIC ## Row‑Log schema (essential fields)
+# MAGIC - `log_id` *(PK)* – deterministic hash; ensures idempotency within a run.  
+# MAGIC - `table_name`, `run_config_name` – lineage.  
+# MAGIC - `_errors`, `_warnings` – arrays of issue structs:  
+# MAGIC   `{ name, message, columns[], filter, function, run_time, user_metadata, check_id }`  
+# MAGIC - `_errors_fingerprint`, `_warnings_fingerprint` – order/column‑order insensitive digests.  
+# MAGIC - `row_snapshot` – array of `{column, value}` (stringified).  
+# MAGIC - `row_snapshot_fingerprint` – digest included in `log_id`.  
+# MAGIC - `created_by`, `created_at`, `updated_by`, `updated_at` – audit.
+# MAGIC
+# MAGIC > **Note:** There is **no** top‑level `check_id` column; IDs live **inside** each issue element.
+# MAGIC
+# MAGIC ---
+# MAGIC
+# MAGIC ## Operational tips
+# MAGIC - **Write mode per RC**: control idempotency via YAML (`overwrite` recommended for scheduled runs; `append` for incremental scenarios).  
+# MAGIC - **Schema evolution**: if upgrading from a version without `issue.check_id`, the runner sets `autoMerge=true` to evolve arrays of structs in place.  
+# MAGIC - **Performance**: large tables can be slow—filter with rule‑level `filter` predicates in the checks table; consider running by table RCs.  
+# MAGIC - **Dashboards**: the downstream views in your dashboard should explode `_errors`/`_warnings` and join by embedded `check_id` when needed.
+# MAGIC
+# MAGIC ---
+# MAGIC
+# MAGIC ## Troubleshooting
+# MAGIC - **“no checks loaded”** for an RC → ensure checks table has `active=true` and exact `run_config_name` match.  
+# MAGIC - **Validation failures** → the runner will isolate bad rules and continue; check notebook output for offending rules (JSON logged). Fix the rule in YAML and re‑load with the loader.  
+# MAGIC - **Duplicate rows in append mode** → `log_id` is deterministic for the same row snapshot & issues; if inputs change (e.g., timestamps), duplicates are expected. Prefer `overwrite` for repeatable runs.  
+# MAGIC - **Missing `check_id` in issues** → verify rule names/filters/table names in checks table match the issues; embedding derives IDs by `(table_key, run_config_name, rule name, filter)`.
+# MAGIC
+# MAGIC ---
+# MAGIC
+# MAGIC ## Verification queries
+# MAGIC ```sql
+# MAGIC -- Row log rows by run config
+# MAGIC SELECT run_config_name, COUNT(*) AS rows
+# MAGIC FROM dq_dev.dqx.checks_log
+# MAGIC GROUP BY run_config_name
+# MAGIC ORDER BY rows DESC;
+# MAGIC
+# MAGIC -- Any issue elements missing check_id?
+# MAGIC SELECT SUM(size(filter(_errors,   x -> x.check_id IS NULL))) AS errors_missing_id,
+# MAGIC        SUM(size(filter(_warnings, x -> x.check_id IS NULL))) AS warnings_missing_id
+# MAGIC FROM dq_dev.dqx.checks_log;
+# MAGIC
+# MAGIC -- Latest summaries
+# MAGIC SELECT * FROM dq_dev.dqx.checks_log_summary_by_rule   ORDER BY run_config_name, rows_flagged DESC;
+# MAGIC SELECT * FROM dq_dev.dqx.checks_log_summary_by_table  ORDER BY run_config_name, table_name;
+# MAGIC ```
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## Implementation
 
 # COMMAND ----------

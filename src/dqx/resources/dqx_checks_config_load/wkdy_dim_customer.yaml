@@ -1,0 +1,361 @@
+# =================================================================================================
+# DQX Rules — gold.wkdy_dim_customer 
+# Catalog: de_prd | Schema: gold | Table: wkdy_dim_customer
+# Run config: gold_wkdy_dim_customer
+#
+# Notes:
+# - Comments above each rule explain intent.
+# - A commented SQL block below each rule shows how to spot offenders in plain Spark SQL.
+# - Criticality: use `error` for must-haves; `warning` for desirable hygiene that legacy rows might violate.
+# =================================================================================================
+
+# 1) Primary key must be unique (no duplicate surrogate keys)
+# SQL test:
+# SELECT customer_key, COUNT(*) AS c
+# FROM de_prd.gold.wkdy_dim_customer
+# GROUP BY customer_key
+# HAVING COUNT(*) > 1;
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: PK uniqueness on customer_key
+criticality: error
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: is_unique
+  arguments:
+    columns: ["customer_key"]
+
+# 2) At most one ACTIVE (SCD) record per customer_id
+# SQL test:
+# SELECT customer_id, COUNT(*) AS active_rows
+# FROM de_prd.gold.wkdy_dim_customer
+# WHERE is_active_record = true
+# GROUP BY customer_id
+# HAVING COUNT(*) > 1;
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: One active record per customer_id
+criticality: error
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: sql_query
+  arguments:
+    input_placeholder: "{input}"
+    merge_columns: ["customer_id"]
+    condition_column: "is_offender"
+    query: |
+      SELECT
+        customer_id,
+        COUNT(*) > 1 AS is_offender
+      FROM {input}
+      WHERE is_active_record = true
+      GROUP BY customer_id
+
+# 3) SCD rule: end_date NULL when active; NOT NULL when inactive
+# SQL test:
+# SELECT *
+# FROM de_prd.gold.wkdy_dim_customer
+# WHERE (is_active_record = true  AND end_date IS NOT NULL)
+#    OR (is_active_record = false AND end_date IS NULL);
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: SCD end_date aligns with is_active_record
+criticality: error
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: sql_expression
+  arguments:
+    expression: |
+      (is_active_record = true  AND end_date IS NOT NULL)
+      OR
+      (is_active_record = false AND end_date IS NULL)
+
+# 4) SCD rule: start_date must be <= end_date (when end_date present)
+# SQL test:
+# SELECT *
+# FROM de_prd.gold.wkdy_dim_customer
+# WHERE end_date IS NOT NULL AND start_date IS NOT NULL AND end_date < start_date;
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: SCD date order valid (start_date <= end_date)
+criticality: error
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: sql_expression
+  arguments:
+    expression: |
+      end_date IS NOT NULL AND start_date IS NOT NULL AND end_date < start_date
+
+# 5) Reporting window order valid (start <= end when both present)
+# SQL test:
+# SELECT *
+# FROM de_prd.gold.wkdy_dim_customer
+# WHERE reporting_end_date IS NOT NULL
+#   AND reporting_start_date IS NOT NULL
+#   AND reporting_end_date < reporting_start_date;
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: Reporting date order valid
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: sql_expression
+  arguments:
+    expression: |
+      reporting_end_date IS NOT NULL AND reporting_start_date IS NOT NULL
+      AND reporting_end_date < reporting_start_date
+
+# 6) USA rows must have a city
+# SQL test:
+# SELECT *
+# FROM de_prd.gold.wkdy_dim_customer
+# WHERE country_iso_code = 'USA' AND (city IS NULL OR length(trim(city)) = 0);
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: City required when country=USA
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: sql_expression
+  arguments:
+    expression: |
+      country_iso_code = 'USA' AND (city IS NULL OR length(trim(city)) = 0)
+
+# 7) USA rows must have a valid 2-letter state code
+# SQL test:
+# SELECT *
+# FROM de_prd.gold.wkdy_dim_customer
+# WHERE country_iso_code = 'USA'
+#   AND (state_iso_code IS NULL OR upper(state_iso_code) NOT IN
+#       ('AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','IA','ID','IL','IN','KS','KY','LA','MA','MD','ME','MI','MN','MO','MS','MT','NC','ND','NE','NH','NJ','NM','NV','NY','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VA','VT','WA','WI','WV','DC','PR'));
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: State code valid when country=USA
+criticality: error
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: sql_expression
+  arguments:
+    expression: |
+      country_iso_code = 'USA'
+      AND (state_iso_code IS NULL OR upper(state_iso_code) NOT IN
+        ('AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','IA','ID','IL','IN','KS','KY','LA','MA','MD','ME','MI','MN','MO','MS','MT','NC','ND','NE','NH','NJ','NM','NV','NY','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VA','VT','WA','WI','WV','DC','PR'))
+
+# 8) US ZIP code format (5 or 9 digits with hyphen)
+# SQL test:
+# SELECT postal_code FROM de_prd.gold.wkdy_dim_customer
+# WHERE postal_code IS NOT NULL AND length(trim(postal_code))>0
+#   AND NOT regexp_like(postal_code, '^[0-9]{5}(-[0-9]{4})?$');
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: Postal code format (US ZIP/ZIP+4)
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: regex_match
+  arguments:
+    column: postal_code
+    regex: '^[0-9]{5}(-[0-9]{4})?$'
+
+# 9) Country code format (2–3 uppercase letters)
+# SQL test:
+# SELECT country_iso_code FROM de_prd.gold.wkdy_dim_customer
+# WHERE country_iso_code IS NOT NULL AND length(trim(country_iso_code))>0
+#   AND NOT regexp_like(country_iso_code, '^[A-Z]{2,3}$');
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: Country ISO code format
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: regex_match
+  arguments:
+    column: country_iso_code
+    regex: '^[A-Z]{2,3}$'
+
+# 10) Customer ID format 'A' followed by 5–7 digits
+# SQL test:
+# SELECT customer_id FROM de_prd.gold.wkdy_dim_customer
+# WHERE customer_id IS NOT NULL AND length(trim(customer_id))>0
+#   AND NOT regexp_like(customer_id, '^A[0-9]{5,7}$');
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: Customer ID format A+digits
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: regex_match
+  arguments:
+    column: customer_id
+    regex: '^A[0-9]{5,7}$'
+
+# 11) Email format — biller email looks like an email
+# SQL test:
+# SELECT customer_biller_email FROM de_prd.gold.wkdy_dim_customer
+# WHERE customer_biller_email IS NOT NULL AND length(trim(customer_biller_email))>0
+#   AND NOT regexp_like(customer_biller_email, '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: Email format (biller)
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: regex_match
+  arguments:
+    column: customer_biller_email
+    regex: '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+
+# 12) Email format — leader email looks like an email
+# SQL test:
+# SELECT customer_leader_email FROM de_prd.gold.wkdy_dim_customer
+# WHERE customer_leader_email IS NOT NULL AND length(trim(customer_leader_email))>0
+#   AND NOT regexp_like(customer_leader_email, '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: Email format (leader)
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: regex_match
+  arguments:
+    column: customer_leader_email
+    regex: '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+
+# 13) Email format — default contact email looks like an email
+# SQL test:
+# SELECT default_email_address FROM de_prd.gold.wkdy_dim_customer
+# WHERE default_email_address IS NOT NULL AND length(trim(default_email_address))>0
+#   AND NOT regexp_like(default_email_address, '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: Email format (default contact)
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: regex_match
+  arguments:
+    column: default_email_address
+    regex: '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+
+# 14) Phone format — US number variants allowed (nulls OK)
+# SQL test:
+# SELECT default_phone_number FROM de_prd.gold.wkdy_dim_customer
+# WHERE default_phone_number IS NOT NULL AND length(trim(default_phone_number))>0
+#   AND NOT regexp_like(default_phone_number, '^\+?1?[\s\-\.]?\(?\d{3}\)?[\s\-\.]?\d{3}[\s\-\.]?\d{4}$');
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: Phone format (US-ish)
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: regex_match
+  arguments:
+    column: default_phone_number
+    regex: '^\+?1?[\s\-\.]?\(?\d{3}\)?[\s\-\.]?\d{3}[\s\-\.]?\d{4}$'
+
+# 15) SIC code is 4 digits when present
+# SQL test:
+# SELECT customer_sic_code FROM de_prd.gold.wkdy_dim_customer
+# WHERE customer_sic_code IS NOT NULL AND NOT regexp_like(customer_sic_code, '^[0-9]{4}$');
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: SIC code format (4 digits)
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: regex_match
+  arguments:
+    column: customer_sic_code
+    regex: '^[0-9]{4}$'
+
+# 16) If SIC code present, its name must also be present
+# SQL test:
+# SELECT *
+# FROM de_prd.gold.wkdy_dim_customer
+# WHERE customer_sic_code IS NOT NULL
+#   AND (customer_sic_code_name IS NULL OR length(trim(customer_sic_code_name)) = 0);
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: SIC name required when code present
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: sql_expression
+  arguments:
+    expression: |
+      customer_sic_code IS NOT NULL
+      AND (customer_sic_code_name IS NULL OR length(trim(customer_sic_code_name)) = 0)
+
+# 17) Status ↔ reason alignment — Hold needs a reason containing 'hold'
+# SQL test:
+# SELECT *
+# FROM de_prd.gold.wkdy_dim_customer
+# WHERE upper(customer_status) = 'HOLD'
+#   AND (customer_status_reason IS NULL OR lower(customer_status_reason) NOT LIKE '%hold%');
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: Status reason present for Hold
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: sql_expression
+  arguments:
+    expression: |
+      upper(customer_status) = 'HOLD'
+      AND (customer_status_reason IS NULL OR lower(customer_status_reason) NOT LIKE '%hold%')
+
+# 18) Status ↔ reason alignment — Active should have benign reason (or be null)
+# SQL test:
+# SELECT *
+# FROM de_prd.gold.wkdy_dim_customer
+# WHERE upper(customer_status) = 'ACTIVE'
+#   AND customer_status_reason IS NOT NULL
+#   AND upper(customer_status_reason) NOT IN ('ACTIVE','OK','GOOD STANDING');
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: Status reason benign for Active
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: sql_expression
+  arguments:
+    expression: |
+      upper(customer_status) = 'ACTIVE'
+      AND customer_status_reason IS NOT NULL
+      AND upper(customer_status_reason) NOT IN ('ACTIVE','OK','GOOD STANDING')
+
+# 19) Business flag aligns with category (Individual ⇔ is_business=false)
+# SQL test:
+# SELECT *
+# FROM de_prd.gold.wkdy_dim_customer
+# WHERE (lower(customer_category) = 'individual' AND is_business = true)
+#    OR (lower(customer_category) <> 'individual' AND is_business = false);
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: is_business aligns with category
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: sql_expression
+  arguments:
+    expression: |
+      (lower(customer_category) = 'individual' AND is_business = true)
+      OR
+      (lower(customer_category) <> 'individual' AND is_business = false)
+
+# 20) last_updated string parses as a timestamp (ISO 8601 with offset)
+# SQL test:
+# SELECT last_updated
+# FROM de_prd.gold.wkdy_dim_customer
+# WHERE last_updated IS NOT NULL AND length(trim(last_updated))>0
+#   AND to_timestamp(last_updated, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") IS NULL;
+---
+table_name: de_prd.gold.wkdy_dim_customer
+name: last_updated is a valid timestamp
+criticality: warning
+run_config_name: gold_wkdy_dim_customer
+check:
+  function: is_valid_timestamp
+  arguments:
+    column: last_updated
+    timestamp_format: "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
