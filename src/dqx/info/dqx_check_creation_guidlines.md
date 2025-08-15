@@ -74,7 +74,21 @@ default:
 
 ---
 
-## 4) Function quick reference (most used)
+## 4) Review checklist (for PRs)
+
+- [ ] Keys in required order; names in lower_snake_case. 
+- [ ] `run_config_name` exists in run‑config YAML.
+- [ ] Each rule asserts **one** thing; arguments present only if needed.
+- [ ] Filters, if present, reduce scope meaningfully.
+- [ ] SQL companion (violation count + inspect) included as comments.
+- [ ] No rule that trivially matches all rows.
+- [ ] Dataset‑level checks don’t rely on non-deterministic expressions.
+- [ ] New rules won’t explode shuffle size (check distinct/group‑by cardinality).
+
+
+---
+
+## 5) Function quick reference (most used)
 
 | Function | Scope | Required args | Notes / examples |
 |---|---|---|---|
@@ -90,7 +104,7 @@ default:
 
 ---
 
-## 5) SQL companion pattern (if included, must be commented out)
+## 6) SQL companion pattern (if included, must be commented out)
 
 Add a short SQL block showing how to count/inspect **violations**. This makes rules auditable and reviewable. (**Recommended** but not required)
 
@@ -128,7 +142,7 @@ Include these under each rule as `# SQL ...` comments.
 
 ---
 
-## 6) Examples
+## 7) Examples
 
 ### A) `dq_prd.monitoring.job_run_audit` (high‑signal rules)
 
@@ -300,20 +314,7 @@ Include these under each rule as `# SQL ...` comments.
 
 ---
 
-## 7) Review checklist (for PRs)
-
-- [ ] Keys in required order; names in lower_snake_case.
-- [ ] `run_config_name` exists in run‑config YAML.
-- [ ] Each rule asserts **one** thing; arguments present only if needed.
-- [ ] Filters, if present, reduce scope meaningfully.
-- [ ] SQL companion (violation count + inspect) included as comments.
-- [ ] No rule that trivially matches all rows.
-- [ ] Dataset‑level checks don’t rely on non-deterministic expressions.
-- [ ] New rules won’t explode shuffle size (check distinct/group‑by cardinality).
-
----
-
-## 8) Performance tips
+## 9) Performance tips
 
 - Avoid wide `sql_query` scans over huge joins; prefer keys within the same table when possible.
 - Use `is_unique` vs. ad‑hoc SQL for uniqueness—engine optimizations apply.
@@ -321,7 +322,7 @@ Include these under each rule as `# SQL ...` comments.
 
 ---
 
-## 9) Versioning & change management
+## 10) Versioning & change management
 
 - Treat rule files as code: PR review required.
 - Include **why this rule** in the PR description plus sample violation counts from SQL companion.
@@ -329,7 +330,7 @@ Include these under each rule as `# SQL ...` comments.
 
 ---
 
-## 10) Common anti‑patterns
+## 11) Common anti‑patterns
 
 - `filter: 1 = 1` or filters that still match ~100% of rows.
 - Duplicating the same assertion with tiny variations—prefer one well‑scoped rule.
