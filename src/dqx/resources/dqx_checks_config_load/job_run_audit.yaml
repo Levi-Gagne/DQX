@@ -1,4 +1,7 @@
 # resources/dqx_checks_config/job_run_audit.yaml
+# created_by: LMG
+# created_at: 2025-08-15
+
 
 # --- Keys / presence ----------------------------------------------------------
 # DESCRIPTION: Core business columns must be present (not NULL).
