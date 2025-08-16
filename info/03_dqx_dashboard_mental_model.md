@@ -1,9 +1,8 @@
-
 # DQX Quality Analytics — Base Model & Query Pack (v0.8.x)
 
 This starter pack documents how to go from the raw DQX **text log** (`dq_dev.dqx.checks_log`) and **rules catalog** (`dq_dev.dqx.checks`) to analytics‑ready **materialized views** and **function‑specific query recipes** for both **row‑level** and **dataset‑level** checks.
 
-> **Scope:** Designed for your current layout where `checks_log` stores arrays of issues (`_errors`, `_warnings`) per offending row and **each issue element already contains** a `check_id` pointing back to the canonical rule in `checks`. We keep your existing table as‑is and add derived MVs for fast slicing and drill‑downs.
+> **Scope:** Designed for our current layout where `checks_log` stores arrays of issues (`_errors`, `_warnings`) per offending row and **each issue element already contains** a `check_id` pointing back to the canonical rule in `checks`. We keep our existing table as‑is and add derived MVs for fast slicing and drill‑downs.
 
 ---
 
@@ -115,9 +114,9 @@ This starter pack documents how to go from the raw DQX **text log** (`dq_dev.dqx
 
 ## 3. Base Materialized Views (idempotent)
 
-> Run once; safe to re‑run. If you prefer ordinary views, replace `MATERIALIZED VIEW` with `VIEW`.
+> Run once; safe to re‑run. If we prefer ordinary views, replace `MATERIALIZED VIEW` with `VIEW`.
 
-> **Assumptions:** `_errors[].check_id` and `_warnings[].check_id` exist in `checks_log` (per the updated writer you implemented). If some historical rows lack it, the queries still work; those events will have `check_id = NULL` until backfilled.
+> **Assumptions:** `_errors[].check_id` and `_warnings[].check_id` exist in `checks_log` (per the updated writer we implemented). If some historical rows lack it, the queries still work; those events will have `check_id = NULL` until backfilled.
 
 ### 3.1 `dashboard_event_base_mv`
 
@@ -215,7 +214,7 @@ GROUP BY log_id;
 
 ### 3.4 `dashboard_rule_map_mv`
 
-Thin index of the rules table you can join to by `check_id` for parameters/metadata.
+Thin index of the rules table we join to by `check_id` for parameters/metadata.
 
 ```sql
 DROP MATERIALIZED VIEW IF EXISTS dashboard_rule_map_mv;
@@ -230,7 +229,7 @@ SELECT
   criticality,
   check.function        AS function,
   filter,
-  -- arguments come from your config as MAP<STRING,STRING> (or STRUCT).
+  -- arguments come from our config as MAP<STRING,STRING> (or STRUCT).
   -- Keep as JSON for flexible parsing by function-specific SQL:
   to_json(check.arguments) AS arguments_json
 FROM dq_dev.dqx.checks
@@ -261,7 +260,7 @@ SELECT * FROM dashboard_event_base_mv;
 ## 5. Analytics Patterns — Dataset Level
 
 - Dataset checks like `is_unique`, `sql_query`, `compare_datasets` usually return offenders without a single target column (or with a **set** of columns).  
-- Use event rows (`dashboard_event_base_mv`) grouped by `check_id` + `table_name` to find affected rows; recompute exact deltas via a **replay query** (templated SQL) if you need ground truth lists, but the log-based counts are typically sufficient for dashboards.
+- Use event rows (`dashboard_event_base_mv`) grouped by `check_id` + `table_name` to find affected rows; recompute exact deltas via a **replay query** (templated SQL) if we need ground‑truth lists, but the log‑based counts are typically sufficient for dashboards.
 
 ---
 
@@ -613,19 +612,19 @@ ORDER BY windows_failed DESC;
 
 ## 8. Dashboard Wiring Tips
 
-- Consider these **starter tiles**:
+- Starter tiles:
   - Events by day (ERROR/WARN split) from `dashboard_events_mv`.
   - Top offending checks by table (`COUNT(*) FROM dashboard_event_base_mv GROUP BY table_name, check_name`).
   - Null/empty density per row (`dashboard_row_value_stats_mv`).
   - Function filter (selector) bound to `dashboard_event_base_mv.function`.
-- For deep “offender lists,” wire **link‑outs** to a notebook that runs the function‑specific snippet with the chosen `check_id`/table filter.
+- For deep “offender lists,” add link‑outs to a notebook that runs the function‑specific snippet with the chosen `check_id`/table filter.
 
 ---
 
 ## 9. Performance & Partitioning Notes
 
 - If `checks_log` grows to tens of millions of rows, consider **Z‑ORDER** on `(table_name, run_config_name, created_at)` and/or clustering by `table_name`.  
-- For the MVs, Databricks manages refresh/incremental maintenance; ensure the **warehouse** is assigned and scheduled.  
+- For the MVs, Databricks manages refresh/incremental maintenance; we ensure the **warehouse** is assigned and scheduled.  
 - Avoid over‑partitioning by `check_id` (5K+ keys) at the base table — skew risk. Prefer **coarser** partitioning (e.g., by day, table_name) and rely on Z‑ORDER for secondary pruning.
 
 ---
