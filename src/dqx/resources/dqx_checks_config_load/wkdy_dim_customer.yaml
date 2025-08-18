@@ -6,7 +6,7 @@
 # Notes:
 # - Comments above each rule explain intent.
 # - A commented SQL block below each rule shows how to spot offenders in plain Spark SQL.
-# - Criticality: use `error` for must-haves; `warning` for desirable hygiene that legacy rows might violate.
+# - Criticality: use `error` for must-haves; `warn` for desirable hygiene that legacy rows might violate.
 # =================================================================================================
 
 # 1) Primary key must be unique (no duplicate surrogate keys)
@@ -96,7 +96,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: Reporting date order valid
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: sql_expression
@@ -113,7 +113,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: City required when country=USA
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: sql_expression
@@ -149,7 +149,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: Postal code format (US ZIP/ZIP+4)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: regex_match
@@ -165,7 +165,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: Country ISO code format
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: regex_match
@@ -181,7 +181,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: Customer ID format A+digits
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: regex_match
@@ -197,7 +197,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: Email format (biller)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: regex_match
@@ -213,7 +213,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: Email format (leader)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: regex_match
@@ -229,7 +229,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: Email format (default contact)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: regex_match
@@ -245,7 +245,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: Phone format (US-ish)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: regex_match
@@ -260,7 +260,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: SIC code format (4 digits)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: regex_match
@@ -277,7 +277,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: SIC name required when code present
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: sql_expression
@@ -295,7 +295,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: Status reason present for Hold
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: sql_expression
@@ -314,7 +314,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: Status reason benign for Active
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: sql_expression
@@ -333,7 +333,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: is_business aligns with category
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: sql_expression
@@ -352,7 +352,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_customer
 name: last_updated is a valid timestamp
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_customer
 check:
   function: is_valid_timestamp

@@ -1042,7 +1042,7 @@ def run_checks(
             full_rules.withColumn("run_config_name", F.lit(rc_name)) \
                 .select("run_config_name","table_name","rule_name","severity",
                         "rows_flagged","table_total_rows","pct_of_table_rows") \
-                .write.format("delta").mode("append").saveAsTable("dq_dev.dqx.checks_log_summary_by_rule")
+                .write.format("delta").mode("overwrite").saveAsTable("dq_dev.dqx.checks_log_summary_by_rule")
 
         if not out_batches:
             print(f"[{rc_name}] no row-level hits.")

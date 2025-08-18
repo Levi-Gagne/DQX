@@ -1,17 +1,12 @@
-# utils/print.py
+# src/dqx/utils/print.py
 
 import sys
 from typing import Optional, Dict, Any
 from pyspark.sql import SparkSession
 
+from databricks.sdk.runtime import dbutils
+
 from utils.color import Color
-
-# dbutils may not exist under Spark Connect / SQL Warehouse
-try:
-    from databricks.sdk.runtime import dbutils  # noqa: F401
-except Exception:  # pragma: no cover
-    dbutils = None  # type: ignore
-
 from utils.timezone import current_time_iso
 
 

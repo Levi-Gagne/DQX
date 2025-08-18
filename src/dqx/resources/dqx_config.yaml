@@ -1,12 +1,17 @@
-# dqx/resources/dqx_config.yaml
+# src/dqx/resources/dqx_config.yaml
 
+# 01_load_dqx_checks
 dqx_yaml_checks: resources/dqx_checks_config_load
 dqx_checks_config_table_name: dq_dev.dqx.checks_config
+
+
+# 02_run_dqx_checks
 dqx_checks_log_table_name: dq_dev.dqx.checks_log
+
 
 run_config_name:
   default:
-    output_config:
+    output_config: 
       mode: overwrite
       options:
         mergeSchema: true

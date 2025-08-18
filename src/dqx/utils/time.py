@@ -1,4 +1,4 @@
-# utils/timezone.py
+# src/dqx/utils/timezone.py
 
 from datetime import datetime
 from zoneinfo import ZoneInfo

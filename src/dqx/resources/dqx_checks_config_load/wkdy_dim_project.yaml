@@ -4,7 +4,7 @@
 # Notes:
 # - Comments above each rule explain purpose.
 # - A commented SQL block below each rule lets you spot offenders with plain Spark SQL.
-# - Use `error` for correctness / integrity; use `warning` for hygiene and enrichments.
+# - Use `error` for correctness / integrity; use `warn` for hygiene and enrichments.
 # =================================================================================================
 
 # 1) Primary key must be unique (no duplicate surrogate keys)
@@ -129,7 +129,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Activity not after project_end_date
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: sql_expression
@@ -163,7 +163,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Schedule Pending has no activity
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: sql_expression
@@ -201,7 +201,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Inactive customer with active/scheduled project
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: sql_expression
@@ -218,7 +218,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Email format (leader)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: regex_match
@@ -233,7 +233,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Email format (biller)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: regex_match
@@ -250,7 +250,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Leader employee_id format (6 digits)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: regex_match
@@ -266,7 +266,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Biller employee_id format (6 digits)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: regex_match
@@ -283,7 +283,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Cost center code format (3 digits)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: regex_match
@@ -300,7 +300,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: SIC code format (4 digits)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: regex_match
@@ -316,7 +316,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: SIC name required when code present
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: sql_expression
@@ -334,7 +334,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Project ID format (common patterns)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: regex_match
@@ -351,7 +351,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Disallow 'Unknown' placeholders (key contributor)
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: sql_expression
@@ -371,7 +371,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Active project has leader & biller assigned
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: sql_expression
@@ -391,7 +391,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Active project has type and service line
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: sql_expression
@@ -409,7 +409,7 @@ check:
 ---
 table_name: de_prd.gold.wkdy_dim_project
 name: Period end after project start
-criticality: warning
+criticality: warn
 run_config_name: gold_wkdy_dim_project
 check:
   function: sql_expression

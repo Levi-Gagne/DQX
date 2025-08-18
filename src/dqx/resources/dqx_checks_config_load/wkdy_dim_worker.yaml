@@ -1,0 +1,189 @@
+# src/dqx/resources/dqx_checks_config_load/wkdy_dim_worker.yaml
+
+# =================================================================================================
+# DQX Rules — gold.wkdy_dim_worker 
+# Catalog: de_prd | Schema: gold | Table: wkdy_dim_worker
+
+
+# 1) worker_key must be unique across the table
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: worker_key_is_not_unique
+  criticality: warn
+  run_config_name: default
+  check:
+    function: is_unique
+    arguments:
+      columns: [worker_key]
+  # SQL (violation rows only; counts all rows in duplicate groups, excludes NULLs):
+  # WITH k AS (
+  #   SELECT worker_key, COUNT(*) OVER (PARTITION BY worker_key) AS kcnt
+  #   FROM de_prd.gold.wkdy_dim_worker
+  # )
+  # SELECT COUNT(*) AS violation_count
+  # FROM k
+  # WHERE worker_key IS NOT NULL AND kcnt > 1;
+
+# 2) employee_id must be present
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: employee_id_is_null
+  criticality: warn
+  run_config_name: default
+  check:
+    function: is_not_null
+    arguments:
+      column: employee_id
+  # SQL:
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_worker
+  # WHERE employee_id IS NULL;
+
+# 3) primary_work_email must be a valid shape
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: primary_work_email_is_invalid_shape
+  criticality: warn
+  run_config_name: default
+  check:
+    function: regex_match
+    arguments:
+      column: primary_work_email
+      regex: "^(.+)@(.+)$"
+  # SQL (shape only; nulls excluded from violation to mirror regex behavior on NULLs):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_worker
+  # WHERE primary_work_email IS NOT NULL
+  #   AND NOT (primary_work_email RLIKE '^(.+)@(.+)$');
+
+# 4) primary_work_email should be a CLA domain
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: primary_work_email_wrong_domain
+  criticality: warn
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: "primary_work_email is null OR lower(primary_work_email) LIKE '%@claconnect.com'"
+  # SQL (violation rows only = non-null & not claconnect.com):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_worker
+  # WHERE primary_work_email IS NOT NULL
+  #   AND lower(primary_work_email) NOT LIKE '%@claconnect.com';
+
+# 5) start_date must be <= end_date (wide defaults)
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: start_date_after_end_date
+  criticality: warn
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: "coalesce(CAST(start_date AS date), date '1900-01-01') <= coalesce(CAST(end_date AS date), date '9999-12-31')"
+  # SQL (violation rows only):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_worker
+  # WHERE coalesce(CAST(start_date AS date), date '1900-01-01')
+  #     > coalesce(CAST(end_date   AS date), date '9999-12-31');
+
+# 6) _created_date must be <= _last_updated_date
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: created_after_last_updated
+  criticality: warn
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: "coalesce(CAST(_created_date AS timestamp), timestamp '1900-01-01 00:00:00') <= coalesce(CAST(_last_updated_date AS timestamp), timestamp '9999-12-31 23:59:59')"
+  # SQL (violation rows only):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_worker
+  # WHERE coalesce(CAST(_created_date      AS timestamp), timestamp '1900-01-01 00:00:00')
+  #     > coalesce(CAST(_last_updated_date AS timestamp), timestamp '9999-12-31 23:59:59');
+
+# 7) If termination_date is populated, the worker should not be active
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: terminated_but_marked_active
+  criticality: warn
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: "termination_date is null OR is_active_worker = false"
+  # SQL (violation rows only):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_worker
+  # WHERE termination_date IS NOT NULL
+  #   AND is_active_worker = true;
+
+# 8) If is_active_record = true, end_date should be NULL (SCD hygiene)
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: active_record_has_end_date
+  criticality: warn
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: "NOT is_active_record OR end_date IS NULL"
+  # SQL (violation rows only):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_worker
+  # WHERE is_active_record = true
+  #   AND end_date IS NOT NULL;
+
+# 9) Full-time workers should have reasonable scheduled hours (0,80]
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: full_time_hours_out_of_range
+  criticality: warn
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: "employee_type <> 'Full-time' OR (scheduled_weekly_hours > 0 AND scheduled_weekly_hours <= 80)"
+  # SQL (violation rows only for Full-time):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_worker
+  # WHERE employee_type = 'Full-time'
+  #   AND (scheduled_weekly_hours IS NULL OR scheduled_weekly_hours <= 0 OR scheduled_weekly_hours > 80);
+
+# 10) Client-serving workers should have a service name
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: client_serving_missing_service_name
+  criticality: warn
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: "NOT is_client_serving OR worker_service_name IS NOT NULL"
+  # SQL (violation rows only):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_worker
+  # WHERE is_client_serving = true
+  #   AND worker_service_name IS NULL;
+
+# 11) If a manager ID is set, manager_email should look like an email
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: manager_email_invalid_when_manager_set
+  criticality: warn
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: "manager_employee_id IS NULL OR (manager_email IS NOT NULL AND manager_email RLIKE '^(.+)@(.+)$')"
+  # SQL (violation rows only):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_worker
+  # WHERE manager_employee_id IS NOT NULL
+  #   AND (manager_email IS NULL OR manager_email NOT RLIKE '^(.+)@(.+)$');
+
+# 12) US workers should have a 2-letter state code
+- table_name: de_prd.gold.wkdy_dim_worker
+  name: us_state_code_invalid
+  criticality: warn
+  run_config_name: default
+  check:
+    function: sql_expression
+    arguments:
+      expression: "location_country <> 'US' OR (location_state RLIKE '^[A-Z]{2}$')"
+  # SQL (violation rows only; US only):
+  # SELECT COUNT(*) AS violation_count
+  # FROM de_prd.gold.wkdy_dim_worker
+  # WHERE location_country = 'US'
+  #   AND (location_state IS NULL OR location_state NOT RLIKE '^[A-Z]{2}$');
