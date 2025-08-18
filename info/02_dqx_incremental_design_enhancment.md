@@ -1,118 +1,230 @@
-# DQX @ CLA — Incremental Runner Design, Keys, and CDF Playbook
+# CLA DQX — Incremental Runner Plan (CDF + Watermark)
+
+Goal: move from “scan everything, every day” to incremental without lying to ourselves. Keep it practical and honest about constraints.
+
+---
 
 ## 0) TL;DR
 
-- **Identity:** each rule has a **logic hash** (`logic_hash`) that ignores labels and run configs but captures functional semantics. We store it as both `logic_hash` and `hash_id` in the rules table, and inject it as `user_metadata.rule_id` so results carry it.
-- **Results:** each violation gets a **hit id** (`hit_id = sha256(rule_id || '|' || violation_key)`), where `violation_key` is a stable, rule-specific fingerprint (row identity or key tuple).
-- **Incremental by default:** enable **Delta Change Data Feed (CDF)** per table. Read only changed rows since the last processed **table version**, stored in a tiny control table `dqx_progress`.
-- **Parallelism:** same notebook, **multiple tasks**, each with a **job cluster** and different inputs (e.g., `rules_dir` shards). This is how you scale **horizontally** without intra-cluster fighting.
-- **Dataset-level uniqueness:** keep a small **state table** of key counts so you update only changed keys (optional v2).
+- **Row‑level checks** (nulls, ranges, regex, sql_expression on a row) can run **incrementally** if we can isolate changed rows.
+- **Dataset‑level checks** (is_unique, foreign_key, windowed counts) need **history awareness** → we keep a **key index** and update it incrementally.
+- **Two modes** (use whichever the table supports):
+  1) **CDF Mode** (preferred): Delta **Change Data Feed** by table version.
+  2) **Watermark Mode**: “last seen” value on a **monotonic column** (id or event_ts). If we don’t have one, it’s snapshot‑only until we introduce one.
+- **Identity & dedupe:** `rule_id` = logic hash of functional semantics; `hit_id = sha256(rule_id || '|' || violation_key)` so re‑runs don’t double‑write.
+- **Delta Sharing note:** treat shared tables as **snapshot only** (no CDF). Use Watermark Mode or snapshot‑diff + our own state in our catalog.
 
 ---
 
-## 1) Why this design
+## 1) What blocks incrementality today
 
-- You avoid O(all data × all rules) every run.
-- You write only **new** violations; reruns are idempotent via `hit_id`.
-- You can scale out by sharding tables or rule folders across tasks.
+We don’t consistently know a safe **watermark column** (id or event time) for many sources. Without CDF or a watermark, “incremental” is guesswork. Also, some rules (e.g., **is_unique**) require comparing **new** rows against **all historical** keys — you can’t do that correctly without a state table or a full scan.
 
 ---
 
-## 2) Identity and keys
+## 2) Rule identity & violation identity (what we write)
 
-### 2.1 Rule identity (already implemented in your loader)
-- `logic_hash` = SHA-256 over a **canonical** payload:
-  - **Include:** `table_name` (lowercased), `check.function` (lowercased), normalized `check.arguments`, normalized `check.for_each_column` (sorted), normalized `filter` (whitespace collapsed).
-  - **Exclude:** `name`, `run_config_name`, `user_metadata`, `criticality`.
-- Persist:
-  - `rules.hash_id = logic_hash`
-  - `rules.logic_hash = logic_hash`
-  - `rules.user_metadata.rule_id = logic_hash` (so results carry it directly)
+- **Rule identity (`rule_id`)**: SHA‑256 over canonical `{ table_name↓, filter(normalized), check{ function↓, for_each_column(sorted)?, arguments(stringified, keys sorted)? } }`.  
+  Excludes `name`, `criticality`, `run_config_name`, `user_metadata`.
+- **Violation identity (`hit_id`)**: `sha256(rule_id || '|' || violation_key)` where `violation_key` is stable per offending row (e.g., business PK JSON or a row checksum if no PK).
 
-### 2.2 Violation identity (results)
-- `rule_id` = `logic_hash` from rules table.
-- `violation_key` = deterministic string unique per violating row. Example: concat primary key values or a stable row checksum.
-- `hit_id` = `sha256(rule_id || '|' || violation_key)` — prevents duplicates on reruns.
+Why: `rule_id` lets us track a rule across renames; `hit_id` makes writes idempotent.
 
 ---
 
-## 3) Delta CDF incremental reads
+## 3) Modes
 
-### 3.1 Prereqs
-- Table must be Delta.
-- Enable CDF:
+### 3.1 CDF Mode (Delta Change Data Feed)
+
+**Use when:** the table is Delta and `delta.enableChangeDataFeed = true`.
+
+**How it works**  
+- We track the last processed **table version** per `(table, rule_id)` in `dq_dev.dqx_progress`.  
+- On each run, we read only changes `startingVersion = last_version + 1`.  
+- Row‑level checks run on this diff.  
+- Dataset‑level checks update a **key index** incrementally (see §4).
+
 ```sql
-ALTER TABLE my_table SET TBLPROPERTIES (delta.enableChangeDataFeed = true);
+-- One-time per table
+ALTER TABLE <catalog.schema.table> SET TBLPROPERTIES (delta.enableChangeDataFeed = true);
 ```
-- Ensure `dqx_progress` exists to track last processed version per table/rule:
+
+```python
+# Pseudocode (Spark)
+changes = (spark.read.format("delta")
+           .option("readChangeFeed","true")
+           .option("startingVersion", last_version + 1)
+           .table(table_fqn)
+           # Use postimage for latest values; handle deletes separately
+           .where("_change_type IN ('insert','update_postimage','delete')"))
+
+# Row-level: evaluate only 'insert' and 'update_postimage'
+delta_rows = changes.where("_change_type IN ('insert','update_postimage')")
+
+# Dataset-level: feed key-index with (+1/-1) for inserts/deletes; updates = -1 old +1 new if you read preimage+postimage.
+```
+
+**Pros:** true incremental without a business watermark, handles updates/deletes.  
+**Cons:** must own the table (or have provider enable CDF).
+
+### 3.2 Watermark Mode (Snapshot + Max Value)
+
+**Use when:** no CDF, but we have a **monotonic** column (`event_ts`, `ingest_id`, etc.).
+
+**How it works**  
+- Track `last_value` per `(table, watermark_column)` in `dqx_progress`.  
+- Next run = `WHERE watermark_column > last_value`.  
+- Row‑level checks work fine.  
+- Dataset‑level checks still need the **key index** to detect conflicts against history.
+
+```yaml
+# Example config mapping (table → watermark column)
+watermarks:
+  dq_prd.monitoring.job_run_audit: start_time
+  dq_prd.txn.fact_orders: ingest_ts
+```
+
+**Pros:** simple, no table property required.  
+**Cons:** requires a trustworthy monotonic column; won’t catch late arrivals or updates unless the watermark updates too.
+
+> If we have neither CDF nor a monotonic column, we are **snapshot‑only**. Options: add `ingest_ts` at ingestion, or do a snapshot‑diff against our last saved key list (expensive).
+
+---
+
+## 4) Dataset‑level checks need a **Key Index**
+
+**Why:** `is_unique([k…])`, `foreign_key`, grouped `sql_query` rules must compare new rows to history.
+
+**Table:** `dq_dev.dqx_key_index`
+
+| col              | type      | notes |
+|------------------|-----------|------|
+| table_name       | STRING    | FQN |
+| rule_id          | STRING    | logic hash |
+| key_hash         | STRING    | sha256(JSON of key tuple) |
+| key_json         | STRING    | stable JSON of key tuple (for debugging) |
+| count            | BIGINT    | refcount of seen rows for this key |
+| first_seen       | TIMESTAMP | when inserted |
+| last_seen        | TIMESTAMP | last touch |
+
+**Updates**  
+- **CDF Mode:**  
+  - `insert`/`update_postimage` → `count += 1` for that key.  
+  - `delete`/`update_preimage` → `count -= 1`.  
+- **Watermark Mode:** treat all new rows as `+1`. (We can’t see deletes unless publisher rewrites history or watermark captures updates.)
+
+**Detecting violations**  
+- For `is_unique(keys)`: violation exists when `count > 1`.  
+- For `foreign_key`: maintain a **separate dimension index** (or compute misses by anti‑join on the current dimension snapshot).
+
+---
+
+## 5) Control: `dq_dev.dqx_progress`
+
+| col          | type      | semantics |
+|--------------|-----------|-----------|
+| table_name   | STRING    | FQN |
+| rule_id      | STRING    | logic hash |
+| mode         | STRING    | `cdf` \| `watermark` \| `snapshot` |
+| watermark_col| STRING    | nullable; used in watermark mode |
+| last_version | BIGINT    | nullable; CDF mode |
+| last_value   | STRING    | nullable; watermark mode (store as string) |
+| processed_at | TIMESTAMP | audit |
+
+We keep one row per `(table_name, rule_id)` and update it after a successful write.
+
+---
+
+## 6) Runner outline (what the notebook/job does)
+
+```python
+for group in rules.group_by_table():
+    table = group.table_name
+    mode, spec = choose_mode(table)  # cdf if enabled else watermark if configured else snapshot
+
+    if mode == "cdf":
+        changes = read_cdf_since_version(table, spec.last_version)  # postimage rows
+        df_rows = changes.where("_change_type IN ('insert','update_postimage')")
+        run_rowlevel_rules(df_rows, group.row_rules)                 # write violations w/ hit_id
+        update_key_index_from_cdf(changes, group.dataset_rules)      # +/- counts
+        write_dataset_violations_from_index(table, group.dataset_rules)
+        update_progress_version(table, group.rule_ids, new_table_version)
+
+    elif mode == "watermark":
+        df_rows = spark.table(table).where(f"{spec.col} > '{spec.last_value}'")
+        run_rowlevel_rules(df_rows, group.row_rules)
+        update_key_index_from_rows(df_rows, group.dataset_rules)
+        write_dataset_violations_from_index(table, group.dataset_rules)
+        update_progress_value(table, group.rule_ids, df_rows.agg({"spec.col":"max"}))
+
+    else:  # snapshot (no incremental possible)
+        df_all = spark.table(table)
+        run_rowlevel_rules(df_all, group.row_rules)
+        rebuild_key_index(df_all, group.dataset_rules)  # heavy
+        write_dataset_violations_from_index(table, group.dataset_rules)
+```
+
+**Writes are idempotent** via `hit_id`. We `MERGE` into the violations table on `(hit_id)` to avoid dup rows on retries.
+
+---
+
+## 7) Delta Sharing note (consumer side)
+
+- Assume **snapshot‑only** access. CDF and table versions generally aren’t exposed through Delta Sharing.  
+- We can still do **Watermark Mode** if the shared table has a trustworthy column (`event_ts`, `id`, etc.).  
+- If not, we keep a **consumer‑side snapshot** of keys and anti‑join each run to find new keys (costly but workable on small key sets).  
+- All **state tables** (`dqx_progress`, `dqx_key_index`, violations) live in **our** catalog; the shared source remains read‑only.
+
+---
+
+## 8) Performance notes (don’t burn the cluster)
+
+- **Row‑level null checks:** prefer `for_each_column` over dataset scans; pair with filters to shrink I/O.  
+- **Key Index:** store **hash + JSON**; hash for joins, JSON for human debugging. Don’t explode it with unused columns.  
+- **Updates:** in CDF, use **postimage** for “new value” counts and subtract on preimage when available.  
+- **Late data:** watermark mode won’t see backfills unless the watermark column moves forward with them (event_time vs load_time matters).
+
+---
+
+## 9) Migration path from “full scan”
+
+1) Add/standardize a watermark where missing (prefer `ingest_ts` or a durable `event_ts`).  
+2) Enable **CDF** on owner‑managed Delta tables.  
+3) Create `dqx_progress` + `dqx_key_index`.  
+4) Compute `rule_id` and `hit_id` in the runner (we already compute `rule_id` in the loader).  
+5) Switch row‑level rules first. Add dataset‑level once the key index has warmed up.  
+6) Keep a fallback job for “snapshot‑only” tables until they’re fixed.
+
+---
+
+## 10) Minimal DDL
+
 ```sql
 CREATE TABLE IF NOT EXISTS dq_dev.dqx_progress (
-    table_name STRING,
-    rule_id STRING,
-    last_version BIGINT,
-    processed_at TIMESTAMP
+  table_name   STRING,
+  rule_id      STRING,
+  mode         STRING,
+  watermark_col STRING,
+  last_version BIGINT,
+  last_value   STRING,
+  processed_at TIMESTAMP
+) USING DELTA;
+
+CREATE TABLE IF NOT EXISTS dq_dev.dqx_key_index (
+  table_name STRING,
+  rule_id    STRING,
+  key_hash   STRING,
+  key_json   STRING,
+  count      BIGINT,
+  first_seen TIMESTAMP,
+  last_seen  TIMESTAMP
 ) USING DELTA;
 ```
 
-### 3.2 Example: Reading changes since last version
-```python
-from delta.tables import DeltaTable
-
-def read_cdf_incremental(spark, full_table_name, last_version):
-    return (spark.read.format("delta")
-            .option("readChangeFeed", "true")
-            .option("startingVersion", last_version + 1)
-            .table(full_table_name))
-```
-
 ---
 
-## 4) Parallelizing in Databricks Jobs
+## 11) What we will **not** pretend
 
-- Use **multi-task jobs**.
-- Each task:
-  - Same notebook.
-  - Different `rules_dir` or config param passed as a job parameter.
-  - Targets a smaller subset of rules/tables.
-- **Cluster strategy:** to scale CPU/memory, run each task on its **own job cluster**. Running multiple tasks on the same cluster won't increase the total memory available; they'll just compete.
+- Without CDF **or** a real watermark column, incrementality is marketing. We either store a prior snapshot of keys and diff (expensive) or we run full scans. Pick one and be explicit in the run config.
 
 ---
-
-## 5) Suggested `dqx_progress` schema
-
-| Column         | Type      | Purpose |
-|----------------|-----------|---------|
-| table_name     | STRING    | Fully qualified table name |
-| rule_id        | STRING    | Logic hash from rules table |
-| last_version   | BIGINT    | Last processed Delta table version |
-| processed_at   | TIMESTAMP | When the version was processed |
-
----
-
-## 6) Incremental loop outline
-
-```python
-def process_table_incrementally(spark, table_name, rule_id, last_version):
-    df_changes = read_cdf_incremental(spark, table_name, last_version)
-    # Apply your DQX rules here to df_changes instead of full table
-    # ...
-    new_version = DeltaTable.forName(spark, table_name).history().selectExpr("max(version)").first()[0]
-    update_progress(spark, table_name, rule_id, new_version)
-
-def update_progress(spark, table_name, rule_id, version):
-    spark.sql(f'''
-        MERGE INTO dq_dev.dqx_progress AS tgt
-        USING (SELECT '{table_name}' AS table_name, '{rule_id}' AS rule_id, {version} AS last_version, current_timestamp() AS processed_at) AS src
-        ON tgt.table_name = src.table_name AND tgt.rule_id = src.rule_id
-        WHEN MATCHED THEN UPDATE SET last_version = src.last_version, processed_at = src.processed_at
-        WHEN NOT MATCHED THEN INSERT *
-    ''')
-```
-
----
-
-## 7) Notes
-
-- If no natural PK exists, consider a **stable row checksum** of all columns as `violation_key`.
-- For non-Delta sources, CDF is not available — you’d need other strategies (e.g., snapshot diffing).
-- Keep your violation table **append-only**; rely on `hit_id` to dedupe.
