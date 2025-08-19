@@ -1,4 +1,3 @@
-import os
 import json
 import hashlib
 import yaml
@@ -14,6 +13,7 @@ from utils.display import show_df, display_section
 from utils.runtime import print_notebook_env
 from utils.timer import current_time_iso
 from utils.color import Color
+from utils.config import ProjectConfig  # uses utils.path under the hood
 
 # ======================================================
 # DQX argument spec (row + dataset checks)
@@ -479,10 +479,6 @@ def apply_table_documentation(
     table_fqn: str,
     doc: Optional[Dict[str, Any]],
 ) -> None:
-    """
-    Apply table & column comments (ALWAYS).
-    Uses robust syntax; falls back to TBLPROPERTIES for table comment if needed.
-    """
     if not doc:
         return
     qtable = _q_fqn(table_fqn)
@@ -518,7 +514,6 @@ def _set_not_null_if_possible(spark: SparkSession, table_fqn: str, column: str) 
     try:
         spark.sql(f"ALTER TABLE {qtable} ALTER COLUMN `{column}` SET NOT NULL")
     except Exception:
-        # ignore if already NOT NULL or not supported
         pass
 
 def _constraints_df(spark: SparkSession, table_fqn: str) -> DataFrame:
@@ -538,29 +533,6 @@ def _constraints_df(spark: SparkSession, table_fqn: str) -> DataFrame:
           AND tc.table_schema  = '{sch}'
           AND tc.table_name    = '{tbl}'
     """)
-
-# =========================
-# Recursive YAML discovery
-# =========================
-def _normalize_base(path: str) -> str:
-    if path.startswith("dbfs:/"):
-        return "/dbfs/" + path[len("dbfs:/") :].lstrip("/")
-    return path
-
-def discover_yaml_files_recursive(base_dir: str) -> List[str]:
-    base = _normalize_base(base_dir)
-    if not os.path.isdir(base):
-        raise FileNotFoundError(f"Rules folder not found or not a directory: {base_dir} (resolved: {base})")
-    out: List[str] = []
-    for root, dirs, files in os.walk(base):
-        dirs[:] = [d for d in dirs if not d.startswith(".")]
-        for f in files:
-            if f.startswith("."):
-                continue
-            fl = f.lower()
-            if fl.endswith(".yaml") or fl.endswith(".yml"):
-                out.append(os.path.join(root, f))
-    return sorted(out)
 
 # =========================
 # Delta I/O
@@ -586,10 +558,8 @@ def overwrite_rules_into_delta(
     Overwrite table data on every run.
     Add PRIMARY KEY **only on initial creation** (never on subsequent runs).
     """
-    # Ensure schema exists
     ensure_schema_exists(spark, delta_table_name)
 
-    # Cast audit timestamps
     df = df.withColumn("created_at", to_timestamp(col("created_at"))) \
            .withColumn("updated_at", to_timestamp(col("updated_at")))
 
@@ -635,7 +605,6 @@ def overwrite_rules_into_delta(
     # Preview metadata
     preview_table_documentation(spark, delta_table_name, doc_to_apply)
 
-    # Display a clean confirmation table
     display_section("WRITE RESULT (Delta)")
     summary = spark.createDataFrame(
         [(df.count(), delta_table_name, "overwrite", f"pk_{primary_key}")],
@@ -685,58 +654,8 @@ def print_rules_df(spark: SparkSession, rules: List[dict]) -> Optional[DataFrame
     return df
 
 # =========================
-# Validation (works off a file list)
+# Main
 # =========================
-def validate_rule_files(file_paths: List[str], required_fields: List[str], fail_fast: bool = True) -> List[str]:
-    errors = []
-    for full_path in file_paths:
-        print(f"\nValidating file: {full_path}")
-        try:
-            docs = load_yaml_rules(full_path)
-            if not docs:
-                print(f"  (empty) skipped: {full_path}")
-                continue
-            validate_rules_file(docs, full_path)
-            print(f"  File-level validation passed for {full_path}")
-            for rule in docs:
-                validate_rule_fields(rule, full_path, required_fields=required_fields)
-                print(f"    Rule-level validation passed for rule '{rule.get('name')}'")
-            validate_with_dqx(docs, full_path)
-            print(f"  DQX validation PASSED for {full_path}")
-        except Exception as ex:
-            print(f"  Validation FAILED for file {full_path}\n  Reason: {ex}")
-            errors.append(str(ex))
-            if fail_fast:
-                break
-    if not errors:
-        print("\nAll YAML rule files are valid!")
-    else:
-        print("\nRule validation errors found:")
-        for e in errors:
-            print(e)
-    return errors
-
-# =========================
-# Recursive discovery + write
-# =========================
-def _load_output_config(path: str) -> Dict[str, Any]:
-    with open(path, "r") as fh:
-        return yaml.safe_load(fh) or {}
-
-def _parse_checks_table_cfg(cfg_value: Any) -> Tuple[str, str]:
-    """
-    Supports:
-      - String (legacy):  "dq_dev.dqx.checks_config" → (name, 'check_id')
-      - Mapping (new):    {name: "...", primary_key: "check_id"} → (name, pk)
-    """
-    if isinstance(cfg_value, dict):
-        nm = cfg_value.get("name") or cfg_value.get("table") or cfg_value.get("table_name")
-        if not nm:
-            raise ValueError("dqx_checks_config_table_name must include 'name' when provided as a mapping.")
-        pk = cfg_value.get("primary_key", "check_id")
-        return str(nm), str(pk)
-    return str(cfg_value), "check_id"
-
 def main(
     output_config_path: str = "resources/dqx_config.yaml",
     rules_dir: Optional[str] = None,
@@ -751,17 +670,14 @@ def main(
     spark = SparkSession.builder.getOrCreate()
     print_notebook_env(spark, local_timezone=time_zone)
 
-    output_config = _load_output_config(output_config_path)
-
-    # Support the new PK-bearing structure
-    rules_dir = rules_dir or output_config["dqx_yaml_checks"]
-    tbl_cfg_value = output_config["dqx_checks_config_table_name"]
-    delta_table_name, primary_key = _parse_checks_table_cfg(tbl_cfg_value)
+    cfg = ProjectConfig(output_config_path, spark=spark, start_file=__file__)
+    rules_dir = rules_dir or cfg.yaml_rules_dir()
+    delta_table_name, primary_key = cfg.checks_config_table()
 
     required_fields = required_fields or ["table_name", "name", "criticality", "run_config_name", "check"]
 
-    # Recursively discover YAML files
-    yaml_files = discover_yaml_files_recursive(rules_dir)
+    # Recursively discover YAML files via config helper
+    yaml_files = cfg.list_rule_files(rules_dir)
     display_section("YAML FILES DISCOVERED (recursive)")
     files_df = spark.createDataFrame([(p,) for p in yaml_files], "yaml_path string")
     show_df(files_df, n=500, truncate=False)
