@@ -1,3 +1,34 @@
+So a few things, 
+
+
+These variables:
+    created_by="AdminUser",
+    apply_table_metadata=True,  # or None to use YAML flag
+&
+    batch_dedupe_mode="warn",
+
+
+Should be defined here:
+dqx_config:
+  local_timezone: America/Chicago
+  processing_timezone: UTC
+  apply_table_metadata: false
+  variables:            # optional runtime substitution variables
+    env: dev            # used by dq_{env} → dq_dev
+
+
+Also, in the notebook any refernce to allowed_criticiality should instead refer here:
+    allowed_criticality: [error, warn]
+
+
+dont allow warning please its just error and warn
+
+
+This is also defined int he config:
+    created_by: str = "AdminUser",
+
+
+Rememver im trying to dry things up as much as possible, here is the notebook to update:
 import json
 import hashlib
 from typing import Dict, Any, Optional, List
@@ -138,7 +169,7 @@ def validate_rule_fields(
     rule: dict,
     file_path: str,
     required_fields: List[str],
-    allowed_criticality={"error", "warn", "warning"},
+    allowed_criticality={"error", "warn"},
 ):
     probs = []
     for f in required_fields:
@@ -185,7 +216,7 @@ def process_yaml_file(
             rule,
             path,
             required_fields=required_fields,
-            allowed_criticality=set(allowed_criticality or {"error", "warn", "warning"}),
+            allowed_criticality=set(allowed_criticality or {"error", "warn"}),
         )
 
         raw_check = rule["check"] or {}
@@ -553,3 +584,255 @@ res = load_checks(
     batch_dedupe_mode="warn",
 )
 print(res)
+
+
+
+
+
+Hree is the config, update if needed:
+#######################################################
+# src/dqx/resources/dqx_config.yaml
+#######################################################
+
+dqx_config:
+  local_timezone: America/Chicago
+  processing_timezone: UTC
+  apply_table_metadata: false
+  variables:            # optional runtime substitution variables
+    env: dev            # used by dq_{env} → dq_dev
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 01_load_dqx_checks
+# ──────────────────────────────────────────────────────────────────────────────
+dqx_load_checks:
+  checks_config_source:
+    storage_type: repo            # repo | volume
+    source_format: yaml           # yaml | json | python
+    source_path: resources/dqx_checks_config_load
+    allowed_criticality: [error, warn]
+    required_fields: [table_name, name, criticality, run_config_name, check]
+
+  checks_config_table:
+    target_table: dq_{env}.dqx.checks_config
+    table_format: delta
+    write_mode: overwrite
+    primary_key: check_id
+    partition_by: []              # (none)
+    table_comment: |
+      ## DQX Checks Configuration
+      - One row per **unique canonical rule** generated from YAML (source of truth).
+      - **Primary key**: `check_id` (sha256 of canonical payload). Uniqueness is enforced by the loader and a runtime assertion.
+      - Rebuilt by the loader (typically **overwrite** semantics); manual edits will be lost.
+      - Used by runners to resolve rules per `run_config_name` and by logs to map back to rule identity.
+      - `check_id_payload` preserves the exact canonical JSON used to compute `check_id` for reproducibility.
+      - `run_config_name` is a **routing tag**, not part of identity.
+      - Only rows with `active=true` are executed.
+    columns:
+      check_id:
+        datatype: string
+        nullable: false
+        allowed_values: []
+        comment: "PRIMARY KEY. Stable sha256 over canonical {table_name↓, filter, check.*}."
+      check_id_payload:
+        datatype: string
+        nullable: false
+        allowed_values: []
+        comment: "Canonical JSON used to derive `check_id` (sorted keys, normalized values)."
+      table_name:
+        datatype: string
+        nullable: false
+        allowed_values: []
+        comment: "Target table FQN (`catalog.schema.table`). Lowercased in payload for stability."
+      name:
+        datatype: string
+        nullable: false
+        allowed_values: []
+        comment: "Human-readable rule name. Used in UI/diagnostics and name-based joins when enriching logs."
+      criticality:
+        datatype: string
+        nullable: false
+        allowed_values: [error, warn, warning]
+        comment: "Rule severity: `warn|warning|error`. Reporting normalizes warn/warning → `warning`."
+      check:
+        datatype: struct<function:string,for_each_column:array<string>,arguments:map<string,string>>
+        nullable: false
+        allowed_values: []
+        comment: "Structured rule: `{function, for_each_column?, arguments?}`; argument values stringified."
+      filter:
+        datatype: string
+        nullable: true
+        allowed_values: []
+        comment: "Optional SQL predicate applied before evaluation (row-level). Normalized in payload."
+      run_config_name:
+        datatype: string
+        nullable: false
+        allowed_values: []
+        comment: "Execution group/tag. Drives which runs pick up this rule; **not** part of identity."
+      user_metadata:
+        datatype: map<string,string>
+        nullable: true
+        allowed_values: []
+        comment: "Free-form `map<string,string>` carried through to issues for traceability."
+      yaml_path:
+        datatype: string
+        nullable: false
+        allowed_values: []
+        comment: "Absolute/volume path to the defining YAML doc (lineage)."
+      active:
+        datatype: boolean
+        nullable: false
+        allowed_values: [true, false]
+        comment: "If `false`, rule is ignored by runners."
+      created_by:
+        datatype: string
+        nullable: false
+        allowed_values: []
+        comment: "Audit: creator/principal that materialized the row."
+      created_at:
+        datatype: timestamp
+        nullable: false
+        allowed_values: []
+        comment: "Audit: creation timestamp (cast to TIMESTAMP on write)."
+      updated_by:
+        datatype: string
+        nullable: true
+        allowed_values: []
+        comment: "Audit: last updater (nullable)."
+      updated_at:
+        datatype: timestamp
+        nullable: true
+        allowed_values: []
+        comment: "Audit: last update timestamp (nullable; cast to TIMESTAMP on write)."
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 02_run_dqx_checks
+# ──────────────────────────────────────────────────────────────────────────────
+dqx_run_checks:
+  checks_log_table:
+    target_table: &checks_log_table dq_{env}.dqx.checks_log
+    target_format: delta
+    write_mode: overwrite
+    primary_key: log_id
+    partition_by: []
+    table_comment: |
+      ## DQX Row-Level Check Results Log
+      - One row per **flagged source row** (error or warning) emitted by DQX for a given run.
+      - **Primary key**: `log_id` = sha256(table_name, run_config_name, row_snapshot_fp, _errors_fp, _warnings_fp). **No duplicates allowed** within a run; duplicates indicate a repeated write or misconfigured mode.
+      - `_errors/_warnings` capture issue structs; corresponding fingerprints are deterministic and order-insensitive.
+      - `row_snapshot` captures the offending row’s non-reserved columns (values stringified) at evaluation time.
+      - `check_id` lists originating rule IDs from the config table; may be empty if name-based mapping was not possible.
+      - Writers should ensure idempotency (e.g., overwrite mode or dedupe by `log_id` when appending).
+    columns:
+      log_id:
+        datatype: string
+        nullable: false
+        allowed_values: []
+        comment: "PRIMARY KEY. Deterministic sha256 over (table_name, run_config_name, row_snapshot_fingerprint, _errors_fingerprint, _warnings_fingerprint)."
+      check_id:
+        datatype: array<string>
+        nullable: true
+        allowed_values: []
+        comment: "Array of originating config `check_id`s that fired for this row (may be empty if unmapped)."
+      table_name:
+        datatype: string
+        nullable: false
+        allowed_values: []
+        comment: "Source table FQN (`catalog.schema.table`) where the row was evaluated."
+      run_config_name:
+        datatype: string
+        nullable: false
+        allowed_values: []
+        comment: "Run configuration under which the checks executed."
+      _errors:
+        datatype: array<struct<name:string,message:string,columns:array<string>,filter:string,function:string,run_time:string,user_metadata:map<string,string>>>
+        nullable: true
+        allowed_values: []
+        comment: "Array<struct> of error issues."
+      _errors_fingerprint:
+        datatype: string
+        nullable: true
+        allowed_values: []
+        comment: "Deterministic digest of normalized `_errors` (order/column-order insensitive)."
+      _warnings:
+        datatype: array<struct<name:string,message:string,columns:array<string>,filter:string,function:string,run_time:string,user_metadata:map<string,string>>>
+        nullable: true
+        allowed_values: []
+        comment: "Array<struct> of warning issues."
+      _warnings_fingerprint:
+        datatype: string
+        nullable: true
+        allowed_values: []
+        comment: "Deterministic digest of normalized `_warnings`."
+      row_snapshot:
+        datatype: array<struct<column:string,value:string>>
+        nullable: true
+        allowed_values: []
+        comment: "Array<struct{column:string, value:string}> of non-reserved columns for the flagged row (stringified)."
+      row_snapshot_fingerprint:
+        datatype: string
+        nullable: true
+        allowed_values: []
+        comment: "sha256(JSON(row_snapshot)) used in `log_id` and de-duplication."
+      created_by:
+        datatype: string
+        nullable: false
+        allowed_values: []
+        comment: "Audit: writer identity for this record."
+      created_at:
+        datatype: timestamp
+        nullable: false
+        allowed_values: []
+        comment: "Audit: creation timestamp (UTC)."
+      updated_by:
+        datatype: string
+        nullable: true
+        allowed_values: []
+        comment: "Audit: last updater (nullable)."
+      updated_at:
+        datatype: timestamp
+        nullable: true
+        allowed_values: []
+        comment: "Audit: last update timestamp (UTC, nullable)."
+
+  checks_log_summary_by_rule_table:
+    target_table: dq_{env}.dqx.checks_log_summary_by_rule
+    target_format: delta
+    write_mode: overwrite
+    primary_key:
+    partition_by: []
+
+  checks_log_summary_by_table_table:
+    target_table: dq_{env}.dqx.checks_log_summary_by_table
+    target_format: delta
+    write_mode: overwrite
+    primary_key:
+    partition_by: []
+    created_by_default: AdminUser
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Run configs — show all options; leave values empty unless you want to override.
+# Anchors/aliases used to avoid repeating the checks_log_table target.
+# ──────────────────────────────────────────────────────────────────────────────
+run_config_name:
+  default:
+    output_config:
+      location: *checks_log_table     # → dq_{env}.dqx.checks_log
+      mode:
+      format:
+      options: {}
+    quarantine_config:
+      location:
+      mode:
+      format:
+      options: {}
+  generated_check:
+    output_config:
+      location: dq_{env}.dqx.generated_checks_log
+      mode:
+      format:
+      options: {}
+    quarantine_config:
+      location: dq_{env}.dqx.generated_checks_quarantine
+      mode:
+      format:
+      options: {}
