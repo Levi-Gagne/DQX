@@ -1,75 +1,61 @@
-#######################################################
 # src/dqx/resources/dqx_config.yaml
-#######################################################
 
-dqx_config:
+project_config:
   local_timezone: America/Chicago
   processing_timezone: UTC
-  apply_table_metadata: true     # set true when you want to (re)apply comments
+  apply_table_metadata: true
   created_by: AdminUser
   batch_dedupe_mode: warn
-  variables:            # optional runtime substitution variables
-    env: dev            # used by dq_{env} → dq_dev
+  variables:
+    env: dev
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 01_load_dqx_checks
-# ──────────────────────────────────────────────────────────────────────────────
-dqx_load_checks:
-  checks_config_source:
-    storage_type: repo            # repo | volume
-    source_format: yaml           # yaml | json | python
-    source_path: resources/dqx_checks_config_load
-    allowed_criticality: [error, warn]
-    required_fields: [table_name, name, criticality, run_config_name, check]
+notebooks:
+  - name: 01_load_dqx_checks
+    data_source:
+      storage_type: repo         # repo | volume
+      source_format: yaml        # yaml | json | python
+      source_path: resources/dqx_checks_config_load
+      allowed_criticality: [error, warn]
+      required_fields: [table_name, name, criticality, run_config_name, check]
+    target_tables:
+      - name: dq_{env}.dqx.checks_config
+        table_format: delta
+        write_mode: overwrite
+        primary_key: check_id
+        partition_by: []
+        table_description: |
+          ## DQX Checks Configuration
+          - One row per **unique canonical rule** generated from YAML (source of truth).
+          - **Primary key**: `check_id` (sha256 of canonical payload). Uniqueness is enforced by the loader and a runtime assertion.
+          - Rebuilt by the loader (typically **overwrite** semantics); manual edits will be lost.
+          - Used by runners to resolve rules per `run_config_name` and by logs to map back to rule identity.
+          - `check_id_payload` preserves the exact canonical JSON used to compute `check_id` for reproducibility.
+          - `run_config_name` is a **routing tag**, not part of identity.
+          - Only rows with `active=true` are executed.
 
-  checks_config_table:
-    target_table: dq_{env}.dqx.checks_config
-    table_format: delta
-    write_mode: overwrite
-    primary_key: check_id
-    partition_by: []              # (none)
-    table_description: |
-      "## DQX Checks Configuration
-      - One row per **unique canonical rule** generated from YAML (source of truth).
-      - **Primary key**: `check_id` (sha256 of canonical payload). Uniqueness is enforced by the loader and a runtime assertion.
-      - Rebuilt by the loader (typically **overwrite** semantics); manual edits will be lost.
-      - Used by runners to resolve rules per `run_config_name` and by logs to map back to rule identity.
-      - `check_id_payload` preserves the exact canonical JSON used to compute `check_id` for reproducibility.
-      - `run_config_name` is a **routing tag**, not part of identity.
-      - Only rows with `active=true` are executed."
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 02_run_dqx_checks  (kept minimal; no docs here)
-# ──────────────────────────────────────────────────────────────────────────────
-dqx_run_checks:
-  checks_log_table:
-    target_table: dq_{env}.dqx.checks_log
-    target_format: delta
-    write_mode: overwrite
-    primary_key: log_id
-    partition_by: []
-    table_description: |
-      "## DQX Row-Level Check Results Log
-      - One row per **flagged source row** (error or warning) emitted by DQX for a given run.
-      - **Primary key**: `log_id` = sha256(table_name, run_config_name, row_snapshot_fp, _errors_fp, _warnings_fp). **No duplicates allowed** within a run; duplicates indicate a repeated write or misconfigured mode.
-      - `_errors/_warnings` capture issue structs; corresponding fingerprints are deterministic and order-insensitive.
-      - `row_snapshot` captures the offending row’s non-reserved columns (values stringified) at evaluation time.
-      - `check_id` lists originating rule IDs from the config table; may be empty if name-based mapping was not possible.
-      - Writers should ensure idempotency (e.g., overwrite mode or dedupe by `log_id` when appending)."
-
-  checks_log_summary_by_rule_table:
-    target_table: dq_{env}.dqx.checks_log_summary_by_rule
-    target_format: delta
-    write_mode: overwrite
-    primary_key:
-    partition_by: []
-
-  checks_log_summary_by_table_table:
-    target_table: dq_{env}.dqx.checks_log_summary_by_table
-    target_format: delta
-    write_mode: overwrite
-    primary_key:
-    partition_by: []
+  - name: 02_run_dqx_checks
+    target_tables:
+      - name: dq_{env}.dqx.checks_log
+        table_format: delta
+        write_mode: overwrite
+        primary_key: log_id
+        partition_by: []
+        table_description: |
+          ## DQX Row-Level Check Results Log
+          - One row per **flagged source row** (error or warning) emitted by DQX for a given run.
+          - **Primary key**: `log_id` = sha256(table_name, run_config_name, row_snapshot_fp, _errors_fp, _warnings_fp).
+          - `_errors/_warnings` capture issue structs; corresponding fingerprints are deterministic and order-insensitive.
+          - `row_snapshot` captures the offending row’s non-reserved columns (values stringified) at evaluation time.
+          - `check_id` lists originating rule IDs from the config table; may be empty if name-based mapping was not possible.
+          - Writers should ensure idempotency (e.g., overwrite mode or dedupe by `log_id` when appending).
+      - name: dq_{env}.dqx.checks_log_summary_by_rule
+        table_format: delta
+        write_mode: overwrite
+        partition_by: []
+      - name: dq_{env}.dqx.checks_log_summary_by_table
+        table_format: delta
+        write_mode: overwrite
+        partition_by: []
 
 # (Optional) Run configs – left minimal
 run_config_name:
