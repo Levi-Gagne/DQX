@@ -1,7 +1,3 @@
-So after that the primary key is not set, and the column comments are not added
-
-Can we update the code? it was working before but no longer is
-
 import json
 import hashlib
 import yaml
@@ -23,7 +19,6 @@ from utils.table import (
     write_empty_delta_table,
     empty_df_from_schema,
 )
-
 from resources.dqx_functions_0_8_0 import EXPECTED as _EXPECTED
 
 try:
@@ -100,6 +95,9 @@ def _materialize_table_doc(doc_template: Dict[str, Any], table_fqn: str) -> Dict
     if "table_comment" in copy and isinstance(copy["table_comment"], str):
         copy["table_comment"] = copy["table_comment"].replace("{TABLE_FQN}", table_fqn)
     return copy
+
+def _q_fqn(fqn: str) -> str:
+    return ".".join(f"`{p}`" for p in fqn.split("."))
 
 # =========================
 # Canonicalization & IDs
@@ -333,9 +331,6 @@ def dedupe_rules_in_batch_by_check_id(rules: List[dict], mode: str = "warn") -> 
 def _esc_comment(s: str) -> str:
     return (s or "").replace("'", "''")
 
-def _q_fqn(fqn: str) -> str:
-    return ".".join(f"`{p}`" for p in fqn.split("."))
-
 def preview_table_documentation(spark: SparkSession, table_fqn: str, doc: Dict[str, Any]) -> None:
     display_section("TABLE METADATA PREVIEW (markdown text stored in comments)")
     doc_df = spark.createDataFrame(
@@ -410,10 +405,12 @@ def create_table_if_absent(
 
     # Add PRIMARY KEY once at create
     if primary_key:
-        add_primary_key_constraint(spark, table_fqn, column=primary_key, constraint_name=f"pk_{primary_key}", rely=True)
+        add_primary_key_constraint(
+            spark, table_fqn, column=primary_key, constraint_name=f"pk_{primary_key}", rely=True
+        )
 
 # =========================
-# Data overwrite only
+# Data overwrite (preserve metadata)
 # =========================
 def overwrite_rules_into_delta(
     spark: SparkSession,
@@ -423,24 +420,52 @@ def overwrite_rules_into_delta(
     *,
     primary_key: str = "check_id",
 ):
+    """
+    Replace table data while preserving table properties, comments, and constraints.
+    """
     df = df.withColumn("created_at", to_timestamp(col("created_at"))) \
            .withColumn("updated_at", to_timestamp(col("updated_at")))
 
-    df.write.format("delta") \
-        .mode("overwrite") \
-        .option("overwriteSchema", "true") \
-        .saveAsTable(delta_table_name)
+    if not table_exists(spark, delta_table_name):
+        # Safety: if not created yet (shouldn't happen given main), create now.
+        create_table_if_absent(
+            spark, delta_table_name, schema=TABLE_SCHEMA,
+            table_doc=_materialize_table_doc(DQX_CHECKS_CONFIG_METADATA, delta_table_name),
+            primary_key=primary_key
+        )
+
+    # Align column order to the existing table to keep INSERT OVERWRITE happy.
+    target_schema = spark.table(delta_table_name).schema
+    target_cols = [f.name for f in target_schema.fields]
+    missing = [c for c in target_cols if c not in df.columns]
+    extra   = [c for c in df.columns if c not in target_cols]
+    if missing or extra:
+        raise ValueError(
+            f"Schema mismatch for INSERT OVERWRITE.\n"
+            f"Missing in df: {missing}\nExtra in df: {extra}"
+        )
+
+    df_ordered = df.select(*target_cols)
+    tmp_view = "__tmp_overwrite_rules"
+    df_ordered.createOrReplaceTempView(tmp_view)
+    try:
+        spark.sql(f"INSERT OVERWRITE TABLE {_q_fqn(delta_table_name)} SELECT * FROM {tmp_view}")
+    finally:
+        try:
+            spark.catalog.dropTempView(tmp_view)
+        except Exception:
+            pass
 
     display_section("WRITE RESULT (Delta)")
     summary = spark.createDataFrame(
-        [(df.count(), delta_table_name, "overwrite", f"pk_{primary_key}")],
+        [(df.count(), delta_table_name, "insert overwrite", f"pk_{primary_key}")],
         schema="`rules written` long, `target table` string, `mode` string, `constraint` string",
     )
     show_df(summary, n=1)
     print(
         f"\n{Color.b}{Color.ivory}Rules written to: "
         f"'{Color.r}{Color.b}{Color.chartreuse}{delta_table_name}{Color.r}{Color.b}{Color.ivory}' "
-        f"(PK set on first create only){Color.r}"
+        f"(metadata preserved){Color.r}"
     )
 
 # =========================
