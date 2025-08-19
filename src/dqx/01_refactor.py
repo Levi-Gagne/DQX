@@ -1,3 +1,597 @@
+Now this next ask is going to be a big lift
+
+
+Here is current version of the config file I have:
+#######################################################
+# src/dqx/resources/dqx_config.yaml
+
+# 01_load_dqx_checks
+dqx_yaml_checks: resources/dqx_checks_config_load
+dqx_checks_config_table_name:
+  name: dq_dev.dqx.checks_config
+  primary_key: check_id
+
+# 02_run_dqx_checks
+dqx_checks_log_table_name: dq_dev.dqx.checks_log
+
+
+run_config_name:
+  default:
+    output_config: 
+      mode: overwrite
+      options:
+        mergeSchema: true
+
+
+
+and the current config.py we use to grab those values is here:
+# src/dqx/utils/config.py
+
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+import yaml
+from pyspark.sql import SparkSession
+
+
+class ProjectConfig:
+    """
+    Minimal, notebook-friendly config loader.
+
+    - Reads a single YAML config file.
+    - Resolves any relative paths against the current working directory.
+    - Provides helpers to list YAML rule files and to load a YAML rules file.
+    """
+
+    def __init__(self, config_path: str, spark: Optional[SparkSession] = None):
+        p = Path(self._normalize_dbfs_like(config_path))
+        if not p.is_absolute():
+            p = (Path.cwd() / p).resolve()
+        if not p.exists():
+            raise FileNotFoundError(f"Config not found: {p}")
+        self._cfg_path = p
+        self._base_dir = p.parent  # not used externally but handy to keep
+        self.spark = spark
+
+        with open(p, "r") as fh:
+            self._cfg: Dict[str, Any] = yaml.safe_load(fh) or {}
+
+    # -------- public accessors --------
+    @property
+    def raw(self) -> Dict[str, Any]:
+        return self._cfg
+
+    def yaml_rules_dir(self) -> str:
+        """Return the absolute path to the folder containing YAML rules."""
+        rules_dir = str(self._cfg.get("dqx_yaml_checks", "")).strip()
+        if not rules_dir:
+            raise ValueError("Missing 'dqx_yaml_checks' in config.")
+        p = Path(self._normalize_dbfs_like(rules_dir))
+        if not p.is_absolute():
+            p = (Path.cwd() / p).resolve()
+        return str(p)
+
+    def checks_config_table(self) -> Tuple[str, str]:
+        """
+        Return (fully_qualified_table_name, primary_key).
+        Accepts either a string or a mapping {name, primary_key} in the config.
+        """
+        val = self._cfg.get("dqx_checks_config_table_name")
+        if isinstance(val, dict):
+            nm = val.get("name") or val.get("table") or val.get("table_name")
+            if not nm:
+                raise ValueError("dqx_checks_config_table_name must include 'name'.")
+            pk = val.get("primary_key", "check_id")
+            return str(nm), str(pk)
+        if not val:
+            raise ValueError("Missing 'dqx_checks_config_table_name' in config.")
+        return str(val), "check_id"
+
+    def list_rule_files(self, base_dir: str) -> List[str]:
+        """
+        Recursively enumerate *.yaml / *.yml under base_dir (resolved vs CWD).
+        """
+        root = Path(self._normalize_dbfs_like(base_dir))
+        if not root.is_absolute():
+            root = (Path.cwd() / root).resolve()
+        if not root.exists() or not root.is_dir():
+            raise FileNotFoundError(f"Rules folder not found or not a directory: {root}")
+
+        out: List[str] = []
+        for cur, dirs, files in os.walk(root):
+            # skip dot-directories
+            dirs[:] = [d for d in dirs if not d.startswith(".")]
+            for f in files:
+                if f.startswith("."):
+                    continue
+                if self._is_yaml(f):
+                    out.append(str(Path(cur) / f))
+        return sorted(out)
+
+    # -------- static helpers kept inside the class --------
+    @staticmethod
+    def _normalize_dbfs_like(p: str) -> str:
+        if p.startswith("dbfs:/"):
+            return "/dbfs/" + p[len("dbfs:/"):].lstrip("/")
+        return p
+
+    @staticmethod
+    def _is_yaml(fname: str) -> bool:
+        low = (fname or "").lower()
+        return low.endswith(".yaml") or low.endswith(".yml")
+
+    @staticmethod
+    def load_yaml_rules(path: str) -> List[dict]:
+        """
+        Read one YAML file that may contain multiple documents.
+        Flattens dict docs and lists of dicts.
+        """
+        p = Path(ProjectConfig._normalize_dbfs_like(path))
+        if not p.is_absolute():
+            p = (Path.cwd() / p).resolve()
+        if not p.exists():
+            raise FileNotFoundError(f"YAML file not found: {p}")
+
+        with open(p, "r") as fh:
+            docs = list(yaml.safe_load_all(fh)) or []
+
+        out: List[dict] = []
+        for d in docs:
+            if not d:
+                continue
+            if isinstance(d, dict):
+                out.append(d)
+            elif isinstance(d, list):
+                out.extend([x for x in d if isinstance(x, dict)])
+        return out
+
+
+# needed for list_rule_files
+import os  # keep at bottom to avoid shadowing by staticmethod names
+
+
+and here is my current dictionary: 
+# ======================================================
+# Documentation dictionary
+# ======================================================
+DQX_CHECKS_CONFIG_METADATA: Dict[str, Any] = {
+    "table": "<override at create time>",
+    "table_comment": (
+        "## DQX Checks Configuration\n"
+        "- One row per **unique canonical rule** generated from YAML (source of truth).\n"
+        "- **Primary key**: `check_id` (sha256 of canonical payload). Uniqueness is enforced by the loader and a runtime assertion.\n"
+        "- Rebuilt by the loader (typically **overwrite** semantics); manual edits will be lost.\n"
+        "- Used by runners to resolve rules per `run_config_name` and by logs to map back to rule identity.\n"
+        "- `check_id_payload` preserves the exact canonical JSON used to compute `check_id` for reproducibility.\n"
+        "- `run_config_name` is a **routing tag**, not part of identity.\n"
+        "- Only rows with `active=true` are executed."
+    ),
+    "columns": {
+        "check_id": "PRIMARY KEY. Stable sha256 over canonical {table_name↓, filter, check.*}.",
+        "check_id_payload": "Canonical JSON used to derive `check_id` (sorted keys, normalized values).",
+        "table_name": "Target table FQN (`catalog.schema.table`). Lowercased in payload for stability.",
+        "name": "Human-readable rule name. Used in UI/diagnostics and name-based joins when enriching logs.",
+        "criticality": "Rule severity: `warn|warning|error`. Reporting normalizes warn/warning → `warning`.",
+        "check": "Structured rule: `{function, for_each_column?, arguments?}`; argument values stringified.",
+        "filter": "Optional SQL predicate applied before evaluation (row-level). Normalized in payload.",
+        "run_config_name": "Execution group/tag. Drives which runs pick up this rule; **not** part of identity.",
+        "user_metadata": "Free-form `map<string,string>` carried through to issues for traceability.",
+        "yaml_path": "Absolute/volume path to the defining YAML doc (lineage).",
+        "active": "If `false`, rule is ignored by runners.",
+        "created_by": "Audit: creator/principal that materialized the row.",
+        "created_at": "Audit: creation timestamp (cast to TIMESTAMP on write).",
+        "updated_by": "Audit: last updater (nullable).",
+        "updated_at": "Audit: last update timestamp (nullable; cast to TIMESTAMP on write).",
+    },
+}
+
+
+I expanded the yaml, with a rough format if you could hlep me with it.
+
+# src/dqx/resources/dqx_config.yaml
+
+dqx_config:
+  local_timezone: America/Chicago
+  processing_timezone: UTC
+  apply_table_metadata: False
+
+# 01_load_dqx_checks
+dqx_load_checks:
+  checks_config_source:
+    storage_type: repo # 'repo' | 'volume'
+    source_format: yaml # 'yaml' | 'json' | 'python'
+    source_path: resources/dqx_checks_config_load
+    allowed_criticality: [error, warn]
+    required_fields: [table_name, name, criticality, run_config_name, check]
+  checks_config_table:
+    target_table: dq_{env}.dqx.checks_config
+      table_format: delta
+      write_mode: overwrite
+      primary_key: check_id
+      partition_by: {}
+      table_description: |
+        "## DQX Checks Configuration\n"
+        "- One row per **unique canonical rule** generated from YAML (source of truth).\n"
+        "- **Primary key**: `check_id` (sha256 of canonical payload). Uniqueness is enforced by the loader and a runtime assertion.\n"
+        "- Rebuilt by the loader (typically **overwrite** semantics); manual edits will be lost.\n"
+        "- Used by runners to resolve rules per `run_config_name` and by logs to map back to rule identity.\n"
+        "- `check_id_payload` preserves the exact canonical JSON used to compute `check_id` for reproducibility.\n"
+        "- `run_config_name` is a **routing tag**, not part of identity.\n"
+        "- Only rows with `active=true` are executed."
+      columns:
+        - check_id:
+          - datatype: StringType
+          - nullable: False
+          - allowed_values: [] # e.g. criticality - [error, warn]
+          - column_description: "PRIMARY KEY. Stable sha256 over canonical {table_name↓, filter, check.*}."
+
+# 02_run_dqx_checks
+dqx_run_checks:
+  checks_log_table:
+    target_table: dq_{env}.dqx.checks_log
+      target_format: delta
+      write_mode: overwrite
+      primary_key: log_id
+      partition_by: N/A
+  checks_log_summary_by_rule_table:
+    target_table: dq_{env}.dqx.checks_log_summary_by_rule
+      target_format: delta
+      write_mode: overwrite
+      primary_key:
+      partition_by: N/A
+  checks_log_summary_by_table_table:
+    target_table: dq_{env}.dqx.checks_log_summary_by_table
+      target_format: delta
+      write_mode: overwrite
+      primary_key:
+      partition_by: N/A
+      created_by_default: AdminUser
+
+
+run_config_name:
+  default:
+    output_config: (note: i would like to call checks_log_table-target_table value defined above not sure the best way tot do that with yaml or if we should just repeat here)
+      location:
+        mode: overwrite
+        format: delta
+        options:
+          mergeSchema: true
+    quarantine_config:
+      location: dq_{env}.dqx.checks_quarantine
+        mode: append
+        format: delta
+        options:
+          mergeSchema: true
+  generated_check:
+    output_config:
+      location: dq_{env}.dqx.generated_checks_log
+        mode: overwrite
+        format: delta
+        options:
+          mergeSchema: true
+    quarantine_config:
+      location: dq_{env}.dqx.generated_checks_quarantine
+        mode: append
+        format: delta
+        options:
+          mergeSchema: true
+
+
+
+Now youll notice that i expanded to include more variables, what I would liek as well is so that all of the information int he dictionaries is in this file
+
+
+so we would have a column for each one, with the description, 
+
+do you think you can update the yaml based on these dictionaries, which should go under
+checks_config_table:
+DQX_CHECKS_CONFIG_METADATA: Dict[str, Any] = {
+    "table": "<override at create time>",
+    "table_comment": (
+        "## DQX Checks Configuration\n"
+        "- One row per **unique canonical rule** generated from YAML (source of truth).\n"
+        "- **Primary key**: `check_id` (sha256 of canonical payload). Uniqueness is enforced by the loader and a runtime assertion.\n"
+        "- Rebuilt by the loader (typically **overwrite** semantics); manual edits will be lost.\n"
+        "- Used by runners to resolve rules per `run_config_name` and by logs to map back to rule identity.\n"
+        "- `check_id_payload` preserves the exact canonical JSON used to compute `check_id` for reproducibility.\n"
+        "- `run_config_name` is a **routing tag**, not part of identity.\n"
+        "- Only rows with `active=true` are executed."
+    ),
+    "columns": {
+        "check_id": "PRIMARY KEY. Stable sha256 over canonical {table_name↓, filter, check.*}.",
+        "check_id_payload": "Canonical JSON used to derive `check_id` (sorted keys, normalized values).",
+        "table_name": "Target table FQN (`catalog.schema.table`). Lowercased in payload for stability.",
+        "name": "Human-readable rule name. Used in UI/diagnostics and name-based joins when enriching logs.",
+        "criticality": "Rule severity: `warn|warning|error`. Reporting normalizes warn/warning → `warning`.",
+        "check": "Structured rule: `{function, for_each_column?, arguments?}`; argument values stringified.",
+        "filter": "Optional SQL predicate applied before evaluation (row-level). Normalized in payload.",
+        "run_config_name": "Execution group/tag. Drives which runs pick up this rule; **not** part of identity.",
+        "user_metadata": "Free-form `map<string,string>` carried through to issues for traceability.",
+        "yaml_path": "Absolute/volume path to the defining YAML doc (lineage).",
+        "active": "If `false`, rule is ignored by runners.",
+        "created_by": "Audit: creator/principal that materialized the row.",
+        "created_at": "Audit: creation timestamp (cast to TIMESTAMP on write).",
+        "updated_by": "Audit: last updater (nullable).",
+        "updated_at": "Audit: last update timestamp (nullable; cast to TIMESTAMP on write).",
+    },
+}
+
+
+checks_log_table:
+DQX_CHECKS_LOG_METADATA: Dict[str, Any] = {
+    "table": "dq_dev.dqx.checks_log",
+    "table_comment": (
+        "## DQX Row-Level Check Results Log\n"
+        "- One row per **flagged source row** (error or warning) emitted by DQX for a given run.\n"
+        "- **Primary key**: `log_id` = sha256(table_name, run_config_name, row_snapshot_fp, _errors_fp, _warnings_fp). "
+        "**No duplicates allowed** within a run; duplicates indicate a repeated write or misconfigured mode.\n"
+        "- `_errors/_warnings` capture issue structs; corresponding fingerprints are deterministic and order-insensitive.\n"
+        "- `row_snapshot` captures the offending row’s non-reserved columns (values stringified) at evaluation time.\n"
+        "- `check_id` lists originating rule IDs from the config table; may be empty if name-based mapping was not possible.\n"
+        "- Writers should ensure idempotency (e.g., overwrite mode or dedupe by `log_id` when appending)."
+    ),
+    "columns": {
+        "log_id": "PRIMARY KEY. Deterministic sha256 over (table_name, run_config_name, row_snapshot_fingerprint, _errors_fingerprint, _warnings_fingerprint).",
+        "check_id": "Array of originating config `check_id`s that fired for this row (may be empty if unmapped).",
+        "table_name": "Source table FQN (`catalog.schema.table`) where the row was evaluated.",
+        "run_config_name": "Run configuration under which the checks executed.",
+        "_errors": "Array<struct> of error issues {name, message, columns, filter, function, run_time, user_metadata}.",
+        "_errors_fingerprint": "Deterministic digest of normalized `_errors` (order/column-order insensitive).",
+        "_warnings": "Array<struct> of warning issues {name, message, columns, filter, function, run_time, user_metadata}.",
+        "_warnings_fingerprint": "Deterministic digest of normalized `_warnings`.",
+        "row_snapshot": "Array<struct{column:string, value:string}> of non-reserved columns for the flagged row (stringified).",
+        "row_snapshot_fingerprint": "sha256(JSON(row_snapshot)) used in `log_id` and de-duplication.",
+        "created_by": "Audit: writer identity for this record.",
+        "created_at": "Audit: creation timestamp (UTC).",
+        "updated_by": "Audit: last updater (nullable).",
+        "updated_at": "Audit: last update timestamp (UTC, nullable).",
+    },
+}
+
+
+
+YOulll also notice that for the run_config_name i expanded,
+                       id rather show all opotions and have them as empty, so can you hlep with this?
+
+
+Asa  reminder, the config.py is used to grab the values from the yaml. so for example if the documentation.py wants to grab the comment description or table description is should do so thorught the the config.py which is here:
+# src/dqx/utils/config.py
+
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+import yaml
+from pyspark.sql import SparkSession
+
+
+class ProjectConfig:
+    """
+    Minimal, notebook-friendly config loader.
+
+    - Reads a single YAML config file.
+    - Resolves any relative paths against the current working directory.
+    - Provides helpers to list YAML rule files and to load a YAML rules file.
+    """
+
+    def __init__(self, config_path: str, spark: Optional[SparkSession] = None):
+        p = Path(self._normalize_dbfs_like(config_path))
+        if not p.is_absolute():
+            p = (Path.cwd() / p).resolve()
+        if not p.exists():
+            raise FileNotFoundError(f"Config not found: {p}")
+        self._cfg_path = p
+        self._base_dir = p.parent  # not used externally but handy to keep
+        self.spark = spark
+
+        with open(p, "r") as fh:
+            self._cfg: Dict[str, Any] = yaml.safe_load(fh) or {}
+
+    # -------- public accessors --------
+    @property
+    def raw(self) -> Dict[str, Any]:
+        return self._cfg
+
+    def yaml_rules_dir(self) -> str:
+        """Return the absolute path to the folder containing YAML rules."""
+        rules_dir = str(self._cfg.get("dqx_yaml_checks", "")).strip()
+        if not rules_dir:
+            raise ValueError("Missing 'dqx_yaml_checks' in config.")
+        p = Path(self._normalize_dbfs_like(rules_dir))
+        if not p.is_absolute():
+            p = (Path.cwd() / p).resolve()
+        return str(p)
+
+    def checks_config_table(self) -> Tuple[str, str]:
+        """
+        Return (fully_qualified_table_name, primary_key).
+        Accepts either a string or a mapping {name, primary_key} in the config.
+        """
+        val = self._cfg.get("dqx_checks_config_table_name")
+        if isinstance(val, dict):
+            nm = val.get("name") or val.get("table") or val.get("table_name")
+            if not nm:
+                raise ValueError("dqx_checks_config_table_name must include 'name'.")
+            pk = val.get("primary_key", "check_id")
+            return str(nm), str(pk)
+        if not val:
+            raise ValueError("Missing 'dqx_checks_config_table_name' in config.")
+        return str(val), "check_id"
+
+    def list_rule_files(self, base_dir: str) -> List[str]:
+        """
+        Recursively enumerate *.yaml / *.yml under base_dir (resolved vs CWD).
+        """
+        root = Path(self._normalize_dbfs_like(base_dir))
+        if not root.is_absolute():
+            root = (Path.cwd() / root).resolve()
+        if not root.exists() or not root.is_dir():
+            raise FileNotFoundError(f"Rules folder not found or not a directory: {root}")
+
+        out: List[str] = []
+        for cur, dirs, files in os.walk(root):
+            # skip dot-directories
+            dirs[:] = [d for d in dirs if not d.startswith(".")]
+            for f in files:
+                if f.startswith("."):
+                    continue
+                if self._is_yaml(f):
+                    out.append(str(Path(cur) / f))
+        return sorted(out)
+
+    # -------- static helpers kept inside the class --------
+    @staticmethod
+    def _normalize_dbfs_like(p: str) -> str:
+        if p.startswith("dbfs:/"):
+            return "/dbfs/" + p[len("dbfs:/"):].lstrip("/")
+        return p
+
+    @staticmethod
+    def _is_yaml(fname: str) -> bool:
+        low = (fname or "").lower()
+        return low.endswith(".yaml") or low.endswith(".yml")
+
+    @staticmethod
+    def load_yaml_rules(path: str) -> List[dict]:
+        """
+        Read one YAML file that may contain multiple documents.
+        Flattens dict docs and lists of dicts.
+        """
+        p = Path(ProjectConfig._normalize_dbfs_like(path))
+        if not p.is_absolute():
+            p = (Path.cwd() / p).resolve()
+        if not p.exists():
+            raise FileNotFoundError(f"YAML file not found: {p}")
+
+        with open(p, "r") as fh:
+            docs = list(yaml.safe_load_all(fh)) or []
+
+        out: List[dict] = []
+        for d in docs:
+            if not d:
+                continue
+            if isinstance(d, dict):
+                out.append(d)
+            elif isinstance(d, list):
+                out.extend([x for x in d if isinstance(x, dict)])
+        return out
+
+
+# needed for list_rule_files
+import os  # keep at bottom to avoid shadowing by staticmethod names
+
+
+
+
+
+You will also need to updat this file:
+# src/dqx/utils/documentation.py
+
+from __future__ import annotations
+
+import json
+from typing import Dict, Any, Optional
+
+from pyspark.sql import SparkSession
+from utils.display import show_df, display_section
+
+__all__ = [
+    "_materialize_table_doc",
+    "_q_fqn",
+    "_esc_comment",
+    "preview_table_documentation",
+    "apply_table_documentation",
+]
+
+
+def _materialize_table_doc(doc_template: Dict[str, Any], table_fqn: str) -> Dict[str, Any]:
+    """Fill the table_fqn into the doc template (deep copied), and expand {TABLE_FQN} placeholders."""
+    copy = json.loads(json.dumps(doc_template))
+    copy["table"] = table_fqn
+    if "table_comment" in copy and isinstance(copy["table_comment"], str):
+        copy["table_comment"] = copy["table_comment"].replace("{TABLE_FQN}", table_fqn)
+    return copy
+
+
+def _q_fqn(fqn: str) -> str:
+    """Backtick-quote catalog.schema.table."""
+    return ".".join(f"`{p}`" for p in fqn.split("."))
+
+
+# =========================
+# Comments + documentation
+# =========================
+def _esc_comment(s: str) -> str:
+    """Escape single quotes for SQL COMMENT strings."""
+    return (s or "").replace("'", "''")
+
+
+def preview_table_documentation(spark: SparkSession, table_fqn: str, doc: Dict[str, Any]) -> None:
+    display_section("TABLE METADATA PREVIEW (markdown text stored in comments)")
+    doc_df = spark.createDataFrame(
+        [(table_fqn, doc.get("table_comment", ""))],
+        schema="table string, table_comment_markdown string",
+    )
+    show_df(doc_df, n=1, truncate=False)
+
+    cols = doc.get("columns", {}) or {}
+    cols_df = spark.createDataFrame(
+        [(k, v) for k, v in cols.items()],
+        schema="column string, column_comment_markdown string",
+    )
+    show_df(cols_df, n=200, truncate=False)
+
+
+def apply_table_documentation(
+    spark: SparkSession,
+    table_fqn: str,
+    doc: Optional[Dict[str, Any]],
+) -> None:
+    """Apply table comment and per-column comments, with fallbacks for engines that lack COMMENT support."""
+    if not doc:
+        return
+
+    qtable = _q_fqn(table_fqn)
+
+    # Table comment
+    table_comment = _esc_comment(doc.get("table_comment", ""))
+    if table_comment:
+        try:
+            spark.sql(f"COMMENT ON TABLE {qtable} IS '{table_comment}'")
+        except Exception:
+            # Fallback to TBLPROPERTIES for engines that don’t support COMMENT
+            spark.sql(f"ALTER TABLE {qtable} SET TBLPROPERTIES ('comment' = '{table_comment}')")
+
+    # Column comments (always best-effort)
+    cols: Dict[str, str] = doc.get("columns", {}) or {}
+    existing_cols = {f.name.lower() for f in spark.table(table_fqn).schema.fields}
+    for col_name, comment in cols.items():
+        if col_name.lower() not in existing_cols:
+            continue
+        qcol = f"`{col_name}`"
+        comment_sql = f"ALTER TABLE {qtable} ALTER COLUMN {qcol} COMMENT '{_esc_comment(comment)}'"
+        try:
+            spark.sql(comment_sql)
+        except Exception:
+            # Try COMMENT ON COLUMN as fallback
+            try:
+                spark.sql(f"COMMENT ON COLUMN {qtable}.{qcol} IS '{_esc_comment(comment)}'")
+            except Exception as e2:
+                print(f"[meta] Skipped column comment for {table_fqn}.{col_name}: {e2}")
+
+
+
+
+
+
+
+So please show me the updated config.py, documentation.py and dqx_config.yaml
+
+
+here is the notebook to update as well:
 import json
 import hashlib
 from typing import Dict, Any, Optional, List
@@ -22,6 +616,7 @@ from utils.table import (
     add_primary_key_constraint,
     write_empty_delta_table,
     empty_df_from_schema,
+    create_table_if_absent,
 )
 from utils.documentation import (
     _materialize_table_doc,
@@ -310,37 +905,6 @@ def dedupe_rules_in_batch_by_check_id(rules: List[dict], mode: str = "warn") -> 
             print(msg)
     return out
 
-# =========================
-# Create-once helper (uses utils.table primitives)
-# =========================
-def create_table_if_absent(
-    spark: SparkSession,
-    table_fqn: str,
-    *,
-    schema: T.StructType,
-    table_doc: Optional[Dict[str, Any]] = None,
-    primary_key: Optional[str] = "check_id",
-    partition_by: Optional[List[str]] = None,
-) -> None:
-    """
-    Create once with the exact schema, optional partitioning, table/column comments, and PK.
-    Does not attempt to create catalog/schema; if they don't exist this will raise (as intended).
-    """
-    if table_exists(spark, table_fqn):
-        return
-
-    # Create the empty Delta table with exact schema
-    write_empty_delta_table(spark, table_fqn, schema, partition_by=partition_by)
-
-    # Apply docs once at create
-    if table_doc:
-        apply_table_documentation(spark, table_fqn, table_doc)
-
-    # Add PRIMARY KEY once at create
-    if primary_key:
-        add_primary_key_constraint(
-            spark, table_fqn, column=primary_key, constraint_name=f"pk_{primary_key}", rely=True
-        )
 
 # =========================
 # Data overwrite (preserve metadata)
@@ -597,3 +1161,4 @@ res = load_checks(
     batch_dedupe_mode="warn",
 )
 print(res)
+
