@@ -1,119 +1,3 @@
-Damn you you dont understand at all
-
-
-So here is what you should run:
-ALTER TABLE {fq} ADD PRIMARY KEY ({cols})
-
-def _handle_post_create(self, add_section):
-        for key, val in add_section.items():
-            if key in ("columns", "table_properties", "table_comment", "partitioned_by"):
-                continue
-            meta = LOADER_CONFIG["add"].get(key)
-            if not meta or not val:
-                continue
-            sql_template = meta.get("sql")
-            if sql_template is None:
-                continue  # Only columns handled separately, rest should all have sql
-            if key == "primary_key" or key == "partitioned_by":
-                sql = sql_template.format(fq=self.fq, cols=", ".join(val))
-                self._run(sql, meta["desc"].format(cols=", ".join(val)))
-            elif key == "unique_keys":
-                for group in val:
-                    sql = sql_template.format(fq=self.fq, key="_".join(group), cols=", ".join(group))
-                    self._run(sql, meta["desc"].format(cols=", ".join(group), key="_".join(group)))
-            elif key == "foreign_keys":
-                for fk_name, fk in val.items():
-                    sql = sql_template.format(
-                        fq=self.fq,
-                        name=fk_name,
-                        cols=", ".join(fk.get("columns", [])),
-                        ref_tbl=fk.get("reference_table", ""),
-                        ref_cols=", ".join(fk.get("reference_columns", [])),
-                    )
-                    self._run(sql, meta["desc"].format(name=fk_name, cols=", ".join(fk.get("columns", []))))
-            elif key == "table_check_constraints":
-                for cname, cdict in val.items():
-                    sql = sql_template.format(fq=self.fq, name=cname, expression=cdict.get("expression"))
-                    self._run(sql, meta["desc"].format(name=cname))
-            elif key == "row_filters":
-                for fname, fdict in val.items():
-                    sql = sql_template.format(fq=self.fq, name=fname, expression=fdict.get("expression"))
-                    self._run(sql, meta["desc"].format(name=fname))
-            elif key == "table_tags":
-                for k, v in val.items():
-                    sql = sql_template.format(fq=self.fq, key=k, val=v)
-                    self._run(sql, meta["desc"].format(key=k, val=v))
-            elif key == "owner":
-                sql = sql_template.format(fq=self.fq, owner=val)
-                self._run(sql, meta["desc"].format(owner=val))
-            # No table_comment/table_properties/columns here
-
-    def _handle_section(self, action: str, section_dict: Dict[str, Any]):
-        config = LOADER_CONFIG[action]
-        for key, meta in config.items():
-            val = section_dict.get(key)
-            if not val:
-                continue
-            sql_template = meta.get("sql")
-            if sql_template is None:
-                self._handle_columns(action, val)
-                continue
-            if key == "primary_key" or key == "partitioned_by":
-                sql = sql_template.format(fq=self.fq, cols=", ".join(val))
-                self._run(sql, meta["desc"].format(cols=", ".join(val)))
-            elif key == "unique_keys":
-                for group in val:
-                    sql = sql_template.format(fq=self.fq, key="_".join(group), cols=", ".join(group))
-                    self._run(sql, meta["desc"].format(cols=", ".join(group), key="_".join(group)))
-            elif key == "foreign_keys":
-                for fk_name, fk in val.items():
-                    sql = sql_template.format(
-                        fq=self.fq,
-                        name=fk_name,
-                        cols=", ".join(fk.get("columns", [])),
-                        ref_tbl=fk.get("reference_table", ""),
-                        ref_cols=", ".join(fk.get("reference_columns", [])),
-                    )
-                    self._run(sql, meta["desc"].format(name=fk_name, cols=", ".join(fk.get("columns", []))))
-            elif key == "table_check_constraints":
-                for cname, cdict in val.items():
-                    sql = sql_template.format(fq=self.fq, name=cname, expression=cdict.get("expression"))
-                    self._run(sql, meta["desc"].format(name=cname))
-            elif key == "row_filters":
-                for fname, fdict in val.items():
-                    sql = sql_template.format(fq=self.fq, name=fname, expression=fdict.get("expression"))
-                    self._run(sql, meta["desc"].format(name=fname))
-            elif key == "table_tags":
-                for k, v in val.items():
-                    sql = sql_template.format(fq=self.fq, key=k, val=v)
-                    self._run(sql, meta["desc"].format(key=k, val=v))
-            elif key == "table_properties":
-                for k, v in val.items():
-                    sql = sql_template.format(fq=self.fq, key=k, val=v)
-                    self._run(sql, meta["desc"].format(key=k, val=v))
-            elif key == "owner":
-                sql = sql_template.format(fq=self.fq, owner=val)
-                self._run(sql, meta["desc"].format(owner=val))
-            elif key == "table_comment":
-                sql = sql_template.format(fq=self.fq, comment=val)
-                self._run(sql, meta["desc"])
-            else:
-                sql = sql_template.format(fq=self.fq, val=val)
-                self._run(sql, f"{action.upper()} {key}: {val}")
-
-
-
-
-Now the above does it how i want but its a lot more than what we need, 
-
-we jsut need one function that craetes or sets the primary key
-
-it should expect a table name and column
-
-
-
-
-Can you update the table.py, the function in add_primary_key_constraint: 
 # src/utils/table.py
 
 from __future__ import annotations
@@ -224,6 +108,11 @@ def ensure_fully_qualified(
         return qualify_table_name(default_catalog, default_schema, name)
     raise ValueError(f"Not fully qualified and no defaults provided: {name!r}")
 
+def _quote_table(fqn: str) -> str:
+    return ".".join(f"`{p}`" for p in fqn.split("."))
+
+# -------- DataFrame/table creation helpers --------
+
 def empty_df_from_schema(spark: SparkSession, schema: T.StructType) -> DataFrame:
     return spark.createDataFrame([], schema)
 
@@ -242,20 +131,33 @@ def write_empty_delta_table(
         writer = writer.partitionBy(*partition_by)
     writer.saveAsTable(table_fqn)
 
+# -------- Constraints helpers --------
+
 def add_primary_key_constraint(
     spark: SparkSession,
     table_fqn: str,
     column: str = "check_id",
-    constraint_name: Optional[str] = None,
-    rely: bool = True,
+    constraint_name: Optional[str] = None,  # ignored (kept for backward compatibility)
+    rely: bool = True,                       # ignored (kept for backward compatibility)
 ) -> None:
     """
-    Add a PRIMARY KEY constraint once. No drop/re-add logic here.
+    Create/declare a PRIMARY KEY on the table using the exact SQL you specified:
+        ALTER TABLE <fq> ADD PRIMARY KEY (<cols>)
+
+    `column` may be a single column name (str) or a list/tuple for a composite key.
     """
-    qtable = ".".join(f"`{p}`" for p in table_fqn.split("."))
-    name = constraint_name or f"pk_{column}"
-    opt_rely = " RELY" if rely else ""
+    qtable = _quote_table(table_fqn)
+
+    if isinstance(column, (list, tuple)):
+        cols_sql = ", ".join(f"`{c}`" for c in column)
+        cols_label = ", ".join(str(c) for c in column)
+    else:
+        cols_sql = f"`{column}`"
+        cols_label = str(column)
+
+    sql = f"ALTER TABLE {qtable} ADD PRIMARY KEY ({cols_sql})"
     try:
-        spark.sql(f"ALTER TABLE {qtable} ADD CONSTRAINT {name} PRIMARY KEY (`{column}`){opt_rely}")
+        spark.sql(sql)
+        print(f"{Console.SUCCESS}Added PRIMARY KEY on {table_fqn}: ({cols_label})")
     except Exception as e:
-        print(f"{Console.WARN}Skipped PRIMARY KEY add on create for {table_fqn}.{column}: {e}")
+        print(f"{Console.WARN}Failed to set PRIMARY KEY on {table_fqn}: {e}")
