@@ -1,60 +1,12 @@
-I now get this error because I deleted teh funtion: 
-NameError: name '_now_iso_safe' is not defined
-File <command-4730582016129069>, line 581
-    567     return main(
-    568         output_config_path=dqx_cfg_yaml,
-    569         rules_dir=None,
-   (...)
-    577         apply_table_metadata=apply_table_metadata,
-    578     )
-    580 # ---- run it ----
---> 581 res = load_checks(
-    582     dqx_cfg_yaml="resources/dqx_config.yaml",
-    583     created_by="AdminUser",
-    584     apply_table_metadata=True,
-    585     # dry_run=True,
-    586     # validate_only=True,
-    587     batch_dedupe_mode="warn",
-    588 )
-    589 print(res)
-File <command-4730582016129069>, line 206, in process_yaml_file(path, required_fields, time_zone, created_by)
-    203     return []
-    205 validate_rules_file(docs, path)
---> 206 now = _now_iso_safe(time_zone)
-    207 flat: List[dict] = []
-    209 for rule in docs:
-
-
-Can you stop making this so complicated, and just define it inline here:
-       flat.append(
-            {
-                "check_id": check_id,
-                "check_id_payload": payload,
-                "table_name": rule["table_name"],
-                "name": rule["name"],
-                "criticality": rule["criticality"],
-                "check": {
-                    "function": function,
-                    "for_each_column": for_each if for_each else None,
-                    "arguments": arguments if arguments else None,
-                },
-                "filter": rule.get("filter"),
-                "run_config_name": rule["run_config_name"],
-                "user_metadata": user_metadata if user_metadata else None,
-                "yaml_path": path,
-                "active": rule.get("active", True),
-                "created_by": created_by,
-                "created_at": now, <- here
-                "updated_by": None,
-                "updated_at": None,
-            }
-
-
-Yeah, show me full updated file here:
 import json
 import hashlib
-import yaml
-from typing import Dict, Any, Optional, List, Tuple
+from typing import Dict, Any, Optional, List
+
+from datetime import datetime, timezone
+try:
+    from zoneinfo import ZoneInfo  # py3.9+
+except Exception:
+    ZoneInfo = None  # type: ignore
 
 from pyspark.sql import SparkSession, DataFrame, types as T
 from pyspark.sql.functions import to_timestamp, col, desc
@@ -149,8 +101,6 @@ DQX_CHECKS_CONFIG_METADATA: Dict[str, Any] = {
     },
 }
 
-
-
 # =========================
 # Canonicalization & IDs
 # =========================
@@ -244,8 +194,6 @@ def validate_with_dqx(rules: List[dict], file_path: str):
     if getattr(status, "has_errors", False):
         raise ValueError(f"DQX validation failed in {file_path}:\n{status.to_string()}")
 
-
-
 # =========================
 # Build rows
 # =========================
@@ -256,7 +204,6 @@ def process_yaml_file(path: str, required_fields: List[str], time_zone: str = "U
         return []
 
     validate_rules_file(docs, path)
-    now = _now_iso_safe(time_zone)
     flat: List[dict] = []
 
     for rule in docs:
@@ -290,6 +237,13 @@ def process_yaml_file(path: str, required_fields: List[str], time_zone: str = "U
                 raise ValueError(f"{path}: user_metadata must be a map (rule '{rule.get('name')}').")
             user_metadata = _stringify_map_values(user_metadata)
 
+        # ---- inline timestamp (no helper) ----
+        created_at_iso = (
+            datetime.now(ZoneInfo(time_zone)).isoformat()
+            if ZoneInfo is not None else
+            datetime.now(timezone.utc).isoformat()
+        )
+
         flat.append(
             {
                 "check_id": check_id,
@@ -308,7 +262,7 @@ def process_yaml_file(path: str, required_fields: List[str], time_zone: str = "U
                 "yaml_path": path,
                 "active": rule.get("active", True),
                 "created_by": created_by,
-                "created_at": now,
+                "created_at": created_at_iso,  # <— inline
                 "updated_by": None,
                 "updated_at": None,
             }
@@ -355,8 +309,6 @@ def dedupe_rules_in_batch_by_check_id(rules: List[dict], mode: str = "warn") -> 
         if mode == "warn":
             print(msg)
     return out
-
-
 
 # =========================
 # Create-once helper (uses utils.table primitives)
@@ -536,7 +488,12 @@ def main(
 
     if validate_only:
         print("\nValidation only: not writing any rules.")
-        errs = validate_rule_files(yaml_files, required_fields)
+        errs: List[str] = []
+        for p in yaml_files:
+            try:
+                validate_rules_file(ProjectConfig.load_yaml_rules(p), p)
+            except Exception as e:
+                errs.append(f"{p}: {e}")
         return {
             "mode": "validate_only",
             "config_path": output_config_path,
