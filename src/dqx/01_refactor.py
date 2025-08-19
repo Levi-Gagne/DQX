@@ -1,24 +1,81 @@
-# utils/timezone.py
-from datetime import datetime, timezone
-from typing import Optional
-try:
-    from zoneinfo import ZoneInfo  # py3.9+
-except Exception:
-    ZoneInfo = None  # type: ignore
+I dont know what the fuck youre doing now, but i get this errro: 
+FileNotFoundError: Rules folder not found or not a directory: /Workspace/Users/levi.gagne@claconnect.com/DQX/src/dqx/resources/resources/dqx_checks_config_load
+File <command-4730582016129069>, line 804
+    791     return main(
+    792         output_config_path=dqx_cfg_yaml,
+    793         rules_dir=None,
+   (...)
+    800         created_by=created_by,
+    801     )
+    803 # ---- run it ----
+--> 804 res = load_checks(
+    805     dqx_cfg_yaml="resources/dqx_config.yaml",
+    806     created_by="AdminUser",
+    807     # dry_run=True,
+    808     # validate_only=True,
+    809     batch_dedupe_mode="warn",
+    810 )
+    811 print(res)
+File /Workspace/Users/levi.gagne@claconnect.com/DQX/src/dqx/utils/config.py:81, in ProjectConfig.list_rule_files(self, base_dir)
+     79     root = (self._base_dir / root).resolve()
+     80 if not root.exists() or not root.is_dir():
+---> 81     raise FileNotFoundError(f"Rules folder not found or not a directory: {root}")
+     83 out: List[str] = []
+     84 for cur, dirs, files in os.walk(root):
 
-def current_time_iso(tz_name: Optional[str] = "UTC") -> str:
-    # Prefer requested zone; fall back to UTC if tz data isn't available.
-    if ZoneInfo is not None:
-        try:
-            return datetime.now(ZoneInfo(tz_name or "UTC")).isoformat()
-        except Exception:
-            pass
-    return datetime.now(timezone.utc).isoformat()
-   
-   
-######
 
 
+
+Im realzing you messed up the config.py relly bad
+
+
+First off, I was passing this path to the file arleady:
+No need to make it overly complex
+
+
+and remember the main point of creating config.py was to replace these functions: 
+# =========================
+# YAML loading (robust)
+# =========================
+def load_yaml_rules(path: str) -> List[dict]:
+    with open(path, "r") as fh:
+        docs = list(yaml.safe_load_all(fh))
+    out: List[dict] = []
+    for d in docs:
+        if d is None:
+            continue
+        if isinstance(d, dict):
+            out.append(d)
+        elif isinstance(d, list):
+            out.extend([x for x in d if isinstance(x, dict)])
+    return out
+
+and this: 
+# =========================
+# Recursive discovery + write
+# =========================
+def _load_output_config(path: str) -> Dict[str, Any]:
+    with open(path, "r") as fh:
+        return yaml.safe_load(fh) or {}
+
+def _parse_checks_table_cfg(cfg_value: Any) -> Tuple[str, str]:
+    """
+    Supports:
+      - String (legacy):  "dq_dev.dqx.checks_config" → (name, 'check_id')
+      - Mapping (new):    {name: "...", primary_key: "check_id"} → (name, pk)
+    """
+    if isinstance(cfg_value, dict):
+        nm = cfg_value.get("name") or cfg_value.get("table") or cfg_value.get("table_name")
+        if not nm:
+            raise ValueError("dqx_checks_config_table_name must include 'name' when provided as a mapping.")
+        pk = cfg_value.get("primary_key", "check_id")
+        return str(nm), str(pk)
+
+
+
+
+    please show me teh updated config.py file please: 
+    # src/dqx/utils/config.py
 
 from __future__ import annotations
 
@@ -109,3 +166,6 @@ class ProjectConfig:
                 if _is_yaml(f):
                     out.append(str(Path(cur) / f))
         return sorted(out)
+    return str(cfg_value), "check_id"
+
+
