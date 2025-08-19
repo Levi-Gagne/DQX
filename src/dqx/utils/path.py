@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Optional
 
 
-# find nearest folder that looks like the project root
 def find_project_root(start_path: str) -> Path:
     path = Path(start_path).resolve()
     for parent in [path] + list(path.parents):

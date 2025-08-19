@@ -1,124 +1,207 @@
-# utils/config.py
+# src/dqx/utils/config.py
+
 from __future__ import annotations
 
 import os
-import yaml
+from pathlib import Path
+from string import Formatter
 from typing import Any, Dict, List, Optional, Tuple
-from pyspark.sql import SparkSession  # type: ignore
 
-from utils.path import resolve_resource, normalize_path
+import yaml
+from pyspark.sql import SparkSession
+
+
+class _SafeMap(dict):
+    """Return {key} literally when missing during format_map."""
+    def __missing__(self, key: str) -> str:
+        return "{" + key + "}"
 
 
 class ProjectConfig:
     """
-    Loader for project-level YAML config with a couple of helpers for paths/values.
+    Minimal, notebook-friendly config loader.
+
+    - Reads a single YAML config file.
+    - Resolves any relative paths against CWD.
+    - Handles simple {var} templating from dqx_config.variables or passed-in variables.
+    - Exposes helpers for rules discovery, target tables, and table documentation.
     """
 
     def __init__(
         self,
         config_path: str,
-        *,
         spark: Optional[SparkSession] = None,
-        env: Optional[str] = None,
-        start_file: Optional[str] = None,
+        variables: Optional[Dict[str, str]] = None,
     ):
+        p = Path(self._normalize_dbfs_like(config_path))
+        if not p.is_absolute():
+            p = (Path.cwd() / p).resolve()
+        if not p.exists():
+            raise FileNotFoundError(f"Config not found: {p}")
+        self._cfg_path = p
+        self._base_dir = p.parent
         self.spark = spark
-        self.env = (env or "").strip().lower()
-        self.start_file = start_file
-        self._dbutils = self._init_dbutils(spark)
-        self._path_in = config_path
-        self._cfg: Dict[str, Any] = {}
-        self._load()
 
-    # attempt both dbutils entry points
-    def _init_dbutils(self, spark: Optional[SparkSession]):
-        try:
-            # available on DBR 13+ notebooks/jobs
-            from databricks.sdk.runtime import dbutils  # type: ignore
-            return dbutils
-        except Exception:
-            pass
-        if spark is not None:
-            try:
-                from pyspark.dbutils import DBUtils  # type: ignore
-                return DBUtils(spark)
-            except Exception:
-                pass
-        return None
-
-    # read the YAML config file (supports repo-relative and dbfs:/)
-    def _load(self) -> None:
-        p = resolve_resource(self._path_in, start_file=self.start_file or __file__)
         with open(p, "r") as fh:
-            self._cfg = yaml.safe_load(fh) or {}
+            self._cfg: Dict[str, Any] = yaml.safe_load(fh) or {}
 
-    # raw dict when needed
+        # variables for {env} etc.
+        vars_from_yaml = (
+            (self._cfg.get("dqx_config") or {}).get("variables") or {}
+        )
+        self._vars: Dict[str, str] = {
+            "env": os.environ.get("DQX_ENV", "dev"),
+            **vars_from_yaml,
+            **(variables or {}),
+        }
+
+    # -------- public accessors --------
     @property
-    def config(self) -> Dict[str, Any]:
+    def raw(self) -> Dict[str, Any]:
         return self._cfg
 
-    # dqx rules folder (config key: dqx_yaml_checks)
+    # timezones / flags
+    def local_timezone(self) -> str:
+        return ((self._cfg.get("dqx_config") or {}).get("local_timezone")) or "UTC"
+
+    def processing_timezone(self) -> str:
+        return ((self._cfg.get("dqx_config") or {}).get("processing_timezone")) or "UTC"
+
+    def apply_table_metadata_flag(self) -> bool:
+        return bool((self._cfg.get("dqx_config") or {}).get("apply_table_metadata", False))
+
+    # rules discovery
     def yaml_rules_dir(self) -> str:
-        raw = self._cfg.get("dqx_yaml_checks") or ""
-        return normalize_path(raw, start_file=self.start_file or __file__)
+        """Return absolute path to folder containing YAML rules (back-compat name)."""
+        node = ((self._cfg.get("dqx_load_checks") or {}).get("checks_config_source") or {})
+        rules_dir = str(node.get("source_path") or self._cfg.get("dqx_yaml_checks", "")).strip()
+        if not rules_dir:
+            raise ValueError("Missing rules directory. Set dqx_load_checks.checks_config_source.source_path.")
+        p = Path(self._normalize_dbfs_like(rules_dir))
+        if not p.is_absolute():
+            p = (Path.cwd() / p).resolve()
+        return str(p)
 
-    # checks config table name + PK (accepts string or mapping with {name, primary_key})
+    # validation controls
+    def allowed_criticality(self) -> List[str]:
+        node = ((self._cfg.get("dqx_load_checks") or {}).get("checks_config_source") or {})
+        vals = node.get("allowed_criticality") or ["error", "warn", "warning"]
+        return [str(v) for v in vals]
+
+    def required_fields(self) -> List[str]:
+        node = ((self._cfg.get("dqx_load_checks") or {}).get("checks_config_source") or {})
+        vals = node.get("required_fields") or ["table_name", "name", "criticality", "run_config_name", "check"]
+        return [str(v) for v in vals]
+
+    # target table names
     def checks_config_table(self) -> Tuple[str, str]:
-        val = self._cfg.get("dqx_checks_config_table_name")
-        if isinstance(val, dict):
-            name = val.get("name") or val.get("table") or val.get("table_name")
-            if not name:
-                raise ValueError("dqx_checks_config_table_name must include 'name' when provided as a mapping.")
-            pk = val.get("primary_key", "check_id")
-            return str(name), str(pk)
-        if isinstance(val, str) and val.strip():
-            return val.strip(), "check_id"
-        raise ValueError("dqx_checks_config_table_name not set")
+        """Return (fully_qualified_table_name, primary_key)."""
+        node = ((self._cfg.get("dqx_load_checks") or {}).get("checks_config_table") or {})
+        name = node.get("target_table") or (self._cfg.get("dqx_checks_config_table_name") if isinstance(self._cfg.get("dqx_checks_config_table_name"), str) else None)
+        if not name:
+            raise ValueError("checks_config_table.target_table is required.")
+        pk = node.get("primary_key") or "check_id"
+        return self._render(name), str(pk)
 
-    # checks log table (dataset for row-level issues)
-    def checks_log_table(self) -> str:
-        val = self._cfg.get("dqx_checks_log_table_name")
-        if not val:
-            raise ValueError("dqx_checks_log_table_name not set")
-        return str(val)
+    def checks_log_table(self) -> Tuple[str, str]:
+        node = ((self._cfg.get("dqx_run_checks") or {}).get("checks_log_table") or {})
+        name = node.get("target_table") or (self._cfg.get("dqx_checks_log_table_name") if isinstance(self._cfg.get("dqx_checks_log_table_name"), str) else None)
+        if not name:
+            raise ValueError("dqx_run_checks.checks_log_table.target_table is required.")
+        pk = node.get("primary_key") or "log_id"
+        return self._render(name), str(pk)
 
-    # run configs block (used by runners)
-    def run_configs(self) -> Dict[str, Any]:
-        return dict(self._cfg.get("run_config_name") or {})
+    # documentation templates (table + column comments)
+    def table_doc(self, table_section: str) -> Optional[Dict[str, Any]]:
+        """
+        table_section: 'checks_config_table' | 'checks_log_table' | etc.
+        Returns dict with keys: table (placeholder), table_comment, columns{name->comment}
+        """
+        if table_section == "checks_config_table":
+            node = ((self._cfg.get("dqx_load_checks") or {}).get("checks_config_table") or {})
+        else:
+            node = ((self._cfg.get("dqx_run_checks") or {}).get(table_section) or {})
 
-    # optional: secrets via dbutils
-    def get_secret(self, scope: str, key: str) -> str:
-        if not self._dbutils:
-            raise RuntimeError("dbutils not available")
-        return self._dbutils.secrets.get(scope=scope, key=key)
+        if not node:
+            return None
 
-    # enumerate YAML rule files recursively (hidden files ignored)
-    def list_rule_files(self, base_dir: Optional[str] = None) -> List[str]:
-        from os import walk
-        from os.path import join
-        root = normalize_path(base_dir or self.yaml_rules_dir(), start_file=self.start_file or __file__)
+        tbl_comment = node.get("table_comment", "") or ""
+        cols_node = node.get("columns") or {}
+        # normalize: support either {name:{...,comment}} or {name: "comment"} styles
+        cols_comments: Dict[str, str] = {}
+        for k, v in cols_node.items():
+            if isinstance(v, dict):
+                comment = v.get("comment") or v.get("column_description") or ""
+            else:
+                comment = str(v or "")
+            cols_comments[str(k)] = str(comment)
+
+        return {
+            "table": "<override at create time>",
+            "table_comment": str(tbl_comment),
+            "columns": cols_comments,
+        }
+
+    # list rule files recursive
+    def list_rule_files(self, base_dir: str) -> List[str]:
+        root = Path(self._normalize_dbfs_like(base_dir))
+        if not root.is_absolute():
+            root = (Path.cwd() / root).resolve()
+        if not root.exists() or not root.is_dir():
+            raise FileNotFoundError(f"Rules folder not found or not a directory: {root}")
+
         out: List[str] = []
-        for r, dirs, files in walk(root):
+        for cur, dirs, files in os.walk(root):
             dirs[:] = [d for d in dirs if not d.startswith(".")]
             for f in files:
                 if f.startswith("."):
                     continue
-                fl = f.lower()
-                if fl.endswith(".yaml") or fl.endswith(".yml"):
-                    out.append(join(r, f))
+                if self._is_yaml(f):
+                    out.append(str(Path(cur) / f))
         return sorted(out)
 
-    # multi-doc YAML parse → list of dicts
-    def read_yaml_rules_file(self, path: str) -> List[dict]:
-        p = normalize_path(path, start_file=self.start_file or __file__)
+    # -------- static helpers --------
+    @staticmethod
+    def _normalize_dbfs_like(p: str) -> str:
+        if p.startswith("dbfs:/"):
+            return "/dbfs/" + p[len("dbfs:/"):].lstrip("/")
+        return p
+
+    @staticmethod
+    def _is_yaml(fname: str) -> bool:
+        low = (fname or "").lower()
+        return low.endswith(".yaml") or low.endswith(".yml")
+
+    @staticmethod
+    def load_yaml_rules(path: str) -> List[dict]:
+        p = Path(ProjectConfig._normalize_dbfs_like(path))
+        if not p.is_absolute():
+            p = (Path.cwd() / p).resolve()
+        if not p.exists():
+            raise FileNotFoundError(f"YAML file not found: {p}")
+
         with open(p, "r") as fh:
-            docs = list(yaml.safe_load_all(fh))
+            docs = list(yaml.safe_load_all(fh)) or []
+
         out: List[dict] = []
         for d in docs:
-            if d is None:
+            if not d:
                 continue
             if isinstance(d, dict):
                 out.append(d)
             elif isinstance(d, list):
                 out.extend([x for x in d if isinstance(x, dict)])
         return out
+
+    # formatting for {variables}
+    def _render(self, s: Any) -> str:
+        if not isinstance(s, str):
+            return str(s)
+        # only format when there is at least one {...}
+        if any(t[1] is not None for t in Formatter().parse(s)):
+            return s.format_map(_SafeMap(self._vars))
+        return s
+
+
+# needed for list_rule_files
+import os  # keep at bottom

@@ -277,8 +277,11 @@ import yaml
 from databricks.sdk import WorkspaceClient
 from databricks.labs.dqx.engine import DQEngine
 from pyspark.sql import SparkSession, DataFrame, Row, functions as F, types as T
+
 from utils.color import Color
 from utils.print import print_notebook_env
+
+from resources.dqx_functions_0_8_0 import EXPECTED as _EXPECTED
 
 # -------------------
 # Display helpers
@@ -484,26 +487,7 @@ def _normalize_issues_for_fp(arr_col: F.Column) -> F.Column:
 # --------------------------
 # JIT argument coercion (unchanged)
 # --------------------------
-_EXPECTED: Dict[str, Dict[str, str]] = {
-    "is_unique": {"columns": "list"},
-    "is_in_list": {"column": "str", "allowed": "list"},
-    "is_in_range": {"column": "str", "min_limit": "num", "max_limit": "num",
-                    "inclusive_min": "bool", "inclusive_max": "bool"},
-    "regex_match": {"column": "str", "regex": "str"},
-    "sql_expression": {"expression": "str"},
-    "sql_query": {
-        "query": "str",
-        "merge_columns": "list",
-        "msg": "str",
-        "name": "str",
-        "negate": "bool",
-        "condition_column": "str",
-        "input_placeholder": "str",
-        "row_filter": "str",
-    },
-    "is_not_null": {"column": "str"},
-    "is_not_null_and_not_empty": {"column": "str"},
-}
+
 
 def _parse_scalar(s: Optional[str]):
     if s is None: return None
