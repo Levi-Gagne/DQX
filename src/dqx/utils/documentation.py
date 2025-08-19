@@ -2,44 +2,54 @@
 
 from __future__ import annotations
 
-import json
 from typing import Dict, Any, Optional
-
 from pyspark.sql import SparkSession
+from pyspark.sql import types as T
+
 from utils.display import show_df, display_section
-from utils.config import ProjectConfig
 
 __all__ = [
-    "_materialize_table_doc",
     "_q_fqn",
     "_esc_comment",
+    "build_doc_from_schema",
     "preview_table_documentation",
     "apply_table_documentation",
-    "doc_from_config",
 ]
-
-
-def _materialize_table_doc(doc_template: Dict[str, Any], table_fqn: str) -> Dict[str, Any]:
-    """Fill the table FQN into the doc template and expand placeholders."""
-    copy = json.loads(json.dumps(doc_template))
-    copy["table"] = table_fqn
-    if "table_comment" in copy and isinstance(copy["table_comment"], str):
-        copy["table_comment"] = copy["table_comment"].replace("{TABLE_FQN}", table_fqn)
-    return copy
-
 
 def _q_fqn(fqn: str) -> str:
     """Backtick-quote catalog.schema.table."""
     return ".".join(f"`{p}`" for p in fqn.split("."))
 
-
-# =========================
-# Comments + documentation
-# =========================
 def _esc_comment(s: str) -> str:
     """Escape single quotes for SQL COMMENT strings."""
     return (s or "").replace("'", "''")
 
+def build_doc_from_schema(
+    table_description: Optional[str],
+    schema: T.StructType,
+    *,
+    metadata_key: str = "comment",
+) -> Dict[str, Any]:
+    """
+    Create a documentation payload from a StructType and an optional table_description.
+    - Table comment comes from the YAML 'table_description' (string, may be markdown).
+    - Column comments come from StructField.metadata[metadata_key], if present.
+    """
+    cols: Dict[str, str] = {}
+    for field in schema.fields:
+        try:
+            meta = field.metadata or {}
+            comment = meta.get(metadata_key)
+            if isinstance(comment, str) and comment.strip():
+                cols[field.name] = comment
+        except Exception:
+            # Be permissive; skip if metadata not readable.
+            pass
+
+    return {
+        "table_comment": table_description or "",
+        "columns": cols,
+    }
 
 def preview_table_documentation(spark: SparkSession, table_fqn: str, doc: Dict[str, Any]) -> None:
     display_section("TABLE METADATA PREVIEW (markdown text stored in comments)")
@@ -56,13 +66,15 @@ def preview_table_documentation(spark: SparkSession, table_fqn: str, doc: Dict[s
     )
     show_df(cols_df, n=200, truncate=False)
 
-
 def apply_table_documentation(
     spark: SparkSession,
     table_fqn: str,
     doc: Optional[Dict[str, Any]],
 ) -> None:
-    """Apply table comment and per-column comments, with fallbacks for engines that lack COMMENT support."""
+    """
+    Apply table comment and column comments via SQL COMMENT statements.
+    Falls back to TBLPROPERTIES('comment'='...') for engines that don't support COMMENT ON TABLE.
+    """
     if not doc:
         return
 
@@ -91,14 +103,3 @@ def apply_table_documentation(
                 spark.sql(f"COMMENT ON COLUMN {qtable}.{qcol} IS '{_esc_comment(comment)}'")
             except Exception as e2:
                 print(f"[meta] Skipped column comment for {table_fqn}.{col_name}: {e2}")
-
-
-# Convenience: fetch and materialize table doc directly from YAML config
-def doc_from_config(cfg: ProjectConfig, table_section: str, table_fqn: str) -> Optional[Dict[str, Any]]:
-    """
-    table_section: 'checks_config_table' | 'checks_log_table' | ...
-    """
-    tpl = cfg.table_doc(table_section)
-    if not tpl:
-        return None
-    return _materialize_table_doc(tpl, table_fqn)
