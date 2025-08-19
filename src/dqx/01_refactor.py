@@ -1,89 +1,142 @@
-from __future__ import annotations
-
-import os
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
-
-import yaml
-from pyspark.sql import SparkSession
+Okay now this
 
 
-def _normalize_dbfs_like(p: str) -> str:
-    # Accept "dbfs:/..." or normal paths; return a local-style path when needed.
-    if p.startswith("dbfs:/"):
-        return "/dbfs/" + p[len("dbfs:/"):].lstrip("/")
-    return p
+So we have this dictionary in the notebook:
+# ======================================================
+# DQX argument spec (row + dataset checks)
+# ======================================================
+_EXPECTED: Dict[str, Dict[str, str]] = {
+    # ---------- Row-level ----------
+    "is_not_null": {"column": "str"},
+    "is_not_empty": {"column": "str"},
+    "is_not_null_and_not_empty": {"column": "str", "trim_strings": "bool"},
+    "is_in_list": {"column": "str", "allowed": "list"},
+    "is_not_null_and_is_in_list": {"column": "str", "allowed": "list"},
+    "is_not_null_and_not_empty_array": {"column": "str"},
+
+    "is_in_range": {
+        "column": "str",
+        "min_limit": "num",
+        "max_limit": "num",
+        "inclusive_min": "bool",
+        "inclusive_max": "bool",
+    },
+    "is_not_in_range": {
+        "column": "str",
+        "min_limit": "num",
+        "max_limit": "num",
+        "inclusive_min": "bool",
+        "inclusive_max": "bool",
+    },
+    "is_not_less_than": {"column": "str", "limit": "num"},
+    "is_not_greater_than": {"column": "str", "limit": "num"},
+
+    "is_valid_date": {"column": "str", "date_format": "str"},
+    "is_valid_timestamp": {"column": "str", "timestamp_format": "str"},
+
+    "is_not_in_future": {"column": "str", "offset": "num", "curr_timestamp": "str"},
+    "is_not_in_near_future": {"column": "str", "offset": "num", "curr_timestamp": "str"},
+
+    "is_older_than_n_days": {
+        "column": "str",
+        "days": "num",
+        "curr_date": "str",
+        "negate": "bool",
+    },
+    "is_older_than_col2_for_n_days": {
+        "column1": "str",
+        "column2": "str",
+        "days": "num",
+        "negate": "bool",
+    },
+
+    "regex_match": {"column": "str", "regex": "str", "negate": "bool"},
+
+    "sql_expression": {
+        "expression": "str",
+        "msg": "str",
+        "name": "str",
+        "negate": "bool",
+        "columns": "list",
+    },
+
+    "is_valid_ipv4_address": {"column": "str"},
+    "is_ipv4_address_in_cidr": {"column": "str", "cidr_block": "str"},
+
+    "is_data_fresh": {
+        "column": "str",
+        "max_age_minutes": "num",
+        "base_timestamp": "str",
+    },
+
+    # ---------- Dataset-level ----------
+    "is_unique": {"columns": "list", "nulls_distinct": "bool"},
+    "is_aggr_not_greater_than": {
+        "column": "str",
+        "limit": "num",
+        "aggr_type": "str",
+        "group_by": "list",
+    },
+    "is_aggr_not_less_than": {
+        "column": "str",
+        "limit": "num",
+        "aggr_type": "str",
+        "group_by": "list",
+    },
+    "is_aggr_equal": {
+        "column": "str",
+        "limit": "num",
+        "aggr_type": "str",
+        "group_by": "list",
+    },
+    "is_aggr_not_equal": {
+        "column": "str",
+        "limit": "num",
+        "aggr_type": "str",
+        "group_by": "list",
+    },
+
+    "foreign_key": {
+        "columns": "list",
+        "ref_columns": "list",
+        "ref_df_name": "str",
+        "ref_table": "str",
+        "negate": "bool",
+    },
+
+    "sql_query": {
+        "query": "str",
+        "merge_columns": "list",
+        "msg": "str",
+        "name": "str",
+        "negate": "bool",
+        "condition_column": "str",
+        "input_placeholder": "str",
+        "row_filter": "str",
+    },
+
+    "compare_datasets": {
+        "columns": "list",
+        "ref_columns": "list",
+        "exclude_columns": "list",
+        "ref_df_name": "str",
+        "ref_table": "str",
+        "check_missing_records": "bool",
+        "null_safe_row_matching": "bool",
+        "null_safe_column_value_matching": "bool",
+    },
+
+    "is_data_fresh_per_time_window": {
+        "column": "str",
+        "window_minutes": "num",
+        "min_records_per_window": "num",
+        "lookback_windows": "num",
+        "curr_timestamp": "str",
+    },
+}
 
 
-def _is_yaml(fname: str) -> bool:
-    low = fname.lower()
-    return low.endswith(".yaml") or low.endswith(".yml")
 
+This notebook we are working on and another will use this
 
-class ProjectConfig:
-    """
-    Simple, notebook-friendly YAML config loader.
-
-    - Reads the config at the given path.
-    - For any relative paths in the config, resolve against the current working directory.
-    """
-
-    def __init__(self, config_path: str, spark: Optional[SparkSession] = None):
-        cfg_path = Path(_normalize_dbfs_like(config_path))
-        if not cfg_path.is_absolute():
-            cfg_path = (Path.cwd() / cfg_path).resolve()
-        if not cfg_path.exists():
-            raise FileNotFoundError(f"Config not found: {cfg_path}")
-
-        self._cfg_path = cfg_path
-        self._base_dir = self._cfg_path.parent  # kept for reference
-        self.spark = spark
-
-        with open(self._cfg_path, "r") as fh:
-            self._cfg: Dict[str, Any] = yaml.safe_load(fh) or {}
-
-    @property
-    def raw(self) -> Dict[str, Any]:
-        return self._cfg
-
-    def yaml_rules_dir(self) -> str:
-        # Resolve relative to the current working directory (not the config file path).
-        rules_dir = str(self._cfg.get("dqx_yaml_checks", "")).strip()
-        if not rules_dir:
-            raise ValueError("Missing 'dqx_yaml_checks' in config.")
-        rules_dir = _normalize_dbfs_like(rules_dir)
-        p = Path(rules_dir)
-        if not p.is_absolute():
-            p = (Path.cwd() / p).resolve()
-        return str(p)
-
-    def checks_config_table(self) -> Tuple[str, str]:
-        # Accepts either a string or a mapping {name, primary_key}
-        val = self._cfg.get("dqx_checks_config_table_name")
-        if isinstance(val, dict):
-            nm = val.get("name") or val.get("table") or val.get("table_name")
-            if not nm:
-                raise ValueError("dqx_checks_config_table_name must include 'name'.")
-            pk = val.get("primary_key", "check_id")
-            return str(nm), str(pk)
-        if not val:
-            raise ValueError("Missing 'dqx_checks_config_table_name' in config.")
-        return str(val), "check_id"
-
-    def list_rule_files(self, base_dir: str) -> List[str]:
-        # Recursively discover *.yaml / *.yml; base_dir resolved relative to CWD if not absolute.
-        root = Path(_normalize_dbfs_like(base_dir))
-        if not root.is_absolute():
-            root = (Path.cwd() / root).resolve()
-        if not root.exists() or not root.is_dir():
-            raise FileNotFoundError(f"Rules folder not found or not a directory: {root}")
-
-        out: List[str] = []
-        for cur, dirs, files in os.walk(root):
-            dirs[:] = [d for d in dirs if not d.startswith(".")]
-            for f in files:
-                if f.startswith("."):
-                    continue
-                if _is_yaml(f):
-                    out.append(str(Path(cur) / f))
-        return sorted(out)
+Can you please let me know should we have this in the resoucres folder? and should it be a python file or yaml? what do you suggest? 
