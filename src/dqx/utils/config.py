@@ -12,7 +12,6 @@ from pyspark.sql import SparkSession
 
 
 class _SafeMap(dict):
-    """Return {key} literally when missing during format_map."""
     def __missing__(self, key: str) -> str:
         return "{" + key + "}"
 
@@ -20,11 +19,6 @@ class _SafeMap(dict):
 class ProjectConfig:
     """
     Minimal, notebook-friendly config loader.
-
-    - Reads a single YAML config file.
-    - Resolves any relative paths against CWD.
-    - Handles simple {var} templating from dqx_config.variables or passed-in variables.
-    - Exposes helpers for rules discovery, target tables, and table documentation.
     """
 
     def __init__(
@@ -45,10 +39,7 @@ class ProjectConfig:
         with open(p, "r") as fh:
             self._cfg: Dict[str, Any] = yaml.safe_load(fh) or {}
 
-        # variables for {env} etc.
-        vars_from_yaml = (
-            (self._cfg.get("dqx_config") or {}).get("variables") or {}
-        )
+        vars_from_yaml = ((self._cfg.get("dqx_config") or {}).get("variables") or {})
         self._vars: Dict[str, str] = {
             "env": os.environ.get("DQX_ENV", "dev"),
             **vars_from_yaml,
@@ -60,7 +51,7 @@ class ProjectConfig:
     def raw(self) -> Dict[str, Any]:
         return self._cfg
 
-    # timezones / flags
+    # core flags
     def local_timezone(self) -> str:
         return ((self._cfg.get("dqx_config") or {}).get("local_timezone")) or "UTC"
 
@@ -70,9 +61,14 @@ class ProjectConfig:
     def apply_table_metadata_flag(self) -> bool:
         return bool((self._cfg.get("dqx_config") or {}).get("apply_table_metadata", False))
 
-    # rules discovery
+    def created_by(self) -> str:
+        return ((self._cfg.get("dqx_config") or {}).get("created_by")) or "AdminUser"
+
+    def batch_dedupe_mode(self) -> str:
+        return ((self._cfg.get("dqx_config") or {}).get("batch_dedupe_mode")) or "warn"
+
+    # rules discovery / validation
     def yaml_rules_dir(self) -> str:
-        """Return absolute path to folder containing YAML rules (back-compat name)."""
         node = ((self._cfg.get("dqx_load_checks") or {}).get("checks_config_source") or {})
         rules_dir = str(node.get("source_path") or self._cfg.get("dqx_yaml_checks", "")).strip()
         if not rules_dir:
@@ -82,10 +78,9 @@ class ProjectConfig:
             p = (Path.cwd() / p).resolve()
         return str(p)
 
-    # validation controls
     def allowed_criticality(self) -> List[str]:
         node = ((self._cfg.get("dqx_load_checks") or {}).get("checks_config_source") or {})
-        vals = node.get("allowed_criticality") or ["error", "warn", "warning"]
+        vals = node.get("allowed_criticality") or ["error", "warn"]
         return [str(v) for v in vals]
 
     def required_fields(self) -> List[str]:
@@ -93,11 +88,10 @@ class ProjectConfig:
         vals = node.get("required_fields") or ["table_name", "name", "criticality", "run_config_name", "check"]
         return [str(v) for v in vals]
 
-    # target table names
+    # target tables
     def checks_config_table(self) -> Tuple[str, str]:
-        """Return (fully_qualified_table_name, primary_key)."""
         node = ((self._cfg.get("dqx_load_checks") or {}).get("checks_config_table") or {})
-        name = node.get("target_table") or (self._cfg.get("dqx_checks_config_table_name") if isinstance(self._cfg.get("dqx_checks_config_table_name"), str) else None)
+        name = node.get("target_table")
         if not name:
             raise ValueError("checks_config_table.target_table is required.")
         pk = node.get("primary_key") or "check_id"
@@ -105,18 +99,14 @@ class ProjectConfig:
 
     def checks_log_table(self) -> Tuple[str, str]:
         node = ((self._cfg.get("dqx_run_checks") or {}).get("checks_log_table") or {})
-        name = node.get("target_table") or (self._cfg.get("dqx_checks_log_table_name") if isinstance(self._cfg.get("dqx_checks_log_table_name"), str) else None)
+        name = node.get("target_table")
         if not name:
             raise ValueError("dqx_run_checks.checks_log_table.target_table is required.")
         pk = node.get("primary_key") or "log_id"
         return self._render(name), str(pk)
 
-    # documentation templates (table + column comments)
+    # table/column comments from YAML
     def table_doc(self, table_section: str) -> Optional[Dict[str, Any]]:
-        """
-        table_section: 'checks_config_table' | 'checks_log_table' | etc.
-        Returns dict with keys: table (placeholder), table_comment, columns{name->comment}
-        """
         if table_section == "checks_config_table":
             node = ((self._cfg.get("dqx_load_checks") or {}).get("checks_config_table") or {})
         else:
@@ -127,7 +117,6 @@ class ProjectConfig:
 
         tbl_comment = node.get("table_comment", "") or ""
         cols_node = node.get("columns") or {}
-        # normalize: support either {name:{...,comment}} or {name: "comment"} styles
         cols_comments: Dict[str, str] = {}
         for k, v in cols_node.items():
             if isinstance(v, dict):
@@ -142,7 +131,7 @@ class ProjectConfig:
             "columns": cols_comments,
         }
 
-    # list rule files recursive
+    # list rule files under a root
     def list_rule_files(self, base_dir: str) -> List[str]:
         root = Path(self._normalize_dbfs_like(base_dir))
         if not root.is_absolute():
@@ -193,15 +182,9 @@ class ProjectConfig:
                 out.extend([x for x in d if isinstance(x, dict)])
         return out
 
-    # formatting for {variables}
     def _render(self, s: Any) -> str:
         if not isinstance(s, str):
             return str(s)
-        # only format when there is at least one {...}
         if any(t[1] is not None for t in Formatter().parse(s)):
             return s.format_map(_SafeMap(self._vars))
         return s
-
-
-# needed for list_rule_files
-import os  # keep at bottom

@@ -5,7 +5,7 @@
 dqx_config:
   local_timezone: America/Chicago
   processing_timezone: UTC
-  apply_table_metadata: false
+  apply_table_metadata: true
   created_by: AdminUser
   batch_dedupe_mode: warn
   variables:            # optional runtime substitution variables

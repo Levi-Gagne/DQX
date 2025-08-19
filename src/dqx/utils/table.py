@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Dict, Any
 from pyspark.sql import SparkSession, DataFrame, types as T
-from typing import Any
-from utils.console import Console  # <-- switched from utils.printer.Print
+
+from utils.console import Console
+from utils.documentation import apply_table_documentation
 
 __all__ = [
     "table_exists", "refresh_table", "spark_sql_to_df", "spark_df_to_rows",
@@ -19,6 +20,7 @@ __all__ = [
     "empty_df_from_schema",
     "write_empty_delta_table",
     "add_primary_key_constraint",
+    "create_table_if_absent",
 ]
 
 # -------- Spark helpers --------
