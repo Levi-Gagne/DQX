@@ -1,11 +1,9 @@
-Okay now this
+from __future__ import annotations
+from typing import Dict
+import copy
 
-
-So we have this dictionary in the notebook:
-# ======================================================
-# DQX argument spec (row + dataset checks)
-# ======================================================
-_EXPECTED: Dict[str, Dict[str, str]] = {
+# Keep this as a static contract of supported DQX checks → expected argument types.
+EXPECTED: Dict[str, Dict[str, str]] = {
     # ---------- Row-level ----------
     "is_not_null": {"column": "str"},
     "is_not_empty": {"column": "str"},
@@ -37,64 +35,24 @@ _EXPECTED: Dict[str, Dict[str, str]] = {
     "is_not_in_future": {"column": "str", "offset": "num", "curr_timestamp": "str"},
     "is_not_in_near_future": {"column": "str", "offset": "num", "curr_timestamp": "str"},
 
-    "is_older_than_n_days": {
-        "column": "str",
-        "days": "num",
-        "curr_date": "str",
-        "negate": "bool",
-    },
-    "is_older_than_col2_for_n_days": {
-        "column1": "str",
-        "column2": "str",
-        "days": "num",
-        "negate": "bool",
-    },
+    "is_older_than_n_days": {"column": "str", "days": "num", "curr_date": "str", "negate": "bool"},
+    "is_older_than_col2_for_n_days": {"column1": "str", "column2": "str", "days": "num", "negate": "bool"},
 
     "regex_match": {"column": "str", "regex": "str", "negate": "bool"},
 
-    "sql_expression": {
-        "expression": "str",
-        "msg": "str",
-        "name": "str",
-        "negate": "bool",
-        "columns": "list",
-    },
+    "sql_expression": {"expression": "str", "msg": "str", "name": "str", "negate": "bool", "columns": "list"},
 
     "is_valid_ipv4_address": {"column": "str"},
     "is_ipv4_address_in_cidr": {"column": "str", "cidr_block": "str"},
 
-    "is_data_fresh": {
-        "column": "str",
-        "max_age_minutes": "num",
-        "base_timestamp": "str",
-    },
+    "is_data_fresh": {"column": "str", "max_age_minutes": "num", "base_timestamp": "str"},
 
     # ---------- Dataset-level ----------
     "is_unique": {"columns": "list", "nulls_distinct": "bool"},
-    "is_aggr_not_greater_than": {
-        "column": "str",
-        "limit": "num",
-        "aggr_type": "str",
-        "group_by": "list",
-    },
-    "is_aggr_not_less_than": {
-        "column": "str",
-        "limit": "num",
-        "aggr_type": "str",
-        "group_by": "list",
-    },
-    "is_aggr_equal": {
-        "column": "str",
-        "limit": "num",
-        "aggr_type": "str",
-        "group_by": "list",
-    },
-    "is_aggr_not_equal": {
-        "column": "str",
-        "limit": "num",
-        "aggr_type": "str",
-        "group_by": "list",
-    },
+    "is_aggr_not_greater_than": {"column": "str", "limit": "num", "aggr_type": "str", "group_by": "list"},
+    "is_aggr_not_less_than": {"column": "str", "limit": "num", "aggr_type": "str", "group_by": "list"},
+    "is_aggr_equal": {"column": "str", "limit": "num", "aggr_type": "str", "group_by": "list"},
+    "is_aggr_not_equal": {"column": "str", "limit": "num", "aggr_type": "str", "group_by": "list"},
 
     "foreign_key": {
         "columns": "list",
@@ -135,8 +93,12 @@ _EXPECTED: Dict[str, Dict[str, str]] = {
     },
 }
 
-
-
-This notebook we are working on and another will use this
-
-Can you please let me know should we have this in the resoucres folder? and should it be a python file or yaml? what do you suggest? 
+def get_expected() -> Dict[str, Dict[str, str]]:
+    # Return a copy so callers don’t mutate the module constant by accident.
+    return copy.deepcopy(EXPECTED)
+    
+    
+from dqx.resources.dqx_expected import EXPECTED as _EXPECTED
+# or:
+# from dqx.resources.dqx_expected import get_expected
+# _EXPECTED = get_expected()
