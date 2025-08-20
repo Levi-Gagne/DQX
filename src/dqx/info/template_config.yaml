@@ -1,0 +1,190 @@
+# src/dqx/resources/dqx_config.template.yaml
+# -----------------------------------------------------------------------------
+# PURPOSE:
+#   Reusable template for DQX-style configs with positional indexing.
+#   - Positional notebooks: notebooks.notebook_1..N
+#   - Each notebook has positional targets: targets.target_table_1..N
+#   - Each target optionally declares columns: columns.column_1..N
+#   - Nested structs/arrays use positional fields: fields.field_1..N
+#   - Variables are interpolated with {var} from project_config.variables.*
+#
+# NOTES:
+#   - Keep names lowercase/snake_case for consistency.
+#   - Only add what you actually need; everything else can be omitted.
+# -----------------------------------------------------------------------------
+
+project_config:
+  # Time zones are optional; used by jobs that need consistent time handling.
+  local_timezone: America/Chicago
+  processing_timezone: UTC
+
+  # Whether to attach table/column comments & tags programmatically.
+  apply_table_metadata: true
+
+  # Mode for dedupe warnings/logs; free-form string used by your app logic.
+  batch_dedupe_mode: warn
+
+  # Variables become available to string templates as {env}, {foo}, etc.
+  variables:
+    env: dev
+
+notebooks:
+  # -
+  notebook_1:
+    # Human-friendly name for the notebook/job
+    name: 01_some_notebook
+
+    # Optional: input specification if the notebook reads structured configs
+    data_source:
+      storage_type: repo         # repo | volume
+      source_format: yaml        # yaml | json | python
+      source_path: path/inside/repo/or/volume
+      allowed_criticality:
+        - error
+        - warn
+      required_fields:
+        - table_name
+        - name
+        - criticality
+        - run_config_name
+        - check
+
+    targets:
+      # -----------------------------------------------------------------------
+      # Target table 1 (positional alias). Use as many as you need.
+      # -----------------------------------------------------------------------
+      target_table_1:
+        # FQN pieces (rendered with variables): <catalog>.<schema>.<table>
+        catalog: "dq_{env}"
+        schema: "dqx"
+        table: "your_table_name"
+
+        # Optional: name of primary key column (string)
+        primary_key:
+
+        # Partitioning columns (list). If you overwrite daily to a single date, keep empty.
+        partition_by: []
+
+        # Optional: Z-ORDER columns (list). Best for big tables with frequent filters.
+        # Re-run OPTIMIZE after overwrites if you use this.
+        zorder_by: []
+
+        # Writer settings
+        write:
+          mode: overwrite         # overwrite | append | ignore | errorifexists
+          format: delta           # delta | parquet | csv | json | ...
+          options: {}             # free-form Spark options (e.g., delta.* configs)
+
+        # Optional: descriptive tags for governance/search
+        table_tags:
+          table_tag_1:
+            key: team
+            value: data_quality
+          table_tag_2:
+            key: project
+            value: dqx
+
+        # Free-form Markdown description shown in catalogs/lineage (optional)
+        table_description: |
+          ## Table Purpose
+          - What this table contains.
+          - How it’s produced.
+          - Any caveats / SLA.
+
+        # Optional: column specs (positional)
+        columns:
+          column_1:
+            # Logical name in the table
+            name: id
+            # Scalar types: string, boolean, integer, long, double, decimal(10,2), timestamp, date
+            # Complex types: struct, array, map
+            data_type: string
+            nullable: false
+            comment: "Primary key."
+            # Optional tags on a column (positional)
+            column_tag:
+              column_tag_1:
+                key: primary_key
+                value: true
+            # Optional defaults and allowed values for validation / UDFs
+            default_value:
+            allowed_values:
+
+          column_2:
+            name: some_struct
+            data_type: struct
+            nullable: true
+            comment: "Example struct with positional fields."
+            default_value:
+            allowed_values:
+            fields:
+              field_1:
+                name: nested_a
+                data_type: string
+                nullable: false
+                comment: "A nested value."
+              field_2:
+                name: nested_b
+                data_type: array
+                nullable: true
+                comment: "Optional list of strings."
+                element:
+                  type: string
+
+          column_3:
+            name: some_array_of_structs
+            data_type: array
+            nullable: true
+            comment: "Array of items; each item is a struct."
+            default_value:
+            allowed_values:
+            element:
+              type: struct
+              fields:
+                field_1:
+                  name: item_name
+                  data_type: string
+                  nullable: true
+                  comment: "Optional item name."
+                field_2:
+                  name: item_value
+                  data_type: string
+                  nullable: true
+                  comment: "Optional item value."
+
+        # Optional: declarative constraints (positional). Keep off until you need them.
+        # constraints:
+        #   constraint_1:
+        #     name: not_null_id
+        #     expression: "id IS NOT NULL"
+
+      # -----------------------------------------------------------------------
+      # Another target (copy/paste and adjust)
+      # -----------------------------------------------------------------------
+      target_table_2:
+        catalog: "dq_{env}"
+        schema: "dqx"
+        table: "another_table"
+        primary_key:
+        partition_by: []
+        zorder_by: []
+        write:
+          mode: overwrite
+          format: delta
+          options: {}
+        table_tags:
+          table_tag_1:
+            key: team
+            value: data_quality
+          table_tag_2:
+            key: project
+            value: dqx
+        table_description: |
+          Short description of what goes here.
+        # columns: {}  # (omit if you don't want to specify columns)
+
+  # Add more notebooks as notebook_2, notebook_3, ... following the same pattern
+  # notebook_2:
+  #   name: 02_another_notebook
+  #   targets:
+  #     target_table_1: { ... }
