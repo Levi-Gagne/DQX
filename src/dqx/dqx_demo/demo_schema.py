@@ -1,7 +1,5 @@
 # =====================================================================================
-# CELL 1 — demo_spec.py  (Schemas + MEGASPEC + rule-class stubs + table directory)
-# =====================================================================================
-# Purpose: single source of truth for table names, schemas, row targets, and knobs.
+# CELL 1 — demo_spec.py  (Catalog/schema, table names, schemas, MEGASPEC, rule-class stubs)
 # =====================================================================================
 
 from pyspark.sql.types import (
@@ -16,7 +14,7 @@ DQX_CATALOG        = "dq_dev"
 DQX_SCHEMA         = "dqx"
 DQX_DB             = f"{DQX_CATALOG}.{DQX_SCHEMA}"           # catalog.schema
 QUARANTINE_TABLE   = f"{DQX_DB}.demo_quarantine"             # sink for ERROR rows
-DQ_OUTPUT_COLUMNS  = ["warning", "error"]                    # columns your runner appends
+DQ_OUTPUT_COLUMNS  = ["warning", "error"]                    # columns the runner appends
 
 ROW_TARGETS = {
     f"{DQX_DB}.demo_employee":   2_000,
@@ -26,7 +24,7 @@ ROW_TARGETS = {
     f"{DQX_DB}.demo_expense":   120_000,
 }
 
-# Canonical table names (full paths) + groupings you can use anywhere
+# Canonical table names (full paths) + groupings
 TABLES = {
     "catalog":    DQX_CATALOG,
     "schema":     DQX_DB,   # fully-qualified (catalog.schema)
@@ -70,10 +68,10 @@ TABLES = {
 demo_employee_schema = StructType([
     StructField("employee_id",        StringType(),  False),
     StructField("full_name",          StringType(),  False),
-    StructField("department",         StringType(),  False),
-    StructField("role",               StringType(),  False),
-    StructField("cost_center",        StringType(),  True),
-    StructField("employment_status",  StringType(),  False),
+    StructField("department",         StringType(),  False),  # Consulting, Audit, Tax, IT, Ops
+    StructField("role",               StringType(),  False),  # Engineer, Analyst, Consultant, Manager, Support
+    StructField("cost_center",        StringType(),  True),   # CC-####
+    StructField("employment_status",  StringType(),  False),  # Active, Leave, Terminated
     StructField("hire_date",          DateType(),    False),
     StructField("termination_date",   DateType(),    True),
     StructField("work_email",         StringType(),  True),
@@ -85,23 +83,23 @@ demo_customer_schema = StructType([
     StructField("customer_id",            StringType(),  False),
     StructField("customer_name",          StringType(),  False),
     StructField("industry",               StringType(),  False),
-    StructField("country_code",           StringType(),  True),
-    StructField("status",                 StringType(),  False),
+    StructField("country_code",           StringType(),  True),   # ISO-3166 alpha-2
+    StructField("status",                 StringType(),  False),  # Active, Prospect, Inactive
     StructField("onboarding_date",        DateType(),    False),
     StructField("primary_contact_email",  StringType(),  True),
-    StructField("registration_number",    StringType(),  True),
+    StructField("registration_number",    StringType(),  True),   # national reg / tax-like id
 ])
 
 demo_project_schema = StructType([
     StructField("project_id",          StringType(),       False),
     StructField("customer_id",         StringType(),       False),  # FK -> dq_dev.dqx.demo_customer
     StructField("project_name",        StringType(),       False),
-    StructField("status",              StringType(),       False),
+    StructField("status",              StringType(),       False),  # Planned, Active, OnHold, Closed
     StructField("start_date",          DateType(),         False),
     StructField("end_date",            DateType(),         True),
     StructField("manager_employee_id", StringType(),       True),   # FK -> dq_dev.dqx.demo_employee
     StructField("budget_amount",       DecimalType(18, 2), True),
-    StructField("billing_model",       StringType(),       False),
+    StructField("billing_model",       StringType(),       False),  # T&M, Fixed, Retainer
 ])
 
 demo_timesheet_schema = StructType([
@@ -109,9 +107,9 @@ demo_timesheet_schema = StructType([
     StructField("employee_id",   StringType(),       False),  # FK -> dq_dev.dqx.demo_employee
     StructField("project_id",    StringType(),       False),  # FK -> dq_dev.dqx.demo_project
     StructField("work_date",     DateType(),         False),
-    StructField("hours_worked",  DecimalType(5, 2),  False),
-    StructField("work_type",     StringType(),       False),
-    StructField("source_system", StringType(),       False),
+    StructField("hours_worked",  DecimalType(5, 2),  False),  # 0–24
+    StructField("work_type",     StringType(),       False),  # Billable, NonBillable, Admin
+    StructField("source_system", StringType(),       False),  # Workday, Jira, CSV
     StructField("created_ts",    TimestampType(),    False),
 ])
 
@@ -120,9 +118,9 @@ demo_expense_schema = StructType([
     StructField("employee_id",      StringType(),       False),  # FK -> dq_dev.dqx.demo_employee
     StructField("project_id",       StringType(),       True),   # FK -> dq_dev.dqx.demo_project (nullable)
     StructField("expense_date",     DateType(),         False),
-    StructField("category",         StringType(),       False),
+    StructField("category",         StringType(),       False),  # Meals, Travel, Supplies, Software, Other
     StructField("amount",           DecimalType(18, 2), False),
-    StructField("currency_code",    StringType(),       False),
+    StructField("currency_code",    StringType(),       False),  # ISO-4217
     StructField("merchant",         StringType(),       True),
     StructField("receipt_attached", BooleanType(),      False),
     StructField("submission_ts",    TimestampType(),    False),
@@ -146,112 +144,31 @@ TABLE_ORDER = [
 ]
 
 # ──────────────────────────────────────────────────────────────────────────────
-# MEGASPEC (nested, readable). Map this to dbldatagen/ddgen in your builder.
-# Fully qualified refs use the dq_dev.dqx schema.
+# MEGASPEC (nested, readable). You can map this to dbldatagen settings.
 # ──────────────────────────────────────────────────────────────────────────────
 
 MEGASPEC = {
     "schema": DQX_DB,
     "quarantine_table": QUARANTINE_TABLE,
-    "dq_output_columns": DQ_OUTPUT_COLUMNS,
+    "dq_output_columns": DQ_OUTPUT_COLUMNS,          # appended by rule runner
     "flags": {
         "enforce_project_window": True,
-        "allow_weekend_billable": "warn",   # 'warn' | 'error' | 'off'
+        "allow_weekend_billable": "warn",            # 'warn' | 'error' | 'off'
     },
     "knobs": {
-        "receipt_threshold": 75.00,
-        "meal_limit": 150.00,
-        "travel_limit": 500.00,
-        "max_hours_per_day_error": 24.0,
-        "hi_hours_warn": 12.0,
-        "duplicate_timesheet_window_days": 0,
-        "duplicate_expense_exact_match": True,
+        "receipt_threshold": 75.00,                  # USD; >= threshold requires receipt
+        "meal_limit": 150.00,                        # warn if Meals > limit
+        "travel_limit": 500.00,                      # warn if Travel > limit
+        "max_hours_per_day_error": 24.0,             # error if > this
+        "hi_hours_warn": 12.0,                       # optional warn if > this
+        "duplicate_timesheet_window_days": 0,        # same-day dupes
+        "duplicate_expense_exact_match": True,       # dup key = (emp, merchant, date, amount)
         "valid_currency_codes": ["USD","CAD","MXN","GBP","INR"],
-    },
-    "tables": {
-        f"{DQX_DB}.demo_employee": {
-            "rows": ROW_TARGETS[f"{DQX_DB}.demo_employee"],
-            "cols": {
-                "employee_id": {"type":"sequence","prefix":"E","start":1001},
-                "full_name": {"type":"faker","provider":"name"},
-                "department": {"type":"choice","values":["Consulting","Audit","Tax","IT","Ops"],"weights":[0.35,0.20,0.20,0.15,0.10]},
-                "role": {"type":"choice","values":["Engineer","Analyst","Consultant","Manager","Support"]},
-                "cost_center": {"type":"pattern","format":"CC-{0000-9999}","null_rate":0.02},
-                "employment_status": {"type":"choice","values":["Active","Leave","Terminated"],"weights":[0.90,0.03,0.07]},
-                "hire_date": {"type":"date","start":"2018-01-01","end":"2025-08-01"},
-                "termination_date": {"type":"conditional_date","when":"employment_status == 'Terminated'","offset_from":"hire_date","min_days":30,"max_days":2500,"null_rate":0.08},
-                "work_email": {"type":"template","template":"{first}.{last}@company.com","invalid_rate":0.03},
-                "country_code": {"type":"choice","values":["US","CA","MX","GB","IN"],"invalid_rate":0.005}
-            },
-            "inject": {"EMP_TERM_DATE_BEFORE_HIRE": 0.008}
-        },
-
-        f"{DQX_DB}.demo_customer": {
-            "rows": ROW_TARGETS[f"{DQX_DB}.demo_customer"],
-            "cols": {
-                "customer_id": {"type":"sequence","prefix":"C","start":5001},
-                "customer_name": {"type":"faker","provider":"company"},
-                "industry": {"type":"choice","values":["Technology","Healthcare","Finance","Retail","Manufacturing"],"weights":[0.30,0.20,0.20,0.20,0.10]},
-                "country_code": {"type":"choice","values":["US","CA","MX","GB","IN"],"invalid_rate":0.005},
-                "status": {"type":"choice","values":["Active","Prospect","Inactive"],"weights":[0.75,0.15,0.10]},
-                "onboarding_date": {"type":"date","start":"2019-01-01","end":"2025-08-01"},
-                "primary_contact_email": {"type":"faker","provider":"email","invalid_rate":0.02},
-                "registration_number": {"type":"pattern","format":"RN-{00000000-99999999}","dupe_rate_active":0.01}
-            }
-        },
-
-        f"{DQX_DB}.demo_project": {
-            "rows": ROW_TARGETS[f"{DQX_DB}.demo_project"],
-            "cols": {
-                "project_id": {"type":"sequence","prefix":"P","start":10001},
-                "customer_id": {"type":"fk","ref": f"{DQX_DB}.demo_customer.customer_id","null_rate":0.01},
-                "project_name": {"type":"template","template":"Project {seq}"},
-                "status": {"type":"choice","values":["Planned","Active","OnHold","Closed"],"weights":[0.15,0.55,0.10,0.20]},
-                "start_date": {"type":"date","start":"2020-01-01","end":"2025-03-01"},
-                "end_date": {"type":"date_or_null","null_rate":0.35,"min_from":"start_date","min_days":30,"max_days":1200},
-                "manager_employee_id": {"type":"fk","ref": f"{DQX_DB}.demo_employee.employee_id","null_rate":0.03},
-                "budget_amount": {"type":"decimal","min":10_000.00,"max":2_000_000.00,"skew":"right"},
-                "billing_model": {"type":"choice","values":["T&M","Fixed","Retainer"],"weights":[0.55,0.35,0.10]}
-            },
-            "inject": {"PROJ_END_BEFORE_START":0.007,"PROJ_BUDGET_NONPOSITIVE":0.004}
-        },
-
-        f"{DQX_DB}.demo_timesheet": {
-            "rows": ROW_TARGETS[f"{DQX_DB}.demo_timesheet"],
-            "cols": {
-                "timesheet_id": {"type":"uuid"},
-                "employee_id": {"type":"fk","ref": f"{DQX_DB}.demo_employee.employee_id"},
-                "project_id": {"type":"fk","ref": f"{DQX_DB}.demo_project.project_id"},
-                "work_date": {"type":"date","start":"2024-01-01","end":"2025-08-10"},
-                "hours_worked": {"type":"decimal","min":0.00,"max":12.00,"step":0.25},
-                "work_type": {"type":"choice","values":["Billable","NonBillable","Admin"],"weights":[0.70,0.25,0.05]},
-                "source_system": {"type":"choice","values":["Workday","Jira","CSV"],"weights":[0.70,0.20,0.10]},
-                "created_ts": {"type":"timestamp_near","base":"work_date","min_offset_hours":0,"max_offset_hours":72}
-            },
-            "inject": {"TS_FUTURE_DATE":0.003,"TS_DUP_EMP_PROJ_DAY":0.006,"TS_NEG_OR_GT24":0.003}
-        },
-
-        f"{DQX_DB}.demo_expense": {
-            "rows": ROW_TARGETS[f"{DQX_DB}.demo_expense"],
-            "cols": {
-                "expense_id": {"type":"uuid"},
-                "employee_id": {"type":"fk","ref": f"{DQX_DB}.demo_employee.employee_id"},
-                "project_id": {"type":"fk","ref": f"{DQX_DB}.demo_project.project_id","null_rate":0.25},
-                "expense_date": {"type":"date","start":"2024-01-01","end":"2025-08-10"},
-                "category": {"type":"choice","values":["Meals","Travel","Supplies","Software","Other"],"weights":[0.35,0.25,0.20,0.10,0.10]},
-                "amount": {"type":"decimal","min":5.00,"max":5_000.00},
-                "currency_code": {"type":"choice","values":["USD","CAD","MXN","GBP","INR"],"invalid_rate":0.002},
-                "merchant": {"type":"choice","values":["Uber","Lyft","Delta","AA","Staples","BestBuy","Amazon","LocalCafe","HotelCo","SoftwareCo"]},
-                "receipt_attached": {"type":"boolean","true_rate":0.92},
-                "submission_ts": {"type":"timestamp_near","base":"expense_date","min_offset_hours":0,"max_offset_hours":240}
-            },
-            "inject": {"EXP_DUP":0.008,"EXP_NO_RECEIPT_OVER_75":0.010,"EXP_OUT_OF_POLICY":0.020}
-        }
     }
 }
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Rule classes (stubs). Define the .rules() bodies in a separate module or here.
+# Rule classes (stubs) — left here if you want to plug a different engine later
 # ──────────────────────────────────────────────────────────────────────────────
 
 class BaseRuleSet:
@@ -279,7 +196,7 @@ class ExpenseRules(BaseRuleSet):
     """dq_dev.dqx.demo_expense — suggested IDs: EXP_DUP, EXP_NO_RECEIPT_OVER_T, EXP_OOP, EXP_BAD_CCY, EXP_EMP_STATUS_ERROR, EXP_OUTSIDE_PROJECT_WINDOW"""
     pass
 
-# Map table → rule class so a driver can instantiate dynamically
+# Map table → rule class so a driver can instantiate dynamically (optional)
 RULE_CLASSES_BY_TABLE = {
     TABLES["employee"]:  EmployeeRules,
     TABLES["customer"]:  CustomerRules,
@@ -293,7 +210,7 @@ print("Row targets: " + ", ".join([f"{k.split('.')[-1]}={v:,}" for k,v in ROW_TA
 
 # COMMAND ----------
 # =====================================================================================
-# CELL 2 — Driver setup (imports, UC catalog/schema, quarantine table)
+# CELL 2 — Setup (imports, UC catalog/schema, quarantine table, colors)
 # =====================================================================================
 
 from pyspark.sql import functions as F
@@ -307,12 +224,22 @@ from __main__ import (
     RULE_CLASSES_BY_TABLE, QUARANTINE_TABLE
 )
 
-def banner(msg):
-    print("\n" + "═"*88)
-    print(f" {msg}")
-    print("═"*88)
+# Colors (your class)
+try:
+    from profilon.utils.color import Color as C
+except Exception:
+    # Minimal no-op fallback if your class isn't on path (keeps demo running)
+    class C:
+        r=b=i=u=bl=rv=h=st=""
+        neon_blue=ivory=bubblegum_pink=moccasin=aqua_blue=python=sky_blue=golden_yellow=soft_orange=deep_blue=bright_pink=candy_red=ghost_white=soft_gray=white="" 
 
-banner("SETUP: Use dq_dev catalog, ensure dqx schema, create quarantine table")
+def banner(msg, color="neon_blue"):
+    col = getattr(C, color, "")
+    print("\n" + "═"*92)
+    print(f"{C.b}{col} {msg}{C.r}")
+    print("═"*92)
+
+banner("SETUP: Use dq_dev catalog, ensure dqx schema, create quarantine table", "aqua_blue")
 
 # Unity Catalog-aware setup
 spark.sql(f"USE CATALOG {DQX_CATALOG}")
@@ -320,8 +247,8 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {DQX_DB}")
 spark.sql(f"USE {DQX_DB}")
 
 run_id = str(uuid4())
-print(f"Using: catalog={DQX_CATALOG}  schema={DQX_SCHEMA}  (db={DQX_DB})")
-print(f"Run ID: {run_id}")
+print(f"{C.ivory}Using: catalog={DQX_CATALOG}  schema={DQX_SCHEMA}  (db={DQX_DB}){C.r}")
+print(f"{C.ivory}Run ID: {C.bubblegum_pink}{run_id}{C.r}")
 
 spark.sql(f"""
 CREATE TABLE IF NOT EXISTS {QUARANTINE_TABLE} (
@@ -334,55 +261,19 @@ CREATE TABLE IF NOT EXISTS {QUARANTINE_TABLE} (
   _row_payload_json STRING
 ) USING delta
 """)
-print(f"Quarantine table ready: {QUARANTINE_TABLE}")
+print(f"{C.ivory}Quarantine table ready: {C.golden_yellow}{QUARANTINE_TABLE}{C.r}")
 
 # COMMAND ----------
 # =====================================================================================
-# CELL 3 — Helpers (small utilities for deterministic, lightweight data gen)
+# CELL 3 — DataGen (Employees)
 # =====================================================================================
 
-banner("HELPERS: small UDF-like helpers (still available; Datagen used below)")
-
-def seq_id(prefix: str, start: int):
-    return F.concat(F.lit(prefix), F.lpad((F.col("_rn") + F.lit(start)).cast("string"), 4, "0"))
-
-def choice_expr(options, weights=None, seed=None):
-    # Kept for reference; not used in Datagen flow
-    if not options or len(options) == 0:
-        raise ValueError("options must be non-empty")
-    if not weights:
-        weights = [1.0/len(options)] * len(options)
-    elif len(weights) != len(options):
-        raise ValueError("weights length must match options length")
-    total = float(sum(weights))
-    cum = []
-    s = 0.0
-    for w in weights:
-        s += float(w) / total
-        cum.append(s)
-    rnd = F.rand(seed)
-    expr = F.lit(options[-1])
-    for i in range(len(options) - 2, -1, -1):
-        expr = F.when(rnd <= F.lit(cum[i]), F.lit(options[i])).otherwise(expr)
-    return expr
-
-def rand_date(start: str, end: str, rand_expr="rand()"):
-    days = F.datediff(F.lit(end), F.lit(start))
-    return F.expr(f"date_add('{start}', cast({rand_expr} * {days} as int))")
-
-print("Helpers ready (Datagen used in Cells 4–8).")
-
-# COMMAND ----------
-# =====================================================================================
-# CELL 4 — DIM: Employees (dbldatagen)
-# =====================================================================================
-
-banner(f"BUILD (Datagen): {TABLES['employee']}")
+banner(f"BUILD (Datagen): {TABLES['employee']}", "sky_blue")
 
 try:
     from dbldatagen import DataGenerator
 except Exception as e:
-    print("ERROR: dbldatagen not available. Install it with `%pip install dbldatagen` in a separate cell and re-run.")
+    print("ERROR: dbldatagen not available. Run `%pip install dbldatagen` in a separate cell and re-run.")
     raise
 
 n_emp = ROW_TARGETS[TABLES["employee"]]
@@ -403,14 +294,13 @@ emp_gen = (DataGenerator(spark, name="demo_employee_gen", rows=n_emp, partitions
                        weights=[0.90,0.03,0.07])
            .withColumn("hire_date", "date", minValue="2018-01-01", maxValue="2025-08-01")
            .withColumn("termination_date", "date", minValue="2018-02-01", maxValue="2030-12-31",
-                       percentNulls=1.0)  # will compute conditionally below
+                       percentNulls=1.0)  # we compute conditionally below
            .withColumn("work_email", "string",
                        expr="concat('emp', cast(id as string), '@company.com')")
            .withColumn("country_code", values=["US","CA","MX","GB","IN"])
 )
 
-emp_df = (emp_gen.build()
-          .drop("id"))
+emp_df = emp_gen.build().drop("id")
 
 # Conditional injections to mirror MEGASPEC
 emp_df = (emp_df
@@ -438,15 +328,15 @@ emp_df = (emp_df
 )
 
 emp_df.write.format("delta").mode("overwrite").saveAsTable(TABLES["employee"])
-print(f"Wrote: {TABLES['employee']}  rows={spark.table(TABLES['employee']).count():,}")
+print(f"{C.ivory}Wrote: {C.golden_yellow}{TABLES['employee']}{C.r}  rows={spark.table(TABLES['employee']).count():,}")
 display(spark.table(TABLES["employee"]).limit(5))
 
 # COMMAND ----------
 # =====================================================================================
-# CELL 5 — DIM: Customers (dbldatagen)
+# CELL 4 — DataGen (Customers)
 # =====================================================================================
 
-banner(f"BUILD (Datagen): {TABLES['customer']}")
+banner(f"BUILD (Datagen): {TABLES['customer']}", "sky_blue")
 
 from dbldatagen import DataGenerator
 
@@ -485,21 +375,21 @@ cust_df = (cust_df.crossJoin(dupe_sample.limit(1))
            ).drop("dup_reg"))
 
 cust_df.write.format("delta").mode("overwrite").saveAsTable(TABLES["customer"])
-print(f"Wrote: {TABLES['customer']}  rows={spark.table(TABLES['customer']).count():,}")
+print(f"{C.ivory}Wrote: {C.golden_yellow}{TABLES['customer']}{C.r}  rows={spark.table(TABLES['customer']).count():,}")
 display(spark.table(TABLES["customer"]).limit(5))
 
 # COMMAND ----------
 # =====================================================================================
-# CELL 6 — DIM: Projects (dbldatagen, FKs to Customer & Employee)
+# CELL 5 — DataGen (Projects) — FKs to Customer & Employee
 # =====================================================================================
 
-banner(f"BUILD (Datagen): {TABLES['project']}")
+banner(f"BUILD (Datagen): {TABLES['project']}", "sky_blue")
 
 from dbldatagen import DataGenerator
 
 n_proj = ROW_TARGETS[TABLES["project"]]
 
-emp_ids = [r[0] for r in spark.table(TABLES["employee"]).select("employee_id").collect()]
+emp_ids  = [r[0] for r in spark.table(TABLES["employee"]).select("employee_id").collect()]
 cust_ids = [r[0] for r in spark.table(TABLES["customer"]).select("customer_id").collect()]
 
 proj_gen = (DataGenerator(spark, name="demo_project_gen", rows=n_proj, partitions=8)
@@ -534,15 +424,15 @@ proj_df = (proj_df
 )
 
 proj_df.write.format("delta").mode("overwrite").saveAsTable(TABLES["project"])
-print(f"Wrote: {TABLES['project']}  rows={spark.table(TABLES['project']).count():,}")
+print(f"{C.ivory}Wrote: {C.golden_yellow}{TABLES['project']}{C.r}  rows={spark.table(TABLES['project']).count():,}")
 display(spark.table(TABLES["project"]).limit(5))
 
 # COMMAND ----------
 # =====================================================================================
-# CELL 7 — FACT: Timesheets (dbldatagen, FKs to Employee & Project)
+# CELL 6 — DataGen (Timesheets) — FKs to Employee & Project
 # =====================================================================================
 
-banner(f"BUILD (Datagen): {TABLES['timesheet']}")
+banner(f"BUILD (Datagen): {TABLES['timesheet']}", "sky_blue")
 
 from dbldatagen import DataGenerator
 
@@ -553,7 +443,6 @@ proj_keys = (spark.table(TABLES["project"])
              .collect())
 
 project_id_list = [r["project_id"] for r in proj_keys]
-proj_dates_map = {r["project_id"]:(r["start_date"], r["end_date"]) for r in proj_keys}
 
 ts_gen = (DataGenerator(spark, name="demo_timesheet_gen", rows=n_ts, partitions=48)
           .withColumn("timesheet_id", "string", expr="uuid()")
@@ -592,15 +481,15 @@ dupe_fraction = 0.006
 ts_df = ts_df.unionByName(ts_df.sample(withReplacement=True, fraction=dupe_fraction, seed=11))
 
 ts_df.write.format("delta").mode("overwrite").saveAsTable(TABLES["timesheet"])
-print(f"Wrote: {TABLES['timesheet']}  rows={spark.table(TABLES['timesheet']).count():,}")
+print(f"{C.ivory}Wrote: {C.golden_yellow}{TABLES['timesheet']}{C.r}  rows={spark.table(TABLES['timesheet']).count():,}")
 display(spark.table(TABLES["timesheet"]).limit(5))
 
 # COMMAND ----------
 # =====================================================================================
-# CELL 8 — FACT: Expenses (dbldatagen, FKs to Employee & Project)
+# CELL 7 — DataGen (Expenses) — FKs to Employee & Project
 # =====================================================================================
 
-banner(f"BUILD (Datagen): {TABLES['expense']}")
+banner(f"BUILD (Datagen): {TABLES['expense']}", "sky_blue")
 
 from dbldatagen import DataGenerator
 
@@ -649,15 +538,84 @@ exp_df = (exp_df.join(dups.drop("k"), ["employee_id","merchant","expense_date","
                .withColumn("k", F.lit(None).cast("int")))
 
 exp_df.write.format("delta").mode("overwrite").saveAsTable(TABLES["expense"])
-print(f"Wrote: {TABLES['expense']}  rows={spark.table(TABLES['expense']).count():,}")
+print(f"{C.ivory}Wrote: {C.golden_yellow}{TABLES['expense']}{C.r}  rows={spark.table(TABLES['expense']).count():,}")
 display(spark.table(TABLES["expense"]).limit(5))
 
 # COMMAND ----------
 # =====================================================================================
-# CELL 9 — Rules: default builder (used if your RULE_CLASSES are still stubs)
+# CELL 8 — (Optional but recommended) Stage a few deterministic "demo hits"
 # =====================================================================================
 
-banner("RULES: load from classes or fall back to default demo rules")
+banner("STAGE: Append deterministic demo rows for guaranteed rule hits", "golden_yellow")
+
+# Anchor employee (Active) and project
+emp_anchor = spark.sql(f"""
+  SELECT employee_id, country_code
+  FROM {TABLES['employee']}
+  WHERE employment_status='Active'
+  ORDER BY employee_id
+  LIMIT 1
+""").first()
+
+proj_anchor = spark.sql(f"""
+  SELECT project_id, start_date, end_date
+  FROM {TABLES['project']}
+  ORDER BY project_id
+  LIMIT 1
+""").first()
+
+if emp_anchor and proj_anchor:
+    emp_id  = emp_anchor["employee_id"]
+    home_cc = emp_anchor["country_code"]
+    home_ccy = {"US":"USD","CA":"CAD","MX":"MXN","GB":"GBP","IN":"INR"}.get(home_cc, "USD")
+    away_ccy = "GBP" if home_ccy != "GBP" else "USD"
+    proj_id = proj_anchor["project_id"]
+    start_d = proj_anchor["start_date"]
+
+    # A) EXPENSE — Unusual + Out-of-home (combination ERROR trigger)
+    spark.sql(f"""
+      INSERT INTO {TABLES['expense']} VALUES
+      (uuid(), '{emp_id}', '{proj_id}', date_sub(current_date(), 1), 'Meals', 600.00, '{away_ccy}', 'LocalCafe', true, current_timestamp())
+    """)
+
+    # B) EXPENSE — Split-spend day >= 75 but each < 75 (WARN)
+    spark.sql(f"""
+      INSERT INTO {TABLES['expense']} VALUES
+      (uuid(), '{emp_id}', '{proj_id}', date_sub(current_date(), 2), 'Meals', 24.99, '{home_ccy}', 'LocalCafe', false, current_timestamp()),
+      (uuid(), '{emp_id}', '{proj_id}', date_sub(current_date(), 2), 'Meals', 24.99, '{home_ccy}', 'LocalCafe', false, current_timestamp()),
+      (uuid(), '{emp_id}', '{proj_id}', date_sub(current_date(), 2), 'Meals', 26.99, '{home_ccy}', 'LocalCafe', false, current_timestamp())
+    """)
+
+    # C) EXPENSE — Exact duplicate (ERROR)
+    spark.sql(f"""
+      INSERT INTO {TABLES['expense']} VALUES
+      (uuid(), '{emp_id}', '{proj_id}', date_sub(current_date(), 5), 'Supplies', 129.00, '{home_ccy}', 'Amazon', true, current_timestamp()),
+      (uuid(), '{emp_id}', '{proj_id}', date_sub(current_date(), 5), 'Supplies', 129.00, '{home_ccy}', 'Amazon', true, current_timestamp())
+    """)
+
+    # D) TIMESHEET — Outside project window (ERROR)
+    spark.sql(f"""
+      INSERT INTO {TABLES['timesheet']} VALUES
+      (uuid(), '{emp_id}', '{proj_id}', date_add('{start_d}', -3), 8.00, 'Billable', 'Workday', current_timestamp())
+    """)
+
+    # E) TIMESHEET — Duplicate (WARN/ERROR per your config; we keep WARN)
+    spark.sql(f"""
+      INSERT INTO {TABLES['timesheet']} VALUES
+      (uuid(), '{emp_id}', '{proj_id}', date_sub(current_date(), 10), 8.00, 'Billable', 'Workday', current_timestamp()),
+      (uuid(), '{emp_id}', '{proj_id}', date_sub(current_date(), 10), 8.00, 'Billable', 'Workday', current_timestamp())
+    """)
+
+    print(f"{C.ivory}Staged demo rows for employee {C.golden_yellow}{emp_id}{C.ivory} and project {C.golden_yellow}{proj_id}{C.r}")
+else:
+    print("Could not find anchor employee/project; skipping staged rows.")
+
+# COMMAND ----------
+# =====================================================================================
+# CELL 9 — Default rules (SQL expressions). Basic + fraud-ish.
+# =====================================================================================
+
+banner("RULES: build default rule list (basic + fraud-ish)", "python")
 
 def build_default_rules():
     k = MEGASPEC["knobs"]
@@ -665,41 +623,56 @@ def build_default_rules():
     weekend_level = MEGASPEC["flags"]["allow_weekend_billable"]
     weekend_level = "warn" if weekend_level not in ("warn","error") else weekend_level
 
+    # Helper CASE for employee home currency from employee.country_code
+    emp_home_ccy_case = f"""
+      CASE (SELECT e.country_code FROM {TABLES['employee']} e WHERE e.employee_id = t.employee_id)
+        WHEN 'US' THEN 'USD'
+        WHEN 'CA' THEN 'CAD'
+        WHEN 'MX' THEN 'MXN'
+        WHEN 'GB' THEN 'GBP'
+        WHEN 'IN' THEN 'INR'
+        ELSE 'USD'
+      END
+    """
+
     return {
       TABLES["employee"]: [
         {"id":"EMP_TERM_DATE_MISSING","level":"error","message":"Terminated missing termination_date",
-         "expr":"employment_status = 'Terminated' AND termination_date IS NULL"},
+         "expr":"t.employment_status = 'Terminated' AND t.termination_date IS NULL"},
         {"id":"EMP_TERM_DATE_BEFORE_HIRE","level":"error","message":"termination_date < hire_date",
-         "expr":"employment_status = 'Terminated' AND termination_date < hire_date"},
+         "expr":"t.employment_status = 'Terminated' AND t.termination_date < t.hire_date"},
         {"id":"EMP_EMAIL_DOMAIN_WARN","level":"warn","message":"Non-company or missing email",
-         "expr":"work_email IS NULL OR NOT work_email LIKE '%@company.com'"},
+         "expr":"t.work_email IS NULL OR NOT t.work_email LIKE '%@company.com'"},
       ],
+
       TABLES["customer"]: [
         {"id":"CUST_REG_DUP_ACTIVE","level":"error","message":"Duplicate registration_number among Active",
          "expr": f"""
-            registration_number IS NOT NULL AND status = 'Active' AND registration_number IN (
+            t.registration_number IS NOT NULL AND t.status = 'Active' AND t.registration_number IN (
               SELECT registration_number FROM {TABLES["customer"]}
               WHERE registration_number IS NOT NULL AND status = 'Active'
               GROUP BY registration_number HAVING COUNT(*) > 1
             )
          """},
       ],
+
       TABLES["project"]: [
         {"id":"PROJ_END_BEFORE_START","level":"error","message":"end_date before start_date",
-         "expr":"end_date IS NOT NULL AND end_date < start_date"},
+         "expr":"t.end_date IS NOT NULL AND t.end_date < t.start_date"},
         {"id":"PROJ_FK_CUSTOMER_MISSING","level":"error","message":"customer_id not found",
-         "expr":f"customer_id NOT IN (SELECT customer_id FROM {TABLES['customer']})"},
+         "expr":f"t.customer_id NOT IN (SELECT customer_id FROM {TABLES['customer']})"},
       ],
+
       TABLES["timesheet"]: [
         {"id":"TS_NEG_OR_GT24","level":"error","message":"Hours must be within 0..24",
-         "expr":f"hours_worked < 0 OR hours_worked > {k['max_hours_per_day_error']}"},
+         "expr":f"t.hours_worked < 0 OR t.hours_worked > {k['max_hours_per_day_error']}"},
         {"id":"TS_FUTURE_DATE","level":"error","message":"Work date in future",
-         "expr":"work_date > current_date()"},
+         "expr":"t.work_date > current_date()"},
         {"id":"TS_EMP_STATUS_ERROR","level":"error","message":"Non-active employee",
-         "expr":f"employee_id IN (SELECT employee_id FROM {TABLES['employee']} WHERE employment_status <> 'Active')"},
+         "expr":f"t.employee_id IN (SELECT employee_id FROM {TABLES['employee']} WHERE employment_status <> 'Active')"},
         {"id":"TS_DUP_EMP_PROJ_DAY","level":"warn","message":"Duplicate emp+proj+day",
          "expr":f"""
-           (employee_id, project_id, work_date) IN (
+           (t.employee_id, t.project_id, t.work_date) IN (
              SELECT employee_id, project_id, work_date
              FROM {TABLES['timesheet']}
              GROUP BY employee_id, project_id, work_date
@@ -708,20 +681,24 @@ def build_default_rules():
          """},
         {"id":"TS_OUTSIDE_PROJECT_WINDOW","level":"error","message":"Work outside project window",
          "expr":f"""
-           work_date < (SELECT start_date FROM {TABLES['project']} p WHERE p.project_id = {TABLES['timesheet']}.project_id)
-           OR (
-              (SELECT end_date FROM {TABLES['project']} p2 WHERE p2.project_id = {TABLES['timesheet']}.project_id) IS NOT NULL
-              AND work_date >
-                  (SELECT end_date FROM {TABLES['project']} p3 WHERE p3.project_id = {TABLES['timesheet']}.project_id)
+           t.project_id IS NOT NULL AND (
+             t.work_date < (SELECT p.start_date FROM {TABLES['project']} p WHERE p.project_id = t.project_id)
+             OR (
+               (SELECT p2.end_date FROM {TABLES['project']} p2 WHERE p2.project_id = t.project_id) IS NOT NULL
+               AND t.work_date >
+                   (SELECT p3.end_date FROM {TABLES['project']} p3 WHERE p3.project_id = t.project_id)
+             )
            )
          """},
         {"id":"TS_WEEKEND_BILLABLE","level":weekend_level,"message":"Billable hours on weekend",
-         "expr":"work_type = 'Billable' AND date_format(work_date, 'E') IN ('Sat','Sun')"},
+         "expr":"t.work_type = 'Billable' AND date_format(t.work_date, 'E') IN ('Sat','Sun')"},
       ],
+
       TABLES["expense"]: [
-        {"id":"EXP_DUP","level":"error","message":"Duplicate expense",
+        # Bread & butter
+        {"id":"EXP_DUP","level":"error","message":"Exact duplicate expense",
          "expr":f"""
-           (employee_id, merchant, expense_date, amount) IN (
+           (t.employee_id, t.merchant, t.expense_date, t.amount) IN (
              SELECT employee_id, merchant, expense_date, amount
              FROM {TABLES['expense']}
              GROUP BY employee_id, merchant, expense_date, amount
@@ -729,53 +706,77 @@ def build_default_rules():
            )
          """},
         {"id":"EXP_NO_RECEIPT_OVER_T","level":"error","message":"Receipt required at/over threshold",
-         "expr":f"amount >= {k['receipt_threshold']} AND receipt_attached = false"},
+         "expr":f"t.amount >= {k['receipt_threshold']} AND t.receipt_attached = false"},
         {"id":"EXP_OOP","level":"warn","message":"Out-of-policy amount (Meals>limit or Travel>limit)",
-         "expr":f"(category = 'Meals' AND amount > {k['meal_limit']}) OR (category = 'Travel' AND amount > {k['travel_limit']})"},
+         "expr":f"(t.category = 'Meals' AND t.amount > {k['meal_limit']}) OR (t.category = 'Travel' AND t.amount > {k['travel_limit']})"},
         {"id":"EXP_BAD_CCY","level":"error","message":"Invalid currency code",
-         "expr":f"currency_code NOT IN ({valid_ccy})"},
+         "expr":f"t.currency_code NOT IN ({valid_ccy})"},
         {"id":"EXP_EMP_STATUS_ERROR","level":"error","message":"Non-active employee",
-         "expr":f"employee_id IN (SELECT employee_id FROM {TABLES['employee']} WHERE employment_status <> 'Active')"},
-        {"id":"EXP_OUTSIDE_PROJECT_WINDOW","level":"error","message":"Expense outside project window",
+         "expr":f"t.employee_id IN (SELECT employee_id FROM {TABLES['employee']} WHERE employment_status <> 'Active')"},
+
+        # Fraud-ish 1: Unusually large for this person+category (vs personal avg)
+        {"id":"EXP_UNUSUAL_SIZE_WARN","level":"warn","message":"Unusually large vs personal avg (non-Travel)",
          "expr":f"""
-           project_id IS NOT NULL AND (
-             expense_date < (SELECT start_date FROM {TABLES['project']} p WHERE p.project_id = {TABLES['expense']}.project_id)
+           t.category <> 'Travel' AND
+           t.amount > 1.33 * COALESCE((
+             SELECT AVG(e2.amount) FROM {TABLES['expense']} e2
+             WHERE e2.employee_id = t.employee_id AND e2.category = t.category
+           ), 0)
+         """},
+
+        # Fraud-ish 2: Out-of-home currency on non-Travel
+        {"id":"EXP_OUT_OF_HOME_AREA_WARN","level":"warn","message":"Non-Travel spend in currency not matching employee home country",
+         "expr":f"""
+           t.category <> 'Travel'
+           AND t.currency_code <> {emp_home_ccy_case}
+         """},
+
+        # Fraud-ish 3: Combination escalation → ERROR (quarantine)
+        {"id":"EXP_UNUSUAL_AND_AWAY_ERROR","level":"error","message":"Unusual size AND out-of-home currency (non-Travel)",
+         "expr":f"""
+           t.category <> 'Travel'
+           AND t.amount > 1.33 * COALESCE((
+             SELECT AVG(e3.amount) FROM {TABLES['expense']} e3
+             WHERE e3.employee_id = t.employee_id AND e3.category = t.category
+           ), 0)
+           AND t.currency_code <> {emp_home_ccy_case}
+         """},
+
+        # Fraud-ish 4: Split-spend day sum ≥ threshold with each < threshold
+        {"id":"EXP_SPLIT_TXN_WARN","level":"warn","message":"Multiple small same-day same-merchant expenses sum to >= 75",
+         "expr":f"""
+           t.amount < {k['receipt_threshold']} AND
+           (
+             SELECT SUM(e4.amount) FROM {TABLES['expense']} e4
+             WHERE e4.employee_id = t.employee_id
+               AND e4.merchant    = t.merchant
+               AND e4.expense_date= t.expense_date
+           ) >= {k['receipt_threshold']}
+         """},
+
+        # Project window for project-linked expenses
+        {"id":"EXP_OUTSIDE_PROJECT_WINDOW","level":"error","message":"Expense outside linked project window",
+         "expr":f"""
+           t.project_id IS NOT NULL AND (
+             t.expense_date < (SELECT p.start_date FROM {TABLES['project']} p WHERE p.project_id = t.project_id)
              OR (
-               (SELECT end_date FROM {TABLES['project']} p2 WHERE p2.project_id = {TABLES['expense']}.project_id) IS NOT NULL
-               AND expense_date >
-                   (SELECT end_date FROM {TABLES['project']} p3 WHERE p3.project_id = {TABLES['expense']}.project_id)
+               (SELECT p2.end_date FROM {TABLES['project']} p2 WHERE p2.project_id = t.project_id) IS NOT NULL
+               AND t.expense_date >
+                   (SELECT p3.end_date FROM {TABLES['project']} p3 WHERE p3.project_id = t.project_id)
              )
            )
          """},
       ]
     }
 
-def load_rules():
-    rules_by_table = {}
-    for tbl, cls in RULE_CLASSES_BY_TABLE.items():
-        try:
-            rset = cls()
-            rules = rset.rules()  # should return list[dict]
-            rules_by_table[tbl] = rules or []
-        except Exception:
-            rules_by_table[tbl] = []
-    defaults = build_default_rules()
-    for tbl in defaults:
-        if tbl not in rules_by_table or not rules_by_table[tbl]:
-            rules_by_table[tbl] = defaults[tbl]
-    return rules_by_table
-
-RULES = load_rules()
-print("Rules loaded for:")
-for k in TABLES["sources"]:
-    print("  •", k, f"({len(RULES.get(k, []))} rules)")
+RULES = build_default_rules()
 
 # COMMAND ----------
 # =====================================================================================
 # CELL 10 — Rule Runner (append warning/error, write quarantine, keep clean rows)
 # =====================================================================================
 
-banner("APPLY: Run rules per table, quarantine errors, keep warned rows")
+banner("APPLY: Run rules per table, quarantine errors, keep warned rows", "soft_orange")
 
 def apply_rules_to_table(table_fullname: str, rules: list, run_id: str):
     if not rules:
@@ -803,6 +804,7 @@ def apply_rules_to_table(table_fullname: str, rules: list, run_id: str):
     """
     flagged = spark.sql(flagged_sql)
 
+    # Quarantine ERROR rows (explode by rule)
     if errs:
         err_map = spark.createDataFrame(
             [(e["id"], e.get("message","")) for e in errs],
@@ -820,25 +822,47 @@ def apply_rules_to_table(table_fullname: str, rules: list, run_id: str):
          .select("_source_table","_rule_id","_level",F.col("message").alias("_reason"),"_run_id","_event_ts","_row_payload_json"))
         exploded.write.format("delta").mode("append").saveAsTable(QUARANTINE_TABLE)
 
+    # Keep non-error rows in the cleaned table (with warnings attached)
     cleaned = flagged.where(F.size(F.col("error")) == 0)
     cleaned.write.format("delta").mode("overwrite").option("overwriteSchema","true").saveAsTable(table_fullname)
 
     total  = flagged.count()
     err_ct = flagged.where(F.size(F.col("error")) > 0).count()
     warn_ct= cleaned.where(F.size(F.col("warning")) > 0).count()
-    print(f"[{table_fullname}] total={total:,}  quarantined={err_ct:,}  warned_on_kept={warn_ct:,}")
+    print(f"{C.ivory}[{table_fullname}] total={C.golden_yellow}{total:,}{C.ivory}  quarantined={C.candy_red}{err_ct:,}{C.ivory}  warned_on_kept={C.sky_blue}{warn_ct:,}{C.r}")
 
 for tbl in TABLES["sources"]:
     apply_rules_to_table(tbl, RULES.get(tbl, []), run_id)
 
-print("Done applying rules.")
+print(f"{C.b}{C.neon_blue}Done applying rules.{C.r}")
 
 # COMMAND ----------
 # =====================================================================================
-# CELL 11 — Demo Views (summaries you can show)
+# CELL 11 — Demo Views (HTML mini-dashboard + handy displays)
 # =====================================================================================
 
-banner("DEMO: Quarantine summary by rule")
+banner("DEMO: Mini-dashboard & drill-downs", "deep_blue")
+
+# HTML mini-dashboard
+hits = spark.sql(f"""
+SELECT _rule_id, COUNT(*) AS hits
+FROM {QUARANTINE_TABLE}
+WHERE _run_id = '{run_id}'
+GROUP BY _rule_id
+ORDER BY hits DESC
+""").collect()
+
+items = "".join([f"<li><code>{r['_rule_id']}</code>: <b>{r['hits']}</b></li>" for r in hits]) or "<li>None</li>"
+
+displayHTML(f"""
+<div style="font-family: ui-sans-serif, system-ui; background:#0f172a; color:#e2e8f0; border:1px solid #1f2937; border-radius:14px; padding:16px; line-height:1.4;">
+  <div style="font-size:12px; opacity:0.75;">{DQX_DB}</div>
+  <div style="font-weight:800; font-size:16px; margin-top:2px;">Quarantine hits (run_id {run_id[:8]}…)</div>
+  <ul style="margin:8px 0 0 18px;">{items}</ul>
+</div>
+""")
+
+banner("DEMO: Quarantine by rule (table)", "python")
 display(spark.sql(f"""
 SELECT _rule_id, COUNT(*) AS hits
 FROM {QUARANTINE_TABLE}
@@ -847,22 +871,22 @@ GROUP BY _rule_id
 ORDER BY hits DESC
 """))
 
-banner("DEMO: Which tables had warnings?")
+banner("DEMO: Which tables had warnings?", "python")
 for tbl in TABLES["sources"]:
     df = spark.table(tbl)
     if "warning" in df.columns:
         cnt = df.where(F.size(F.col("warning")) > 0).count()
         print(f"  {tbl}: {cnt:,} rows with warnings")
 
-banner("DEMO: Sample warned rows (expenses)")
+banner("DEMO: Sample warned rows (expenses)", "python")
 display(spark.sql(f"""
-SELECT expense_id, employee_id, category, amount, currency_code, receipt_attached, warning
+SELECT expense_id, employee_id, category, amount, currency_code, merchant, receipt_attached, warning
 FROM {TABLES['expense']}
 WHERE size(warning) > 0
 LIMIT 20
 """))
 
-banner("DEMO: Row counts after quarantine")
+banner("DEMO: Row counts after quarantine", "python")
 display(spark.sql(f"SHOW TABLES IN {DQX_DB}"))
 for tbl in TABLES["sources"]:
     print(tbl, spark.table(tbl).count())
