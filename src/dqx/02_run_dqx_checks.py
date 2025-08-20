@@ -110,6 +110,55 @@ END: run_checks
 
 # COMMAND ----------
 
+# DBTITLE 1,Target Table Structured Schema
+"""
+CHECKS_LOG_SCHEMA = T.StructType([
+    T.StructField("log_id",                      T.StringType(),  False),  # PK (deterministic)
+    # (no top-level check_id)
+    T.StructField("table_name",                  T.StringType(),  False),
+    T.StructField("run_config_name",             T.StringType(),  False),
+
+    # _errors (array of issue structs; includes check_id inside each element)
+    T.StructField("_errors", T.ArrayType(T.StructType([
+        T.StructField("name",          T.StringType(), True),
+        T.StructField("message",       T.StringType(), True),
+        T.StructField("columns",       T.ArrayType(T.StringType()), True),
+        T.StructField("filter",        T.StringType(), True),
+        T.StructField("function",      T.StringType(), True),
+        T.StructField("run_time",      T.TimestampType(), True),
+        T.StructField("user_metadata", T.MapType(T.StringType(), T.StringType()), True),
+        T.StructField("check_id",      T.StringType(), True),
+    ])), False),
+    T.StructField("_errors_fingerprint",         T.StringType(),  False),
+
+    # _warnings (array of issue structs; includes check_id inside each element)
+    T.StructField("_warnings", T.ArrayType(T.StructType([
+        T.StructField("name",          T.StringType(), True),
+        T.StructField("message",       T.StringType(), True),
+        T.StructField("columns",       T.ArrayType(T.StringType()), True),
+        T.StructField("filter",        T.StringType(), True),
+        T.StructField("function",      T.StringType(), True),
+        T.StructField("run_time",      T.TimestampType(), True),
+        T.StructField("user_metadata", T.MapType(T.StringType(), T.StringType()), True),
+        T.StructField("check_id",      T.StringType(), True),
+    ])), False),
+    T.StructField("_warnings_fingerprint",       T.StringType(),  False),
+
+    T.StructField("row_snapshot", T.ArrayType(T.StructType([
+        T.StructField("column",        T.StringType(), False),
+        T.StructField("value",         T.StringType(), True),
+    ])), False),
+    T.StructField("row_snapshot_fingerprint",    T.StringType(),  False),
+
+    T.StructField("created_by",                  T.StringType(),  False),
+    T.StructField("created_at",                  T.TimestampType(), False),
+    T.StructField("updated_by",                  T.StringType(),  True),
+    T.StructField("updated_at",                  T.TimestampType(), True),
+])
+"""
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ### Runbook — 02_run_dqx_checks (Run DQX Checks)
 # MAGIC
@@ -1077,3 +1126,8 @@ run_checks(
     # exclude_cols=["_created_date","_last_updated_date"],
     coercion_mode="strict"
 )
+
+# COMMAND ----------
+
+# DBTITLE 1,TESTING
+
