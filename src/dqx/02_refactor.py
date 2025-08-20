@@ -33,18 +33,36 @@ def _default_for_column(columns: Dict[str, Any], target_name: str) -> Optional[s
             return spec.get("default_value")
     return None
 
+def _as_target_index(k: Any) -> Optional[int]:
+    # Accept 1, "1", "target_table_1"
+    try:
+        return int(k)
+    except Exception:
+        try:
+            s = str(k)
+            if "_" in s:
+                return int(s.rsplit("_", 1)[-1])
+        except Exception:
+            pass
+    return None
+
 def _find_checks_config_table(cfg: ProjectConfig) -> str:
-    # Look through all notebooks/targets; return FQN of table named 'checks_config'
-    for key in cfg.list_notebooks():  # keys like notebook_1, notebook_2
-        nb = cfg.notebook(key)
+    # Iterate notebooks and their targets; return FQN whose table name is 'checks_config'
+    for nb_key in cfg.list_notebooks():    # e.g., "notebook_1", "notebook_2"
+        nb = cfg.notebook(nb_key)
         tcfg = nb.targets()
-        for tkey in tcfg.keys():
-            t = tcfg.target_table(tkey)
+        for k in tcfg.keys():
+            idx = _as_target_index(k)
+            if idx is None:
+                continue
             try:
-                fqn = t.full_table_name()
+                fqn = tcfg.target_table(idx).full_table_name()
             except Exception:
                 continue
-            if fqn.split(".")[-1].strip().lower() == "checks_config":
+            if not fqn:
+                continue
+            last = fqn.split(".")[-1].strip().lower()
+            if last == "checks_config":
                 return fqn
     raise ValueError("Could not locate a target table named '*.*.checks_config' in the YAML config.")
 
@@ -56,8 +74,8 @@ def _parse_scalar(s: Optional[str]):
     s = s.strip()
     sl = s.lower()
     if sl in ("null", "none", ""): return None
-    if sl == "true": return True
-    if sl == "false": return False
+    if sl in ("true", "false"):
+        return sl == "true"
     if (s.startswith("[") and s.endswith("]")) or (s.startswith("{") and s.endswith("}")):
         try: return json.loads(s)
         except Exception: return s
@@ -163,14 +181,12 @@ def _load_checks_from_table_as_dicts(spark: SparkSession,
     status = DQEngine.validate_checks(raw_rules)
     if getattr(status, "has_errors", False):
         keep: List[dict] = []
-        skipped: List[str] = []
         for r in raw_rules:
             st = DQEngine.validate_checks([r])
-            if getattr(st, "has_errors", False):
-                skipped.append(r.get("name") or "<unnamed>")
-            else:
+            if not getattr(st, "has_errors", False):
                 keep.append(r)
-        return _group_by_table(keep), coerced, len(skipped)
+        skipped = len(raw_rules) - len(keep)
+        return _group_by_table(keep), coerced, skipped
     else:
         return _group_by_table(raw_rules), coerced, 0
 
@@ -490,8 +506,8 @@ def run_checks_loader(
     created_by_default = _default_for_column(results_cols, "created_by") or "AdminUser"
 
     # Optional summaries (targets 2 and 3)
-    t2 = targets.target_table(2) if "target_table_2" in targets.keys() else None
-    t3 = targets.target_table(3) if "target_table_3" in targets.keys() else None
+    t2 = targets.target_table(2) if any(str(k).endswith("_2") or str(k) == "2" for k in targets.keys()) else None
+    t3 = targets.target_table(3) if any(str(k).endswith("_3") or str(k) == "3" for k in targets.keys()) else None
 
     summary_by_rule_fqn  = t2.full_table_name() if t2 else None
     summary_by_rule_mode = _must(t2.get("write").get("mode"),   f"{summary_by_rule_fqn}.write.mode") if t2 else "overwrite"
@@ -703,7 +719,7 @@ if __name__ == "__main__":
     result = run_checks_loader(
         spark=spark,
         cfg=cfg,
-        notebook_idx=2,                # ← use index to match the loader style
+        notebook_idx=2,                # ← notebook_2: 02_run_dqx_checks
         # exclude_cols=["_created_date","_last_updated_date"],
         coercion_mode="strict",
     )
