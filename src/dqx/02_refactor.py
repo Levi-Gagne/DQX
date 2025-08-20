@@ -14,97 +14,43 @@ from resources.dqx_functions_0_8_0 import EXPECTED as _EXPECTED
 from utils.color import Color
 from utils.runtime import print_notebook_env
 from utils.display import show_df, display_section
-from utils.create import TableCreator
-from utils.table import table_exists
-from utils.config import ProjectConfig
+from utils.config import ProjectConfig, ConfigError
+from utils.write import TableWriter
 
-# ============================================================================
-# Schema (inline issue structure; comments as metadata)
-# ============================================================================
+# =========================
+# Small helpers
+# =========================
+def _must(val: Any, name: str) -> Any:
+    if val is None:
+        raise ConfigError(f"Missing required config: {name}")
+    if isinstance(val, str) and not val.strip():
+        raise ConfigError(f"Missing required config (empty string): {name}")
+    return val
 
-ROW_LOG_COLUMN_SPECS: List[Tuple[str, T.DataType, bool, str]] = [
-    ("log_id", T.StringType(), False, "PRIMARY KEY. Deterministic sha256 over (table_name, run_config_name, row_snapshot_fingerprint, _errors_fingerprint, _warnings_fingerprint)."),
-    ("table_name", T.StringType(), False, "Source table FQN (`catalog.schema.table`) where the row was evaluated."),
-    ("run_config_name", T.StringType(), False, "Run configuration under which the checks executed."),
-
-    ("_errors", T.ArrayType(T.StructType([
-        T.StructField("name",          T.StringType(),  True,  {"comment": "Rule name that emitted this issue."}),
-        T.StructField("message",       T.StringType(),  True,  {"comment": "Human-readable reason the row was flagged."}),
-        T.StructField("columns",       T.ArrayType(T.StringType()), True, {"comment": "Columns referenced by the rule (if any)."}),
-        T.StructField("filter",        T.StringType(),  True,  {"comment": "Predicate applied before evaluation (if any)."}),
-        T.StructField("function",      T.StringType(),  True,  {"comment": "DQX function that produced the issue."}),
-        T.StructField("run_time",      T.TimestampType(), True, {"comment": "Timestamp when the rule was evaluated."}),
-        T.StructField("user_metadata", T.MapType(T.StringType(), T.StringType()), True, {"comment": "Free-form metadata from config."}),
-        T.StructField("check_id",      T.StringType(),  True,  {"comment": "Originating config `check_id` resolved from the config table."}),
-    ])), False, "Array of **error** issues for this row."),
-
-    ("_errors_fingerprint", T.StringType(), False, "Deterministic digest of normalized `_errors` (order/column-order insensitive)."),
-
-    ("_warnings", T.ArrayType(T.StructType([
-        T.StructField("name",          T.StringType(),  True,  {"comment": "Rule name that emitted this issue."}),
-        T.StructField("message",       T.StringType(),  True,  {"comment": "Human-readable reason the row was flagged."}),
-        T.StructField("columns",       T.ArrayType(T.StringType()), True, {"comment": "Columns referenced by the rule (if any)."}),
-        T.StructField("filter",        T.StringType(),  True,  {"comment": "Predicate applied before evaluation (if any)."}),
-        T.StructField("function",      T.StringType(),  True,  {"comment": "DQX function that produced the issue."}),
-        T.StructField("run_time",      T.TimestampType(), True, {"comment": "Timestamp when the rule was evaluated."}),
-        T.StructField("user_metadata", T.MapType(T.StringType(), T.StringType()), True, {"comment": "Free-form metadata from config."}),
-        T.StructField("check_id",      T.StringType(),  True,  {"comment": "Originating config `check_id` resolved from the config table."}),
-    ])), False, "Array of **warning** issues for this row."),
-
-    ("_warnings_fingerprint", T.StringType(), False, "Deterministic digest of normalized `_warnings` (order/column-order insensitive)."),
-
-    ("row_snapshot", T.ArrayType(T.StructType([
-        T.StructField("column", T.StringType(), False, {"comment": "Column name from the source row."}),
-        T.StructField("value",  T.StringType(), True,  {"comment": "Stringified value at evaluation time (non-reserved columns only)."}),
-    ])), False, "Array<struct{column:string, value:string}> of non-reserved columns for the flagged row (stringified)."),
-
-    ("row_snapshot_fingerprint", T.StringType(), False, "sha256(JSON(row_snapshot)) used in `log_id` and de-duplication."),
-
-    ("created_by", T.StringType(), False, "Audit: writer identity for this record."),
-    ("created_at", T.TimestampType(), False, "Audit: creation timestamp (UTC)."),
-    ("updated_by", T.StringType(), True, "Audit: last updater (nullable)."),
-    ("updated_at", T.TimestampType(), True, "Audit: last update timestamp (UTC, nullable)."),
-]
-
-# StructType with metadata
-ROW_LOG_SCHEMA: T.StructType = TableCreator.build_schema_from_specs(ROW_LOG_COLUMN_SPECS)
-
-# ============================================================================
-# Helpers
-# ============================================================================
-
-def _pick_col(df: DataFrame, *candidates: str) -> Optional[str]:
-    for c in candidates:
-        if c in df.columns:
-            return c
+def _default_for_column(columns: Dict[str, Any], target_name: str) -> Optional[str]:
+    for spec in (columns or {}).values():
+        if isinstance(spec, dict) and (spec.get("name") or "").strip() == target_name:
+            return spec.get("default_value")
     return None
 
-def _empty_issues_array() -> F.Column:
-    issue_struct_type = T.StructType([
-        T.StructField("name",          T.StringType(),  True),
-        T.StructField("message",       T.StringType(),  True),
-        T.StructField("columns",       T.ArrayType(T.StringType()), True),
-        T.StructField("filter",        T.StringType(),  True),
-        T.StructField("function",      T.StringType(),  True),
-        T.StructField("run_time",      T.TimestampType(), True),
-        T.StructField("user_metadata", T.MapType(T.StringType(), T.StringType()), True),
-        T.StructField("check_id",      T.StringType(),  True),
-    ])
-    return F.from_json(F.lit("[]"), T.ArrayType(issue_struct_type))
+def _find_checks_config_table(cfg: ProjectConfig) -> str:
+    # Look through all notebooks/targets; return FQN of table named 'checks_config'
+    for key in cfg.list_notebooks():  # keys like notebook_1, notebook_2
+        nb = cfg.notebook(key)
+        tcfg = nb.targets()
+        for tkey in tcfg.keys():
+            t = tcfg.target_table(tkey)
+            try:
+                fqn = t.full_table_name()
+            except Exception:
+                continue
+            if fqn.split(".")[-1].strip().lower() == "checks_config":
+                return fqn
+    raise ValueError("Could not locate a target table named '*.*.checks_config' in the YAML config.")
 
-def _normalize_issues_for_fp(arr_col: F.Column) -> F.Column:
-    # stable fingerprint: sort 'columns'; drop run_time/user_metadata/check_id
-    return F.transform(
-        arr_col,
-        lambda r: F.struct(
-            r["name"].alias("name"),
-            r["message"].alias("message"),
-            F.coalesce(F.to_json(F.array_sort(r["columns"])), F.lit("[]")).alias("columns_json"),
-            r["filter"].alias("filter"),
-            r["function"].alias("function"),
-        ),
-    )
-
+# ============================================================================
+# Argument parsing & coercion for DQX
+# ============================================================================
 def _parse_scalar(s: Optional[str]):
     if s is None: return None
     s = s.strip()
@@ -173,7 +119,6 @@ def _coerce_arguments(args_map: Optional[Dict[str, str]],
 # ============================================================================
 # Load checks from config table
 # ============================================================================
-
 def _group_by_table(rules: List[dict]) -> Dict[str, List[dict]]:
     out: Dict[str, List[dict]] = {}
     for r in rules:
@@ -232,7 +177,6 @@ def _load_checks_from_table_as_dicts(spark: SparkSession,
 # ============================================================================
 # Apply with isolation (diagnostics)
 # ============================================================================
-
 def _apply_rules_isolating_failures(dq: DQEngine,
                                     src: DataFrame,
                                     table_name: str,
@@ -269,6 +213,37 @@ def _apply_rules_isolating_failures(dq: DQEngine,
 # ============================================================================
 # Projection (row_log)
 # ============================================================================
+def _pick_col(df: DataFrame, *candidates: str) -> Optional[str]:
+    for c in candidates:
+        if c in df.columns:
+            return c
+    return None
+
+def _empty_issues_array() -> F.Column:
+    issue_struct_type = T.StructType([
+        T.StructField("name",          T.StringType(),  True),
+        T.StructField("message",       T.StringType(),  True),
+        T.StructField("columns",       T.ArrayType(T.StringType()), True),
+        T.StructField("filter",        T.StringType(),  True),
+        T.StructField("function",      T.StringType(),  True),
+        T.StructField("run_time",      T.TimestampType(), True),
+        T.StructField("user_metadata", T.MapType(T.StringType(), T.StringType()), True),
+        T.StructField("check_id",      T.StringType(),  True),
+    ])
+    return F.from_json(F.lit("[]"), T.ArrayType(issue_struct_type))
+
+def _normalize_issues_for_fp(arr_col: F.Column) -> F.Column:
+    # stable fingerprint: sort 'columns'; drop run_time/user_metadata/check_id
+    return F.transform(
+        arr_col,
+        lambda r: F.struct(
+            r["name"].alias("name"),
+            r["message"].alias("message"),
+            F.coalesce(F.to_json(F.array_sort(r["columns"])), F.lit("[]")).alias("columns_json"),
+            r["filter"].alias("filter"),
+            r["function"].alias("function"),
+        ),
+    )
 
 def _project_row_hits(df_annot: DataFrame,
                       table_name: str,
@@ -317,7 +292,6 @@ def _project_row_hits(df_annot: DataFrame,
 # ============================================================================
 # Embed check_id inside each issue element
 # ============================================================================
-
 def _embed_issue_check_ids(row_log_df: DataFrame, checks_table: str) -> DataFrame:
     spark = SparkSession.getActiveSession() or SparkSession.builder.getOrCreate()
 
@@ -423,7 +397,6 @@ def _embed_issue_check_ids(row_log_df: DataFrame, checks_table: str) -> DataFram
 # ============================================================================
 # Summaries
 # ============================================================================
-
 def _summarize_table(annot: DataFrame, table_name: str) -> Row:
     err = "_errors" if "_errors" in annot.columns else "_error"
     wrn = "_warnings" if "_warnings" in annot.columns else "_warning"
@@ -480,89 +453,70 @@ def _rules_hits_for_table(annot: DataFrame, table_name: str) -> DataFrame:
     )
 
 # ============================================================================
-# Config resolution
+# Runner (index-based, config-driven)
 # ============================================================================
-
-def _find_checks_config_table(cfg: ProjectConfig) -> str:
-    names: List[str] = []
-    for nb in cfg.list_notebooks():
-        try:
-            for t in cfg.target_tables(nb):
-                nm = t.get("name")
-                if nm:
-                    names.append(str(nm))
-        except Exception:
-            pass
-
-    for nm in names:
-        last = nm.split(".")[-1].strip().lower()
-        if last == "checks_config":
-            return nm
-
-    raise ValueError("Could not locate a target table named '*.*.checks_config' in the YAML config.")
-
-# ============================================================================
-# Runner
-# ============================================================================
-
 def run_checks_loader(
     spark: SparkSession,
     cfg: ProjectConfig,
     *,
-    notebook_name: str = "02_run_dqx_checks",
+    notebook_idx: int,                 # ← use index to mirror the loader
     exclude_cols: Optional[List[str]] = None,
     coercion_mode: str = "permissive",
 ) -> Dict[str, Any]:
 
     spark.conf.set("spark.databricks.delta.schema.autoMerge.enabled", "true")
 
-    local_tz   = cfg.local_timezone()
-    created_by = cfg.created_by()
+    local_tz = _must(cfg.get("project_config.local_timezone"), "project_config.local_timezone")
     print_notebook_env(spark, local_timezone=local_tz)
 
+    # Grab notebook by index
+    nb = cfg.notebook(notebook_idx)
+
+    # Resolve checks_config table across config
     checks_table = _find_checks_config_table(cfg)
 
-    targets = cfg.target_tables(notebook_name)
-    if not targets:
-        raise ValueError(f"{notebook_name}: target_tables is empty.")
+    # Targets for this notebook
+    targets = nb.targets()
+    t1 = targets.target_table(1)  # row-level results (checks_log)
+    results_fqn = t1.full_table_name()
+    results_write = _must(t1.get("write"), f"{results_fqn}.write")
+    results_mode  = _must(results_write.get("mode"),   f"{results_fqn}.write.mode")
+    results_fmt   = _must(results_write.get("format"), f"{results_fqn}.write.format")
+    results_opts  = results_write.get("options") or {}
+    results_part  = t1.get("partition_by") or []
+    results_desc  = t1.get("table_description")
+    results_pk    = _must(t1.get("primary_key"), f"{results_fqn}.primary_key")
+    results_cols  = _must(t1.get("columns"), f"{results_fqn}.columns")
+    created_by_default = _default_for_column(results_cols, "created_by") or "AdminUser"
 
-    results_conf = targets[0]
-    results_table = results_conf.get("name")
-    if not results_table:
-        raise ValueError(f"{notebook_name}: first target table missing 'name'.")
+    # Optional summaries (targets 2 and 3)
+    t2 = targets.target_table(2) if "target_table_2" in targets.keys() else None
+    t3 = targets.target_table(3) if "target_table_3" in targets.keys() else None
 
-    results_mode = results_conf.get("write_mode")
-    if not results_mode:
-        raise ValueError(f"{notebook_name}: first target table missing 'write_mode'.")
-    results_part  = results_conf.get("partition_by") or None
-    results_desc  = results_conf.get("table_description") or ""
-    results_pk    = results_conf.get("primary_key")
-    if not results_pk:
-        raise ValueError(f"{notebook_name}: first target table missing 'primary_key'.")
+    summary_by_rule_fqn  = t2.full_table_name() if t2 else None
+    summary_by_rule_mode = _must(t2.get("write").get("mode"),   f"{summary_by_rule_fqn}.write.mode") if t2 else "overwrite"
+    summary_by_rule_fmt  = _must(t2.get("write").get("format"), f"{summary_by_rule_fqn}.write.format") if t2 else "delta"
+    summary_by_rule_opts = (t2.get("write").get("options") or {}) if t2 else {}
 
-    summary_by_rule_table  = targets[1].get("name") if len(targets) > 1 else None
-    summary_by_rule_mode   = targets[1].get("write_mode") if len(targets) > 1 else "overwrite"
+    summary_by_table_fqn  = t3.full_table_name() if t3 else None
+    summary_by_table_mode = _must(t3.get("write").get("mode"),   f"{summary_by_table_fqn}.write.mode") if t3 else "overwrite"
+    summary_by_table_fmt  = _must(t3.get("write").get("format"), f"{summary_by_table_fqn}.write.format") if t3 else "delta"
+    summary_by_table_opts = (t3.get("write").get("options") or {}) if t3 else {}
 
-    summary_by_table_table = targets[2].get("name") if len(targets) > 2 else None
-    summary_by_table_mode  = targets[2].get("write_mode") if len(targets) > 2 else "overwrite"
-
-    apply_meta = cfg.apply_table_metadata_flag()
-    if not table_exists(spark, results_table):
-        TableCreator.create_table(
-            spark,
-            results_table,
-            column_specs=ROW_LOG_COLUMN_SPECS,
-            partition_by=results_part,
-            primary_key=results_pk,
-            table_description=results_desc,
-        )
-    elif apply_meta:
-        TableCreator.apply_metadata(
-            spark,
-            results_table,
-            column_specs=ROW_LOG_COLUMN_SPECS,
-            table_description=results_desc,
-        )
+    # Create results table from YAML spec (idempotent)
+    apply_meta = bool(_must(cfg.get("project_config.apply_table_metadata"), "project_config.apply_table_metadata"))
+    tw = TableWriter(spark)
+    tw.create_table(
+        fqn=results_fqn,
+        columns=results_cols,
+        format=results_fmt,
+        options=results_opts,
+        partition_by=results_part,
+        primary_key=results_pk,
+        apply_metadata=apply_meta,
+        table_comment=results_desc,
+        table_tags=t1.get("table_tags"),
+    )
 
     dq = DQEngine(WorkspaceClient())
 
@@ -575,9 +529,9 @@ def run_checks_loader(
     all_tbl_summaries: List[Row] = []
     printed_grand_once = False
 
-    rc_map: Dict[str, Any] = cfg.raw.get("run_config_name", {}) or {}
+    rc_map: Dict[str, Any] = cfg.get("run_config_name") or {}
 
-    for rc_name, rc_cfg in rc_map.items():
+    for rc_name, _rc_cfg in rc_map.items():
         if rc_name is None or str(rc_name).lower() == "none":
             continue
 
@@ -619,7 +573,7 @@ def run_checks_loader(
             all_tbl_summaries.append(Row(run_config_name=rc_name, **summary_row.asDict()))
             rc_rule_hit_parts.append(_rules_hits_for_table(annot, tbl))
 
-            row_hits = _project_row_hits(annot, tbl, rc_name, created_by, exclude_cols=exclude_cols)
+            row_hits = _project_row_hits(annot, tbl, rc_name, created_by_default, exclude_cols=exclude_cols)
             if row_hits.limit(1).count() > 0:
                 out_batches.append(row_hits)
 
@@ -628,7 +582,8 @@ def run_checks_loader(
             display_section(f"Row-hit summary by table (run_config={rc_name})")
             show_df(summary_df, n=200, truncate=False)
 
-        if rc_rule_hit_parts and summary_by_rule_table:
+        # summary by rule
+        if rc_rule_hit_parts and summary_by_rule_fqn:
             rules_all = rc_rule_hit_parts[0]
             for part in rc_rule_hit_parts[1:]:
                 rules_all = rules_all.unionByName(part, allowMissingColumns=True)
@@ -671,7 +626,11 @@ def run_checks_loader(
             (full_rules
              .withColumn("run_config_name", F.lit(rc_name))
              .select("run_config_name","table_name","rule_name","severity","rows_flagged","table_total_rows","pct_of_table_rows")
-             .write.format("delta").mode(summary_by_rule_mode).saveAsTable(summary_by_rule_table))
+             .write
+             .format(summary_by_rule_fmt)
+             .mode(summary_by_rule_mode)
+             .options(**summary_by_rule_opts)
+             .saveAsTable(summary_by_rule_fqn))
 
         if not out_batches:
             print(f"[{rc_name}] no row-level hits.")
@@ -683,13 +642,24 @@ def run_checks_loader(
 
         out = _embed_issue_check_ids(out, checks_table)
 
-        out = out.select([f.name for f in ROW_LOG_SCHEMA.fields])
-        rows = out.count()
-        out.write.format("delta").mode(results_mode).saveAsTable(results_table)
-        grand_total += rows
-        print(f"[{rc_name}] wrote {rows} rows → {results_table}")
+        # Align to declared schema (results table)
+        target_cols = [f.name for f in spark.table(results_fqn).schema.fields]
+        out = out.select(*target_cols)
 
-        if summary_by_table_table and not printed_grand_once:
+        # Write via TableWriter
+        tw.write_only(
+            out,
+            fqn=results_fqn,
+            mode=results_mode,
+            format=results_fmt,
+            options=results_opts,
+        )
+        rows = out.count()
+        grand_total += rows
+        print(f"[{rc_name}] wrote {rows} rows → {results_fqn}")
+
+        # summary by table (all run_configs — write once)
+        if summary_by_table_fqn and not printed_grand_once:
             grand_df = (
                 spark.createDataFrame(all_tbl_summaries)
                 .select(
@@ -706,30 +676,34 @@ def run_checks_loader(
             display_section("Row-hit summary by table (ALL run_configs)")
             show_df(grand_df, n=500, truncate=False)
 
-            grand_df.write.format("delta").mode(summary_by_table_mode).saveAsTable(summary_by_table_table)
+            (grand_df
+             .write
+             .format(summary_by_table_fmt)
+             .mode(summary_by_table_mode)
+             .options(**summary_by_table_opts)
+             .saveAsTable(summary_by_table_fqn))
             printed_grand_once = True
 
     display_section("Grand total")
     print(f"{Color.b}{Color.ivory}TOTAL rows written: '{Color.r}{Color.b}{Color.bright_pink}{grand_total}{Color.r}{Color.b}{Color.ivory}'{Color.r}")
 
     return {
-        "results_table": results_table,
+        "results_table": results_fqn,
         "grand_total_rows": grand_total,
         "checks_table": checks_table,
-        "notebook": notebook_name,
+        "notebook_idx": notebook_idx,
     }
 
 # ============================================================================
 # Minimal entrypoint
 # ============================================================================
-
 if __name__ == "__main__":
     spark = SparkSession.builder.getOrCreate()
     cfg = ProjectConfig("resources/dqx_config.yaml", spark=spark)
     result = run_checks_loader(
         spark=spark,
         cfg=cfg,
-        notebook_name="02_run_dqx_checks",
+        notebook_idx=2,                # ← use index to match the loader style
         # exclude_cols=["_created_date","_last_updated_date"],
         coercion_mode="strict",
     )
