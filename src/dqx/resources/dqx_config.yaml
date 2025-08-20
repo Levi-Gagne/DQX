@@ -169,7 +169,7 @@ notebooks:
             allowed_values:
           column_13:
             name: created_at
-            data_type: string
+            data_type: timestamp
             nullable: false
             comment: "Audit: creation timestamp (cast to TIMESTAMP on write)."
             default_value:
@@ -183,7 +183,7 @@ notebooks:
             allowed_values:
           column_15:
             name: updated_at
-            data_type: string
+            data_type: timestamp
             nullable: true
             comment: "Audit: last update timestamp (nullable; cast to TIMESTAMP on write)."
             default_value:
