@@ -1,6 +1,3 @@
-Can you integerate this file inton my notebook below: 
-# src/dqx/utils/console.py
-
 from __future__ import annotations
 
 import os
@@ -57,6 +54,10 @@ class Console:
         "SUCCESS":    ["b", "green", "r"],
         "VALIDATION": ["b", "ivory", "r"],
         "DEBUG":      ["r"],
+        # added for your notebooks:
+        "LOADER":     ["b", "sky_blue", "r"],
+        "SKIP":       ["b", "ivory", "r"],
+        "DEDUPE":     ["b", "moccasin", "r"],
     }
 
     @classmethod
@@ -129,19 +130,13 @@ class Console:
 # export convenience constants like Console.ERROR / Console.INFO
 for _lab in list(Console.TAG_STYLES):
     setattr(Console, _lab, Console.token(_lab))
+    
+    
+    
+#####
 
 
 
-You notice that in the ntoebook below i have things in [] such as loader, can you add it to the list in the console.py as LOADER etc, 
-
-
-
-please show me the ufll updated console and the notebook wited with it
-
-
-# ======================================================================
-# file: src/dqx/notebooks/01_load_dqx_checks.py
-# ======================================================================
 
 # Databricks notebook: 01_load_dqx_checks
 # Purpose: Load YAML rules into dq_{env}.dqx.checks_config
@@ -165,6 +160,7 @@ from databricks.labs.dqx.engine import DQEngine
 from utils.display import show_df, display_section
 from utils.runtime import print_notebook_env
 from utils.color import Color
+from utils.console import Console  # <-- added
 
 from utils.config import ProjectConfig, ConfigError, must, default_for_column
 from utils.write import TableWriter, write_aligned
@@ -298,7 +294,7 @@ def process_yaml_file(
 ) -> List[dict]:
     docs = load_yaml_rules(path)
     if not docs:
-        print(f"[skip] {path} has no rules.")
+        print(f"{Console.SKIP}{path} has no rules.")  # ← updated
         return []
 
     validate_rules_file(docs, path)
@@ -370,12 +366,12 @@ def dedupe_rules_in_batch_by_check_id(rules: List[dict], mode: str) -> List[dict
         if len(lst) == 1: out.append(lst[0]); continue
         lst = sorted(lst, key=lambda x: (x.get("yaml_path",""), x.get("name","")))
         keep, dups = lst[0], lst[1:]; dropped += len(dups)
-        head = f"[dup/batch/check_id] {len(dups)} duplicate(s) for check_id={cid[:12]}…"
+        head = f"{Console.DEDUPE} [batch/check_id] {len(dups)} duplicate(s) for check_id={cid[:12]}…"
         lines = ["    " + _fmt_rule_for_dup(x) for x in lst]
         tail = f"    -> keeping: name={keep.get('name')} | file={keep.get('yaml_path')}"
         blocks.append("\n".join([head, *lines, tail])); out.append(keep)
     if dropped:
-        msg = "\n\n".join(blocks) + f"\n[dedupe/batch] total dropped={dropped}"
+        msg = "\n\n".join(blocks) + f"\n{Console.DEDUPE} total dropped={dropped}"
         if mode == "error": raise ValueError(msg)
         if mode == "warn": print(msg)
     return out
@@ -384,7 +380,7 @@ def dedupe_rules_in_batch_by_check_id(rules: List[dict], mode: str) -> List[dict
 # Discover rule YAMLs
 # =========================
 def discover_yaml(cfg: ProjectConfig, rules_dir: str) -> List[str]:
-    print("[debug] rules_dir (raw from YAML):", rules_dir)
+    print(f"{Console.DEBUG}rules_dir (raw from YAML): {rules_dir}")  # ← updated
     files = list_yaml_files(rules_dir)
     display_section("YAML FILES DISCOVERED (recursive)")
     df = SparkSession.builder.getOrCreate().createDataFrame([(p,) for p in files], "yaml_path string")
@@ -464,7 +460,7 @@ def run_checks_loader(
     yaml_files = discover_yaml(cfg, rules_dir)
 
     if validate_only:
-        print("\nValidation only: not writing any rules.")
+        print(f"{Console.VALIDATION} Validation only: not writing any rules.")  # ← updated
         errs: List[str] = []
         for p in yaml_files:
             try:
@@ -484,17 +480,17 @@ def run_checks_loader(
         )
         if file_rules:
             all_rules.extend(file_rules)
-            print(f"[loader] {full_path}: rules={len(file_rules)}")
+            print(f"{Console.LOADER}{full_path}: rules={len(file_rules)}")  # ← updated
 
     pre_dedupe = len(all_rules)
     rules = dedupe_rules_in_batch_by_check_id(all_rules, mode=dedupe_mode)
     post_dedupe = len(rules)
 
     if not rules:
-        print("No rules discovered; nothing to do.")
+        print(f"{Console.INFO}No rules discovered; nothing to do.")  # ← updated
         return {"config_path": cfg.path, "rules_files": len(yaml_files), "wrote_rows": 0, "target_table": fqn}
 
-    print(f"[loader] total parsed rules (pre-dedupe): {pre_dedupe}")
+    print(f"{Console.LOADER}total parsed rules (pre-dedupe): {pre_dedupe}")  # ← updated
     df = build_df_from_rules(spark, rules, columns_spec)
     preview_summary(df)
 
