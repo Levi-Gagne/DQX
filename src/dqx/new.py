@@ -1,4 +1,3 @@
-So i made the updates and this is what im running: 
 # ======================================================================
 # file: src/dqx/notebooks/02_run_dqx_checks.py
 # ======================================================================
@@ -230,27 +229,42 @@ def _summarize_table(annot: DataFrame, table_name: str) -> Row:
 
     annot = annot.cache()
     tot = annot.count()
-    sums = (annot
-            .select(
-                (F.size(F.col(err)) > 0).cast("int").alias("e"),
-                (F.size(F.col(wrn)) > 0).cast("int").alias("w"),
-                ((F.size(F.col(err)) > 0) | (F.size(F.col(wrn)) > 0)).cast("int").alias("f"),
-            )
-            .agg(F.sum("e").alias("e"), F.sum("w").alias("w"), F.sum("f").alias("f"))
-            .collect()[0])
-    rules = (annot
-             .selectExpr(f"inline_outer(array_union(transform({err}, x -> x.name), transform({wrn}, x -> x.name))) as nm")
-             .where(F.col("nm").isNotNull())
-             .agg(F.countDistinct("nm").alias("rules"))
-             .collect()[0]["rules"])
+
+    # counts for rows with errors/warnings/any flags
+    sums = (
+        annot
+        .select(
+            (F.size(F.col(err)) > 0).cast("int").alias("e"),
+            (F.size(F.col(wrn)) > 0).cast("int").alias("w"),
+            ((F.size(F.col(err)) > 0) | (F.size(F.col(wrn)) > 0)).cast("int").alias("f"),
+        )
+        .agg(F.sum("e").alias("e"), F.sum("w").alias("w"), F.sum("f").alias("f"))
+        .collect()[0]
+    )
+
+    # array<string> of rule names across errors + warnings
+    names_arr = F.expr(
+        f"array_union(transform({err}, x -> x.name), transform({wrn}, x -> x.name))"
+    )
+
+    rules = (
+        annot
+        .select(F.explode_outer(names_arr).alias("nm"))
+        .where(F.col("nm").isNotNull())
+        .agg(F.countDistinct("nm").alias("rules"))
+        .collect()[0]["rules"]
+    )
+
     annot.unpersist()
 
-    return Row(table_name=table_name,
-               table_total_rows=int(tot),
-               table_total_error_rows=int(sums["e"]),
-               table_total_warning_rows=int(sums["w"]),
-               total_flagged_rows=int(sums["f"]),
-               distinct_rules_fired=int(rules))
+    return Row(
+        table_name=table_name,
+        table_total_rows=int(tot),
+        table_total_error_rows=int(sums["e"]),
+        table_total_warning_rows=int(sums["w"]),
+        total_flagged_rows=int(sums["f"]),
+        distinct_rules_fired=int(rules),
+    )
 
 def _rules_hits_for_table(annot: DataFrame, table_name: str) -> DataFrame:
     err = "_errors" if "_errors" in annot.columns else "_error"
@@ -463,54 +477,3 @@ if __name__ == "__main__":
     cfg = ProjectConfig("resources/dqx_config.yaml", spark=spark)
     result = run_checks_loader(spark=spark, cfg=cfg, notebook_idx=2, coercion_mode="strict")
     print(result)
-
-
-
-
-HEre is the error:
-[runtime] Non-fatal while printing runtime info: Invalid timezone 'America/Chicago'. Must be a valid IANA timezone string. Examples: 'UTC', 'America/Chicago', 'Europe/Berlin'.
-
-════════════════════════════════════════════════════════════════════════════════
-║ Run config: default
-════════════════════════════════════════════════════════════════════════════════
-[default] checks_in_table_total=79, loaded=36, coerced=36, skipped_invalid=0
-
-
-[DATATYPE_MISMATCH.UNEXPECTED_INPUT_TYPE] Cannot resolve "inline(array_union(transform(_errors, lambdafunction(namedlambdavariable().name, namedlambdavariable())), transform(_warnings, lambdafunction(namedlambdavariable().name, namedlambdavariable()))))" due to data type mismatch: The first parameter requires the "ARRAY<STRUCT>" type, however "array_union(transform(_errors, lambdafunction(namedlambdavariable().name, namedlambdavariable())), transform(_warnings, lambdafunction(namedlambdavariable().name, namedlambdavariable())))" has the type "ARRAY<STRING>". SQLSTATE: 42K09
-File <command-4730582016133245>, line 463
-    461 spark = SparkSession.builder.getOrCreate()
-    462 cfg = ProjectConfig("resources/dqx_config.yaml", spark=spark)
---> 463 result = run_checks_loader(spark=spark, cfg=cfg, notebook_idx=2, coercion_mode="strict")
-    464 print(result)
-File <command-4730582016133245>, line 374, in run_checks_loader(spark, cfg, notebook_idx, exclude_cols, coercion_mode)
-    371 total_rows = annot.count()
-    372 table_row_counts[tbl] = total_rows
---> 374 summary_row = _summarize_table(annot, tbl)
-    375 rc_tbl_summaries.append(summary_row)
-    376 all_tbl_summaries.append(Row(run_config_name=rc_name, **summary_row.asDict()))
-File <command-4730582016133245>, line 244, in _summarize_table(annot, table_name)
-    231 tot = annot.count()
-    232 sums = (annot
-    233         .select(
-    234             (F.size(F.col(err)) > 0).cast("int").alias("e"),
-   (...)
-    238         .agg(F.sum("e").alias("e"), F.sum("w").alias("w"), F.sum("f").alias("f"))
-    239         .collect()[0])
-    240 rules = (annot
-    241          .selectExpr(f"inline_outer(array_union(transform({err}, x -> x.name), transform({wrn}, x -> x.name))) as nm")
-    242          .where(F.col("nm").isNotNull())
-    243          .agg(F.countDistinct("nm").alias("rules"))
---> 244          .collect()[0]["rules"])
-    245 annot.unpersist()
-    247 return Row(table_name=table_name,
-    248            table_total_rows=int(tot),
-    249            table_total_error_rows=int(sums["e"]),
-    250            table_total_warning_rows=int(sums["w"]),
-    251            total_flagged_rows=int(sums["f"]),
-    252            distinct_rules_fired=int(rules))
-
-
-
-
-
-Can you resolve this? 
