@@ -73,3 +73,54 @@ ROW_LOG_SCHEMA = T.StructType([
     T.StructField("updated_by",                  T.StringType(),  True),
     T.StructField("updated_at",                  T.TimestampType(), True),
 ])
+
+
+
+
+
+
+
+#####
+
+
+
+
+
+########################################################################
+
+# summary_by_rule:
+# Aggregated counts of row-level hits by table and rule for a given run_config.
+# One row per (run_config_name, table_name, rule_name, severity).
+# Calculations:
+#   - rows_flagged: count of rows where this rule fired on the table
+#   - table_total_rows: total rows scanned for that table (denominator)
+#   - pct_of_table_rows: rows_flagged / table_total_rows (0.0 if denominator is 0)
+SUMMARY_BY_RULE_SCHEMA = T.StructType([
+    T.StructField("run_config_name",   T.StringType(),  False),
+    T.StructField("table_name",        T.StringType(),  False),
+    T.StructField("rule_name",         T.StringType(),  False),
+    T.StructField("severity",          T.StringType(),  False),  # 'error' | 'warning'
+    T.StructField("rows_flagged",      T.LongType(),    False),
+    T.StructField("table_total_rows",  T.LongType(),    True),
+    T.StructField("pct_of_table_rows", T.DoubleType(),  False),
+])
+
+########################################################################
+
+# summary_by_table:
+# Per-table totals across all processed tables (per run_config) for this run.
+# Calculations:
+#   - table_total_rows: count(*)
+#   - table_total_error_rows: count(rows with _errors non-empty)
+#   - table_total_warning_rows: count(rows with _warnings non-empty)
+#   - total_flagged_rows: count(rows with _errors or _warnings non-empty)
+#   - distinct_rules_fired: count_distinct(issue.name across both severities)
+SUMMARY_BY_TABLE_SCHEMA = T.StructType([
+    T.StructField("run_config_name",          T.StringType(), False),
+    T.StructField("table_name",               T.StringType(), False),
+    T.StructField("table_total_rows",         T.LongType(),   False),
+    T.StructField("table_total_error_rows",   T.LongType(),   False),
+    T.StructField("table_total_warning_rows", T.LongType(),   False),
+    T.StructField("total_flagged_rows",       T.LongType(),   False),
+    T.StructField("distinct_rules_fired",     T.IntegerType(), False),
+])
