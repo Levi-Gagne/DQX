@@ -1,6 +1,6 @@
 # =================================================================================================
 # DQX Rules — de_prd.gold.wkdy_dim_project
-# Run config: gold_wkdy_dim_project
+# Run config: default
 # Notes:
 # - Comments above each rule explain purpose.
 # - A commented SQL block below each rule lets you spot offenders with plain Spark SQL.
@@ -17,7 +17,7 @@
 table_name: de_prd.gold.wkdy_dim_project
 name: PK uniqueness on project_key
 criticality: error
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: is_unique
   arguments:
@@ -34,7 +34,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: One active SCD record per project_id
 criticality: error
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_query
   arguments:
@@ -59,7 +59,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: SCD end_date aligns with is_active_record
 criticality: error
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -77,7 +77,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: SCD date order valid
 criticality: error
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -94,7 +94,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Project date order valid
 criticality: error
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -112,7 +112,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Activity date order valid
 criticality: error
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -130,7 +130,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Activity not after project_end_date
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -147,7 +147,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Closed requires project_end_date
 criticality: error
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -164,7 +164,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Schedule Pending has no activity
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -183,7 +183,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Active project has customer
 criticality: error
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -202,7 +202,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Inactive customer with active/scheduled project
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -219,7 +219,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Email format (leader)
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -234,7 +234,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Email format (biller)
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -251,7 +251,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Leader employee_id format (6 digits)
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -267,7 +267,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Biller employee_id format (6 digits)
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -284,7 +284,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Cost center code format (3 digits)
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -301,7 +301,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: SIC code format (4 digits)
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -317,7 +317,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: SIC name required when code present
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -335,7 +335,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Project ID format (common patterns)
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -352,7 +352,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Disallow 'Unknown' placeholders (key contributor)
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -372,7 +372,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Active project has leader & biller assigned
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -392,7 +392,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Active project has type and service line
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -410,7 +410,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_project
 name: Period end after project start
 criticality: warn
-run_config_name: gold_wkdy_dim_project
+run_config_name: default
 check:
   function: sql_expression
   arguments:

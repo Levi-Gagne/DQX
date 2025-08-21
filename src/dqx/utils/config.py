@@ -229,3 +229,51 @@ class TableSpec:
                 f"catalog={cat!r}, schema={sch!r}, table={tbl!r})"
             )
         return f"{cat}.{sch}.{tbl}"
+    
+
+def must(val: Any, name: str) -> Any:
+    if val is None or (isinstance(val, str) and not val.strip()):
+        raise ConfigError(f"Missing required config: {name}")
+    return val
+
+def default_for_column(columns: Dict[str, Any], target_name: str) -> Optional[str]:
+    for spec in (columns or {}).values():
+        if isinstance(spec, dict) and (spec.get("name") or "").strip() == target_name:
+            return spec.get("default_value")
+    return None
+
+def _as_target_index(k: Any) -> Optional[int]:
+    try:
+        return int(k)
+    except Exception:
+        try:
+            s = str(k)
+            if "_" in s and s.rsplit("_", 1)[-1].isdigit():
+                return int(s.rsplit("_", 1)[-1])
+        except Exception:
+            pass
+    return None
+
+def find_table(cfg: "ProjectConfig", table_name: str) -> str:
+    want = (table_name or "").strip().lower()
+
+    # explicit override only for checks_config, if set:
+    if want == "checks_config":
+        explicit = (cfg.get("project_config") or {}).get("checks_config_table")
+        if isinstance(explicit, str) and explicit.strip():
+            return explicit.strip()
+
+    for nb_key in cfg.list_notebooks():
+        nb = cfg.notebook(nb_key)
+        tcfg = nb.targets()
+        for k in tcfg.keys():
+            idx = _as_target_index(k)
+            if idx is None:
+                continue
+            try:
+                fqn = tcfg.target_table(idx).full_table_name()
+            except Exception:
+                continue
+            if fqn and fqn.split(".")[-1].strip().lower() == want:
+                return fqn
+    raise ValueError(f"Could not locate a target table named '*.*.{want}' in the YAML config.")

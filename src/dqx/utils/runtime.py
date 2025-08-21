@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import sys
-from typing import Dict, Any
+from typing import Dict, Any, Optional
+
 from pyspark.sql import SparkSession
 from utils.color import Color
+from utils.display import show_df
+from utils.timezone import current_time_iso
 
 # Safe in notebooks/jobs; Spark Connect/unit tests tolerate failure
 try:
@@ -13,18 +16,6 @@ try:
 except Exception:
     dbutils = None  # type: ignore
 
-def current_time_iso(time_zone: Optional[str] = "UTC") -> str:
-    """
-    Return the current datetime as an ISO 8601 string with timezone.
-    """
-    try:
-        zone = ZoneInfo(time_zone)
-    except Exception as e:
-        raise ValueError(
-            f"Invalid timezone '{time_zone}'. Must be a valid IANA timezone string. "
-            "Examples: 'UTC', 'America/Chicago', 'Europe/Berlin'."
-        ) from e
-    return datetime.now(zone).isoformat()
 
 # ---------- internals ----------
 def _safe_conf_get(spark: SparkSession, key: str, default: str = "Unknown") -> str:
@@ -56,68 +47,79 @@ def _get_notebook_path() -> str:
     except Exception:
         return "Unknown"
 
-def _get_current_times(local_timezone: str = "America/Chicago") -> Dict[str, str]:
-    return {
-        "local_time": current_time_iso(local_timezone),
-        "utc_time": current_time_iso("UTC"),
-    }
 
-# ---------- public API ----------
-def gather_runtime_info(spark: SparkSession, *, local_timezone: str = "America/Chicago") -> Dict[str, Any]:
-    """Return a structured dict of runtime facts (no printing, no DataFrame)."""
-    return {
+# ---------- single public API ----------
+def show_notebook_env(
+    spark: SparkSession,
+    *,
+    local_timezone: Optional[str] = None,
+    format: str = "printed",
+) -> Dict[str, Any]:
+    """
+    Show Databricks/Spark runtime details in the requested format.
+
+    Args:
+        spark: active SparkSession
+        local_timezone: IANA TZ name for the "local_time" label (falls back to UTC if unknown)
+        format: "printed" for a colorized text block, or "table" to render a single-row DataFrame
+
+    Returns:
+        A dict with the same fields that are displayed.
+    """
+    # Build the info dict inline (no separate gather_* function)
+    info: Dict[str, Any] = {
         "python_version":  _get_python_version(),
         "spark_version":   _get_spark_version(spark),
         "notebook_path":   _get_notebook_path(),
         "cluster_name":    _get_cluster_name(spark),
         "cluster_id":      _get_cluster_id(spark),
         "executor_memory": _get_executor_memory(spark),
-        **_get_current_times(local_timezone),
+        "local_time":      current_time_iso(local_timezone),  # never raises; falls back to UTC
+        "utc_time":        current_time_iso("UTC"),
     }
 
-def print_notebook_env(spark: SparkSession, local_timezone: str = "America/Chicago") -> Dict[str, Any]:
-    """
-    Print Databricks/Spark runtime details as a COLORED TEXT BLOCK (not a table).
-    Returns the same info dict.
-    """
+    fmt = (format or "printed").strip().lower()
+
+    if fmt == "table":
+        df = spark.createDataFrame(
+            [(
+                info["python_version"],
+                info["spark_version"],
+                info["notebook_path"],
+                info["cluster_name"],
+                info["cluster_id"],
+                info["executor_memory"],
+                info["local_time"],
+                info["utc_time"],
+            )],
+            schema=(
+                "python_version string, spark_version string, notebook_path string, "
+                "cluster_name string, cluster_id string, executor_memory string, "
+                "local_time string, utc_time string"
+            ),
+        )
+        show_df(df, n=1, truncate=False)
+        return info
+
+    # Default: colorized printed block
     try:
-        info = gather_runtime_info(spark, local_timezone=local_timezone)
-        print(f"{Color.saffron}={Color.r}" * 60)
+        sep = f"{Color.saffron}={Color.r}"
+        print(sep * 60)
         print(f"{Color.b}{Color.python}Python version    :{Color.r} {Color.b}{Color.ivory}{info['python_version']}{Color.r}")
         print(f"{Color.b}{Color.spark}Spark version     :{Color.r} {Color.b}{Color.ivory}{info['spark_version']}{Color.r}")
         print(f"{Color.b}{Color.forest_green}Notebook path     :{Color.r} {Color.b}{Color.ivory}{info['notebook_path']}{Color.r}")
         print(f"{Color.b}{Color.CLUSTER_SECONDARY}Cluster name      :{Color.r} {Color.b}{Color.ivory}{info['cluster_name']}{Color.r}")
         print(f"{Color.b}{Color.CLUSTER_SECONDARY}Cluster ID        :{Color.r} {Color.b}{Color.ivory}{info['cluster_id']}{Color.r}")
         print(f"{Color.b}{Color.CLUSTER_SECONDARY}Executor memory   :{Color.r} {Color.b}{Color.ivory}{info['executor_memory']}{Color.r}")
-        print(f"{Color.b}{Color.neon_blue}Local time ({local_timezone}):{Color.r} {Color.b}{Color.ivory}{info['local_time']}{Color.r}")
+        tz_label = local_timezone or "UTC"
+        print(f"{Color.b}{Color.neon_blue}Local time ({tz_label}):{Color.r} {Color.b}{Color.ivory}{info['local_time']}{Color.r}")
         print(f"{Color.b}{Color.neon_blue}UTC time          :{Color.r} {Color.b}{Color.ivory}{info['utc_time']}{Color.r}")
-        print(f"{Color.saffron}={Color.r}" * 60)
-        return info
+        print(sep * 60)
     except Exception as e:
+        # Never fail the job for cosmetics
         print(f"[runtime] Non-fatal while printing runtime info: {e}")
-        return {"python_version": _get_python_version(), "spark_version": spark.version}
 
-# Optional: if you ever WANT a table version of the env block (call explicitly)
-def show_notebook_env_table(spark: SparkSession, local_timezone: str = "America/Chicago") -> None:
-    info = gather_runtime_info(spark, local_timezone=local_timezone)
-    from utils.display import show_df  # local import to avoid any coupling at import-time
-    df = spark.createDataFrame(
-        [(
-            info["python_version"],
-            info["spark_version"],
-            info["notebook_path"],
-            info["cluster_name"],
-            info["cluster_id"],
-            info["executor_memory"],
-            info["local_time"],
-            info["utc_time"],
-        )],
-        schema=(
-            "python_version string, spark_version string, notebook_path string, "
-            "cluster_name string, cluster_id string, executor_memory string, "
-            "local_time string, utc_time string"
-        ),
-    )
-    show_df(df, n=1, truncate=False)
+    return info
 
-__all__ = ["gather_runtime_info", "print_notebook_env", "show_notebook_env_table"]
+
+__all__ = ["show_notebook_env"]

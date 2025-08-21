@@ -1,7 +1,7 @@
 # =================================================================================================
 # DQX Rules — gold.wkdy_dim_customer 
 # Catalog: de_prd | Schema: gold | Table: wkdy_dim_customer
-# Run config: gold_wkdy_dim_customer
+# Run config: default
 #
 # Notes:
 # - Comments above each rule explain intent.
@@ -19,7 +19,7 @@
 table_name: de_prd.gold.wkdy_dim_customer
 name: PK uniqueness on customer_key
 criticality: error
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: is_unique
   arguments:
@@ -36,7 +36,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: One active record per customer_id
 criticality: error
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: sql_query
   arguments:
@@ -61,7 +61,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: SCD end_date aligns with is_active_record
 criticality: error
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -79,7 +79,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: SCD date order valid (start_date <= end_date)
 criticality: error
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -97,7 +97,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: Reporting date order valid
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -114,7 +114,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: City required when country=USA
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -132,7 +132,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: State code valid when country=USA
 criticality: error
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -150,7 +150,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: Postal code format (US ZIP/ZIP+4)
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -166,7 +166,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: Country ISO code format
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -182,7 +182,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: Customer ID format A+digits
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -198,7 +198,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: Email format (biller)
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -214,7 +214,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: Email format (leader)
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -230,7 +230,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: Email format (default contact)
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -246,7 +246,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: Phone format (US-ish)
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -261,7 +261,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: SIC code format (4 digits)
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: regex_match
   arguments:
@@ -278,7 +278,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: SIC name required when code present
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -296,7 +296,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: Status reason present for Hold
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -315,7 +315,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: Status reason benign for Active
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -334,7 +334,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: is_business aligns with category
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: sql_expression
   arguments:
@@ -353,7 +353,7 @@ check:
 table_name: de_prd.gold.wkdy_dim_customer
 name: last_updated is a valid timestamp
 criticality: warn
-run_config_name: gold_wkdy_dim_customer
+run_config_name: default
 check:
   function: is_valid_timestamp
   arguments:

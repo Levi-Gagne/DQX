@@ -7,6 +7,7 @@
     arguments:
       expression: customer_key is not null
       name: customer_key_is_not_null
+
 - table_name: de_prd.gold.wkdy_dim_customer
   name: customer_key_min_max
   criticality: error
@@ -16,6 +17,7 @@
     arguments:
       expression: customer_key >= 253295475 and customer_key <= 514551472
       name: customer_key_min_max
+      
 - table_name: de_prd.gold.wkdy_dim_customer
   name: customer_id_is_not_null
   criticality: error

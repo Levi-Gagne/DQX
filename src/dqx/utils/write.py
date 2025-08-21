@@ -344,3 +344,24 @@ class TableWriter:
                 if k:
                     props[f"coltag.{col}.{k}"] = v
         return props
+    
+
+def write_aligned(spark: SparkSession, df: DataFrame, *, fqn: str, write_block: Dict[str, Any]) -> None:
+    """
+    Align columns to target table schema then write via TableWriter using the provided write block.
+    Adds mergeSchema=true automatically for Delta unless explicitly overridden.
+    """
+    target_cols = [f.name for f in spark.table(fqn).schema.fields]
+    missing = [c for c in target_cols if c not in df.columns]
+    extra   = [c for c in df.columns if c not in target_cols]
+    if missing or extra:
+        raise WriteConfigError(f"Schema mismatch.\nMissing in df: {missing}\nExtra in df: {extra}")
+
+    mode = (write_block.get("mode") or "append")
+    fmt  = (write_block.get("format") or "delta")
+    opts = (write_block.get("options") or {})
+    if fmt.lower() == "delta" and "mergeschema" not in {k.lower(): v for k, v in opts.items()}:
+        opts = {"mergeSchema": "true", **opts}
+
+    tw = TableWriter(spark)
+    tw.write_only(df.select(*target_cols), fqn=fqn, mode=mode, format=fmt, options=opts)
