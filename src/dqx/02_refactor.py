@@ -1,10 +1,9 @@
-# Databricks notebook: 02_run_dqx_checks
-# Requires: databricks-labs-dqx==0.8.x
-
+# src/dqx/run_checks_loader.py
 from __future__ import annotations
-from typing import Dict, Any, List, Optional, Tuple
-
 import json
+from functools import reduce
+from typing import Any, Dict, List, Optional, Tuple
+
 from databricks.sdk import WorkspaceClient
 from databricks.labs.dqx.engine import DQEngine
 from pyspark.sql import SparkSession, DataFrame, Row, functions as F, types as T
@@ -47,8 +46,13 @@ def _as_target_index(k: Any) -> Optional[int]:
     return None
 
 def _find_checks_config_table(cfg: ProjectConfig) -> str:
-    # Iterate notebooks and their targets; return FQN whose table name is 'checks_config'
-    for nb_key in cfg.list_notebooks():    # e.g., "notebook_1", "notebook_2"
+    # Prefer explicit override: project_config.checks_config_table
+    explicit = (cfg.get("project_config") or {}).get("checks_config_table")
+    if isinstance(explicit, str) and explicit.strip():
+        return explicit.strip()
+
+    # Fallback: scan targets for *.*.checks_config
+    for nb_key in cfg.list_notebooks():
         nb = cfg.notebook(nb_key)
         tcfg = nb.targets()
         for k in tcfg.keys():
@@ -61,10 +65,10 @@ def _find_checks_config_table(cfg: ProjectConfig) -> str:
                 continue
             if not fqn:
                 continue
-            last = fqn.split(".")[-1].strip().lower()
-            if last == "checks_config":
+            if fqn.split(".")[-1].strip().lower() == "checks_config":
                 return fqn
-    raise ValueError("Could not locate a target table named '*.*.checks_config' in the YAML config.")
+
+    raise ValueError("checks_config table not found; set project_config.checks_config_table or declare a target named *.checks_config.")
 
 # ============================================================================
 # Argument parsing & coercion for DQX
@@ -74,8 +78,7 @@ def _parse_scalar(s: Optional[str]):
     s = s.strip()
     sl = s.lower()
     if sl in ("null", "none", ""): return None
-    if sl in ("true", "false"):
-        return sl == "true"
+    if sl in ("true", "false"): return sl == "true"
     if (s.startswith("[") and s.endswith("]")) or (s.startswith("{") and s.endswith("}")):
         try: return json.loads(s)
         except Exception: return s
@@ -110,11 +113,17 @@ def _coerce_arguments(args_map: Optional[Dict[str, str]],
                       function_name: Optional[str],
                       mode: str = "permissive") -> Tuple[Dict[str, Any], List[str]]:
     if not args_map: return {}, []
-    raw = {k:_parse_scalar(v) for k, v in args_map.items()}
+    raw = {k: _parse_scalar(v) for k, v in args_map.items()}
     spec = _EXPECTED.get((function_name or "").strip(), {})
 
     out: Dict[str, Any] = {}
     errs: List[str] = []
+
+    # Strict mode: fail on unexpected keys
+    unexpected = [k for k in raw.keys() if k not in spec.keys()]
+    if mode == "strict" and unexpected:
+        raise ValueError(f"Unexpected argument(s) for '{function_name}': {unexpected}")
+
     for k, v in raw.items():
         want = spec.get(k)
         if want == "list":
@@ -335,6 +344,9 @@ def _embed_issue_check_ids(row_log_df: DataFrame, checks_table: str) -> DataFram
         .drop("arr")
         .dropDuplicates(["cfg_tbl_key","t_rc","t_name_norm","t_filter_norm","cfg_check_id"])
     )
+    # broadcast if needed:
+    # from pyspark.sql.functions import broadcast
+    # cfg_keys = broadcast(cfg_keys)
 
     issue_struct_type = T.StructType([
         T.StructField("name",          T.StringType(),  True),
@@ -411,37 +423,42 @@ def _embed_issue_check_ids(row_log_df: DataFrame, checks_table: str) -> DataFram
     )
 
 # ============================================================================
-# Summaries
+# Summaries (one-pass cached)
 # ============================================================================
 def _summarize_table(annot: DataFrame, table_name: str) -> Row:
     err = "_errors" if "_errors" in annot.columns else "_error"
     wrn = "_warnings" if "_warnings" in annot.columns else "_warning"
 
-    error_rows   = annot.where(F.size(F.col(err)) > 0).count()
-    warning_rows = annot.where(F.size(F.col(wrn)) > 0).count()
-    total_rows   = annot.count()
-    total_flagged_rows = annot.where((F.size(F.col(err)) > 0) | (F.size(F.col(wrn)) > 0)).count()
+    annot = annot.cache()
+    tot = annot.count()
 
-    rules_fired = (
-        annot.select(
-            F.explode_outer(
-                F.array_union(
-                    F.expr(f"transform({err}, x -> x.name)"),
-                    F.expr(f"transform({wrn}, x -> x.name)")
-                )
-            ).alias("nm")
-        )
-        .where(F.col("nm").isNotNull())
-        .agg(F.countDistinct("nm").alias("rules"))
-        .collect()[0]["rules"]
+    sums = (annot
+            .select(
+                (F.size(F.col(err)) > 0).cast("int").alias("e"),
+                (F.size(F.col(wrn)) > 0).cast("int").alias("w"),
+                ((F.size(F.col(err)) > 0) | (F.size(F.col(wrn)) > 0)).cast("int").alias("f"),
+            )
+            .agg(F.sum("e").alias("e"), F.sum("w").alias("w"), F.sum("f").alias("f"))
+            .collect()[0])
+
+    rules = (annot
+             .selectExpr(
+                 f"inline_outer(array_union(transform({err}, x -> x.name), "
+                 f"                           transform({wrn}, x -> x.name))) as nm"
+             )
+             .where(F.col("nm").isNotNull())
+             .agg(F.countDistinct("nm").alias("rules"))
+             .collect()[0]["rules"])
+
+    annot.unpersist()
+    return Row(
+        table_name=table_name,
+        table_total_rows=int(tot),
+        table_total_error_rows=int(sums["e"]),
+        table_total_warning_rows=int(sums["w"]),
+        total_flagged_rows=int(sums["f"]),
+        distinct_rules_fired=int(rules),
     )
-
-    return Row(table_name=table_name,
-               table_total_rows=int(total_rows),
-               table_total_error_rows=int(error_rows),
-               table_total_warning_rows=int(warning_rows),
-               total_flagged_rows=int(total_flagged_rows),
-               distinct_rules_fired=int(rules_fired))
 
 def _rules_hits_for_table(annot: DataFrame, table_name: str) -> DataFrame:
     err = "_errors" if "_errors" in annot.columns else "_error"
@@ -480,6 +497,7 @@ def run_checks_loader(
     coercion_mode: str = "permissive",
 ) -> Dict[str, Any]:
 
+    # Reasonable writability defaults for Delta pipelines
     spark.conf.set("spark.databricks.delta.schema.autoMerge.enabled", "true")
 
     local_tz = _must(cfg.get("project_config.local_timezone"), "project_config.local_timezone")
@@ -488,7 +506,7 @@ def run_checks_loader(
     # Grab notebook by index
     nb = cfg.notebook(notebook_idx)
 
-    # Resolve checks_config table across config
+    # Resolve checks_config table across config (explicit override supported)
     checks_table = _find_checks_config_table(cfg)
 
     # Targets for this notebook
@@ -547,7 +565,8 @@ def run_checks_loader(
 
     rc_map: Dict[str, Any] = cfg.get("run_config_name") or {}
 
-    for rc_name, _rc_cfg in rc_map.items():
+    # Deterministic iteration over run_config groups
+    for rc_name, _rc_cfg in sorted(rc_map.items(), key=lambda kv: str(kv[0])):
         if rc_name is None or str(rc_name).lower() == "none":
             continue
 
@@ -590,8 +609,8 @@ def run_checks_loader(
             rc_rule_hit_parts.append(_rules_hits_for_table(annot, tbl))
 
             row_hits = _project_row_hits(annot, tbl, rc_name, created_by_default, exclude_cols=exclude_cols)
-            if row_hits.limit(1).count() > 0:
-                out_batches.append(row_hits)
+            # Write later in a single batch; appending empty DF is a no-op, so no need to .count() here
+            out_batches.append(row_hits)
 
         if rc_tbl_summaries:
             summary_df = spark.createDataFrame(rc_tbl_summaries).orderBy("table_name")
@@ -652,15 +671,30 @@ def run_checks_loader(
             print(f"[{rc_name}] no row-level hits.")
             continue
 
-        out = out_batches[0]
-        for b in out_batches[1:]:
-            out = out.unionByName(b, allowMissingColumns=True)
+        # Efficient union of all row batches
+        out = reduce(lambda a, b: a.unionByName(b, allowMissingColumns=True), out_batches)
 
         out = _embed_issue_check_ids(out, checks_table)
 
         # Align to declared schema (results table)
         target_cols = [f.name for f in spark.table(results_fqn).schema.fields]
         out = out.select(*target_cols)
+
+        # Enforce idempotency using declared primary key
+        if isinstance(results_pk, list):
+            pk_cols = results_pk
+        elif isinstance(results_pk, str):
+            pk_cols = [results_pk]
+        else:
+            raise ConfigError(f"{results_fqn}.primary_key must be string or list of strings.")
+        dupes = (out.groupBy(*pk_cols).count().where(F.col("count") > 1))
+        if dupes.limit(1).count() > 0:
+            raise RuntimeError(f"results batch contains duplicate PKs: {pk_cols}")
+        out = out.dropDuplicates(pk_cols)
+
+        # Delta nicety: allow schema evolution unless explicitly disabled
+        if results_fmt.lower() == "delta":
+            results_opts = {"mergeSchema": "true", **results_opts}
 
         # Write via TableWriter
         tw.write_only(
