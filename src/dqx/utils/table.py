@@ -1,5 +1,4 @@
 # src/utils/table.py
-
 from __future__ import annotations
 
 from typing import Tuple, List, Optional, Dict, Any
@@ -21,6 +20,9 @@ __all__ = [
     "write_empty_delta_table",
     "add_primary_key_constraint",
     "create_table_if_absent",
+    # NEW reusable helpers:
+    "dtype_to_string",
+    "struct_to_columns_spec",
 ]
 
 # -------- Spark helpers --------
@@ -112,3 +114,64 @@ def ensure_fully_qualified(
 
 def _quote_table(fqn: str) -> str:
     return ".".join(f"`{p}`" for p in fqn.split("."))
+
+# -------- NEW: StructType -> columns spec (for TableWriter & comments) --------
+
+def dtype_to_string(dt: T.DataType) -> str:
+    if isinstance(dt, T.StringType):     return "string"
+    if isinstance(dt, T.BooleanType):    return "boolean"
+    if isinstance(dt, T.TimestampType):  return "timestamp"
+    if isinstance(dt, T.DateType):       return "date"
+    if isinstance(dt, T.LongType):       return "long"
+    if isinstance(dt, T.IntegerType):    return "integer"
+    if isinstance(dt, T.ShortType):      return "short"
+    if isinstance(dt, T.ByteType):       return "byte"
+    if isinstance(dt, T.FloatType):      return "float"
+    if isinstance(dt, T.DoubleType):     return "double"
+    if isinstance(dt, T.DecimalType):    return "decimal"
+    if isinstance(dt, T.ArrayType):      return "array"
+    if isinstance(dt, T.MapType):        return "map"
+    if isinstance(dt, T.StructType):     return "struct"
+    # Fallback to repr for exotic types
+    return str(dt)
+
+def struct_to_columns_spec(st: T.StructType, comments: Optional[Dict[str, str]] = None) -> List[Dict[str, Any]]:
+    """
+    Convert a Spark StructType (with nullability) into a TableWriter-friendly columns spec:
+    - Keeps name, nullability
+    - Emits `data_type` as a simple string for portability
+    - Carries comments from (1) explicit `comments` map (highest precedence) or
+      (2) field.metadata["comment"] if present.
+    - Recurses for struct/array/map.
+    """
+    comments = comments or {}
+
+    def field_to_spec(sf: T.StructField, parent: Optional[str] = None) -> Dict[str, Any]:
+        fq = f"{parent}.{sf.name}" if parent else sf.name
+        spec: Dict[str, Any] = {
+            "name": sf.name,
+            "data_type": dtype_to_string(sf.dataType),
+            "nullable": bool(sf.nullable),
+        }
+        # comment precedence: external map > field.metadata.comment
+        c = comments.get(fq)
+        if not c and sf.metadata and "comment" in sf.metadata:
+            c = sf.metadata["comment"]
+        if c:
+            spec["comment"] = c
+
+        dt = sf.dataType
+        if isinstance(dt, T.StructType):
+            spec["fields"] = [field_to_spec(ch, fq) for ch in dt.fields]
+        elif isinstance(dt, T.ArrayType):
+            elem = dt.elementType
+            elem_spec: Dict[str, Any] = {"type": dtype_to_string(elem)}
+            if isinstance(elem, T.StructType):
+                elem_spec["fields"] = [field_to_spec(ch, fq) for ch in elem.fields]
+            spec["element"] = elem_spec
+        elif isinstance(dt, T.MapType):
+            spec["key_type"] = dtype_to_string(dt.keyType)
+            spec["value_type"] = dtype_to_string(dt.valueType)
+        return spec
+
+    return [field_to_spec(f) for f in st.fields]
