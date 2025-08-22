@@ -38,7 +38,6 @@ notebooks:
           - Rebuilt by the loader (**overwrite**). Manual edits will be lost.
           - `run_config_name` is a routing tag (not part of identity).
           - Only rows with `active=true` are executed.
-        # schemas are defined in the notebook code
 
   notebook_2:
     name: 02_run_dqx_checks
@@ -66,6 +65,7 @@ notebooks:
         catalog: "dq_{env}"
         schema: "dqx"
         table: "checks_log_summary_by_rule"
+        primary_key: ""            # <-- placeholder reserved for future PK
         partition_by: []
         write:
           mode: overwrite
@@ -83,6 +83,7 @@ notebooks:
         catalog: "dq_{env}"
         schema: "dqx"
         table: "checks_log_summary_by_table"
+        primary_key: ""            # <-- placeholder reserved for future PK
         partition_by: []
         write:
           mode: overwrite
@@ -96,7 +97,6 @@ notebooks:
           - Per-table totals **per run_config**: `table_total_rows`, error/warn row counts,
             `total_flagged_rows`, `distinct_rules_fired`.
 
-# your runners read this mapping:
 run_config_name:
   default:
     output_config:
