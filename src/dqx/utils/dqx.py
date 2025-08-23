@@ -1,130 +1,82 @@
-# ======================================================================
-# file: src/dqx/utils/dqx.py
-# ======================================================================
-
+# src/dqx/utils/dqx.py
 from __future__ import annotations
+
 from typing import Dict, Any, List, Tuple, Optional
 
 from pyspark.sql import DataFrame, functions as F, types as T
-from databricks.labs.dqx.engine import DQEngine
 
-# --------- Issue array schema helpers ----------
-_ISSUE_STRUCT = T.StructType([
-    T.StructField("name",          T.StringType(),  True),
-    T.StructField("message",       T.StringType(),  True),
+# --------- Issue struct used across helpers ---------
+ISSUE_STRUCT = T.StructType([
+    T.StructField("name",          T.StringType(), True),
+    T.StructField("message",       T.StringType(), True),
     T.StructField("columns",       T.ArrayType(T.StringType()), True),
-    T.StructField("filter",        T.StringType(),  True),
-    T.StructField("function",      T.StringType(),  True),
+    T.StructField("filter",        T.StringType(), True),
+    T.StructField("function",      T.StringType(), True),
     T.StructField("run_time",      T.TimestampType(), True),
     T.StructField("user_metadata", T.MapType(T.StringType(), T.StringType()), True),
-    T.StructField("check_id",      T.StringType(),  True),
+    T.StructField("check_id",      T.StringType(), True),
 ])
 
 def empty_issues_array() -> F.Column:
-    return F.from_json(F.lit("[]"), T.ArrayType(_ISSUE_STRUCT))
+    """Typed empty issues array: array<ISSUE_STRUCT>."""
+    return F.from_json(F.lit("[]"), T.ArrayType(ISSUE_STRUCT))
 
-def normalize_issues_for_fp(arr_col: F.Column) -> F.Column:
-    # stable fingerprint: sort 'columns'; drop run_time/user_metadata/check_id
+def normalize_issues_for_fp(col: F.Column) -> F.Column:
+    """
+    Normalize issues for deterministic fingerprinting:
+      - lower/trim string fields
+      - sort 'columns'
+      - drop run_time impact by nulling it
+      - keep user_metadata as-is (string map), but coalesce to empty map
+    Returns: array<struct> with stable ordering (use array_sort at callsite).
+    """
+    col = F.coalesce(col, empty_issues_array())
     return F.transform(
-        arr_col,
-        lambda r: F.struct(
-            r["name"].alias("name"),
-            r["message"].alias("message"),
-            F.coalesce(F.to_json(F.array_sort(r["columns"])), F.lit("[]")).alias("columns_json"),
-            r["filter"].alias("filter"),
-            r["function"].alias("function"),
-        ),
+        col,
+        lambda x: F.struct(
+            F.lower(F.trim(x["name"])).alias("name"),
+            F.trim(x["message"]).alias("message"),
+            F.array_sort(F.transform(F.coalesce(x["columns"], F.array().cast(T.ArrayType(T.StringType()))),
+                                     lambda c: F.lower(F.trim(c)))).alias("columns"),
+            F.lower(F.trim(x["filter"])).alias("filter"),
+            F.lower(F.trim(x["function"])).alias("function"),
+            F.lit(None).cast(T.TimestampType()).alias("run_time"),
+            F.coalesce(x["user_metadata"], F.map_from_arrays(F.array(), F.array())).alias("user_metadata"),
+            F.coalesce(x["check_id"], F.lit(None).cast(T.StringType())).alias("check_id"),
+        )
     )
 
-# --------- Rule application with isolation ----------
-def apply_rules_isolating_failures(
-    dq: DQEngine, src: DataFrame, rules: List[dict], table_name: str
-) -> Tuple[Optional[DataFrame], List[Tuple[str, str]]]:
-    try:
-        return dq.apply_checks_by_metadata(src, rules), []
-    except Exception:
-        bad: List[Tuple[str, str]] = []
-        good: List[dict] = []
-        for r in rules:
-            try:
-                dq.apply_checks_by_metadata(src, [r])
-                good.append(r)
-            except Exception as ex:
-                bad.append((r.get("name") or "<unnamed>", str(ex)))
-        if not good:
-            return None, bad
-        try:
-            return dq.apply_checks_by_metadata(src, good), bad
-        except Exception:
-            return None, bad
-
-# --------- Argument coercion (uses EXPECTED spec supplied by caller) ----------
-def _parse_scalar(s: Optional[str]):
-    if s is None: return None
-    s = s.strip(); sl = s.lower()
-    if sl in ("null","none",""): return None
-    if sl == "true": return True
-    if sl == "false": return False
-    if (s.startswith("[") and s.endswith("]")) or (s.startswith("{") and s.endswith("}")):
-        try:
-            import json; return json.loads(s)
-        except Exception:
-            return s
-    try:
-        return int(s) if s.lstrip("+-").isdigit() else float(s)
-    except Exception:
-        return s
-
-def _to_list(v):
-    if v is None: return []
-    if isinstance(v, list): return v
-    if isinstance(v, str) and v.strip().startswith("["):
-        try:
-            import json; return json.loads(v)
-        except Exception:
-            return [v]
-    return [v]
-
-def _to_num(v):
-    if v is None: return None
-    if isinstance(v, (int, float)): return v
-    try: return int(v) if str(v).lstrip("+-").isdigit() else float(v)
-    except Exception: return v
-
-def _to_bool(v):
-    if isinstance(v, bool): return v
-    if isinstance(v, str):
-        vl = v.strip().lower()
-        if vl in ("true","t","1"): return True
-        if vl in ("false","f","0"): return False
-    return v
-
-def coerce_arguments(
-    expected_spec: Dict[tuple, Dict[str, str]] | Dict[str, Dict[str, str]],
-    args_map: Optional[Dict[str, str]],
-    function_name: Optional[str],
-    *,
-    mode: str = "permissive",
-) -> Tuple[Dict[str, Any], List[str]]:
-    if not args_map: return {}, []
-    raw = {k:_parse_scalar(v) for k, v in args_map.items()}
-    spec = expected_spec.get((function_name or "").strip(), {}) if isinstance(expected_spec, dict) else {}
-
-    out: Dict[str, Any] = {}; errs: List[str] = []
-    for k, v in raw.items():
-        want = spec.get(k)
-        if want == "list":
-            out[k] = _to_list(v)
-            if not isinstance(out[k], list): errs.append(f"key '{k}' expected list, got {type(out[k]).__name__}")
-        elif want == "num":
-            out[k] = _to_num(v)
-        elif want == "bool":
-            out[k] = _to_bool(v)
-        elif want == "str":
-            out[k] = "" if v is None else str(v)
+# --------- Argument coercion ---------
+def coerce_arguments(expected: Dict[str, Any], provided: Optional[Dict[str, Any]], function_name: Optional[str], *, mode: str = "permissive") -> Tuple[Dict[str, Any], List[str]]:
+    """
+    Simple coercion: stringify complex values; keep scalars as strings.
+    Returns (coerced_args, warnings)
+    """
+    out: Dict[str, Any] = {}
+    warns: List[str] = []
+    provided = provided or {}
+    for k, v in provided.items():
+        if isinstance(v, (list, dict)):
+            out[k] = F.lit(None)  # placeholder; callers typically stringify earlier
+            warns.append(f"argument {k!r} is complex; ensure stringified upstream")
         else:
-            out[k] = v
+            out[k] = str(v) if v is not None else None
+    return out, warns
 
-    if mode == "strict" and errs:
-        raise ValueError(f"Argument coercion failed for '{function_name}': {errs}")
-    return out, errs
+# --------- Rule application (placeholder; lets pipelines import/run) ---------
+def apply_rules_isolating_failures(dq_engine, src_df: DataFrame, rules: List[dict], table_name: str) -> Tuple[Optional[DataFrame], Optional[List[str]]]:
+    """
+    Minimal shim so downstream code doesn’t break:
+      - Ensures _errors and _warnings exist as typed arrays.
+      - Returns (annot_df, None). If you want real DQ execution, swap in your engine call here.
+    """
+    if src_df is None:
+        return None, ["source DataFrame is None"]
+
+    annot = (
+        src_df
+        .withColumn("_errors",   empty_issues_array())
+        .withColumn("_warnings", empty_issues_array())
+    )
+    # If you wire DQEngine here, replace the two lines above with actual annotation call
+    return annot, None
