@@ -24,9 +24,9 @@ from utils.console import Console
 from utils.config import ProjectConfig, ConfigError, must
 from utils.write import TableWriter, write_aligned
 from utils.path import dbfs_to_local, list_yaml_files
-from utils.table import struct_to_columns_spec  # <-- reusable converter
+from utils.table import struct_to_columns_spec  # <-- converter (StructType -> columns spec)
 
-# Force UTC for storage/compute
+# Force UTC for storage/compute of TimestampType values
 spark = SparkSession.builder.getOrCreate()
 spark.conf.set("spark.sql.session.timeZone", "UTC")
 
@@ -55,9 +55,9 @@ CHECKS_CONFIG_STRUCT = T.StructType([
     T.StructField("updated_at",       T.TimestampType(),True,  {"comment": "Audit: last update timestamp (UTC, nullable)."}),
 ])
 
-# Optional: comments map (add/override comments without touching the struct)
+# Optional: comments map (only if you want to override struct metadata comments)
 CHECKS_CONFIG_COMMENTS: Dict[str, str] = {
-    # "check_id": "Your custom comment here (overrides struct metadata)",
+    # "check_id": "Override comment example",
 }
 
 # =========================
@@ -278,11 +278,10 @@ def run_checks_loader(
     validate_only: bool = False,
 ) -> Dict[str, Any]:
 
-    # Only print for human eyes (local time)
+    # Human display only; your env/processing tz values stay in YAML
     local_tz    = must(cfg.get("project_config.local_timezone"), "project_config.local_timezone")
     print_notebook_env(spark, local_timezone=local_tz)
 
-    proc_tz     = must(cfg.get("project_config.processing_timezone"), "project_config.processing_timezone")
     apply_meta  = bool(must(cfg.get("project_config.apply_table_metadata"), "project_config.apply_table_metadata"))
     dedupe_mode = must(cfg.get("project_config.batch_dedupe_mode"), "project_config.batch_dedupe_mode")
 
