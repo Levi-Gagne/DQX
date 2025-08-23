@@ -24,10 +24,7 @@ from utils.console import Console
 from utils.config import ProjectConfig, ConfigError, must
 from utils.write import TableWriter, write_aligned
 from utils.path import dbfs_to_local, list_yaml_files
-
-# Force UTC for storage/compute of TimestampType values
-spark = SparkSession.builder.getOrCreate()
-spark.conf.set("spark.sql.session.timeZone", "UTC")
+from utils.table import struct_to_columns_spec  # <-- use shared helper
 
 # =========================
 # SPARK STRUCTURED SCHEMA (source of truth)
@@ -58,75 +55,6 @@ CHECKS_CONFIG_STRUCT = T.StructType([
 CHECKS_CONFIG_COMMENTS: Dict[str, str] = {
     # "check_id": "Override comment here",
 }
-
-# =========================
-# StructType -> columns-spec (so TableWriter can create & document)
-# =========================
-def _dtype_to_name(dt: T.DataType) -> str:
-    if isinstance(dt, T.StringType): return "string"
-    if isinstance(dt, T.BooleanType): return "boolean"
-    if isinstance(dt, T.TimestampType): return "timestamp"
-    if isinstance(dt, T.DateType): return "date"
-    if isinstance(dt, T.LongType): return "long"
-    if isinstance(dt, T.IntegerType): return "integer"
-    if isinstance(dt, T.ShortType): return "short"
-    if isinstance(dt, T.ByteType): return "byte"
-    if isinstance(dt, T.FloatType): return "float"
-    if isinstance(dt, T.DoubleType): return "double"
-    if isinstance(dt, T.DecimalType): return f"decimal({dt.precision},{dt.scale})"
-    if isinstance(dt, T.ArrayType): return "array"
-    if isinstance(dt, T.MapType): return "map"
-    if isinstance(dt, T.StructType): return "struct"
-    # fallback
-    return "string"
-
-def _field_spec_from_struct_field(sf: T.StructField) -> Dict[str, Any]:
-    dt = sf.dataType
-    base: Dict[str, Any] = {
-        "name": sf.name,
-        "data_type": _dtype_to_name(dt),
-        "nullable": bool(sf.nullable),
-    }
-    # comment via metadata
-    meta_comment = None
-    try:
-        meta_comment = (sf.metadata or {}).get("comment")
-    except Exception:
-        meta_comment = None
-    if meta_comment:
-        base["comment"] = meta_comment
-
-    if isinstance(dt, T.StructType):
-        fields_spec: Dict[str, Any] = {}
-        for i, child in enumerate(dt.fields, start=1):
-            fields_spec[f"field_{i}"] = _field_spec_from_struct_field(child)
-        base["fields"] = fields_spec
-
-    elif isinstance(dt, T.ArrayType):
-        elem = dt.elementType
-        elem_spec: Dict[str, Any] = {"type": _dtype_to_name(elem)}
-        if isinstance(elem, T.StructType):
-            sub: Dict[str, Any] = {}
-            for i, child in enumerate(elem.fields, start=1):
-                sub[f"field_{i}"] = _field_spec_from_struct_field(child)
-            elem_spec["fields"] = sub
-        base["element"] = elem_spec
-
-    elif isinstance(dt, T.MapType):
-        base["key_type"]   = _dtype_to_name(dt.keyType)
-        base["value_type"] = _dtype_to_name(dt.valueType)
-
-    return base
-
-def struct_to_columns_spec(struct: T.StructType, *, comments: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
-    cols: Dict[str, Any] = {}
-    for i, sf in enumerate(struct.fields, start=1):
-        spec = _field_spec_from_struct_field(sf)
-        # allow comment override
-        if comments and sf.name in comments:
-            spec["comment"] = comments[sf.name]
-        cols[f"column_{i}"] = spec
-    return cols
 
 # =========================
 # Canonicalization & IDs
@@ -367,7 +295,7 @@ def run_checks_loader(
     table_tags    = t.get("table_tags")
     primary_key   = must(t.get("primary_key"), f"{fqn}.primary_key")
 
-    # Build table metadata from struct (+ optional comments map)
+    # Build table metadata from struct (+ optional comments map) via utils.table
     columns_spec = struct_to_columns_spec(CHECKS_CONFIG_STRUCT, comments=CHECKS_CONFIG_COMMENTS)
 
     tw = TableWriter(spark)
@@ -465,13 +393,13 @@ def run_checks_loader(
 
 if __name__ == "__main__":
     spark = SparkSession.builder.getOrCreate()
+    spark.conf.set("spark.sql.session.timeZone", "UTC")
     cfg = ProjectConfig("resources/dqx_config.yaml", variables={})
     result = run_checks_loader(spark, cfg, notebook_idx=1, dry_run=False, validate_only=False)
     print(result)
     
     
-################
-
+########################
 
 
 
@@ -494,17 +422,13 @@ from utils.runtime import print_notebook_env
 from utils.display import show_df, display_section
 from utils.config import ProjectConfig, must, default_for_column, find_table
 from utils.write import TableWriter, write_aligned
-from utils.schema_tools import struct_to_columns_spec
+from utils.table import struct_to_columns_spec  # <-- use shared helper
 from dqx.utils.dqx import (
     empty_issues_array,
     normalize_issues_for_fp,
     apply_rules_isolating_failures,
     coerce_arguments,
 )
-
-# Force UTC for compute/storage of TimestampType
-spark = SparkSession.builder.getOrCreate()
-spark.conf.set("spark.sql.session.timeZone", "UTC")
 
 # =========================
 # SPARK STRUCTURED SCHEMAS (source of truth for targets)
@@ -1047,7 +971,7 @@ def run_checks_loader(
 
 if __name__ == "__main__":
     spark = SparkSession.builder.getOrCreate()
+    spark.conf.set("spark.sql.session.timeZone", "UTC")
     cfg = ProjectConfig("resources/dqx_config.yaml")
     result = run_checks_loader(spark=spark, cfg=cfg, notebook_idx=2, coercion_mode="strict")
     print(result)
-    
