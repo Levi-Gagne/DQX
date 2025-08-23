@@ -1,0 +1,64 @@
+# yaml/job-monitor.yaml
+
+teams:
+  lookback_date: "48 hours"
+  webhook_secrets:
+    prd:
+      webhook_scope: "msteams-webhook"
+      webhook_key:   "spyglass_prd_alerts"
+    dev:
+      webhook_scope: "msteams-webhook"
+      webhook_key: "spyglass_test"
+  recipients_list_path: "/Volumes/dq_{env}/monitoring/distribution_lists"
+  teams_emails:
+    - kim.hoff@claconnect.com
+    - levi.gagne@claconnect.com
+
+app_config:
+  target_table:
+    catalog: "dq_"
+    schema: "monitoring"
+    table_name: "job_run_audit"
+  plumbing_columns:
+    dl_partition_column: "start_date"
+    dl_primary_key_column: "run_id"
+  historical_load_date: "2025-04-16T00:00:00"
+  api:
+    version: "2.1"
+    endpoints:
+      job_runs_list: "/jobs/runs/list"
+      job_run_details: "/jobs/runs/get"
+      job_details: "/jobs/get"
+
+schema:
+  business:
+    - {name: "job_name", type: "StringType", api_field: "job_name", default: "n/a"}
+    - {name: "job_id", type: "StringType", api_field: "job_id", default: "n/a"}
+    - {name: "run_id", type: "StringType", api_field: "run_id", default: "n/a"}
+    - {name: "start_time", type: "TimestampType", api_field: "start_time", default: null}
+    - {name: "start_date", type: "DateType", api_field: "start_date", default: null}
+    - {name: "state", type: "StringType", api_field: "life_cycle_state", default: "n/a"}
+    - {name: "result_state", type: "StringType", api_field: "result_state", default: "n/a"}
+    - {name: "creator", type: "StringType", api_field: "creator_user_name", default: "n/a"}
+    - {name: "launched_by", type: "StringType", api_field: "trigger", default: "n/a"}
+    - {name: "start_time_raw", type: "LongType", api_field: "start_time_raw", default: null}
+    - {name: "end_time", type: "TimestampType", api_field: "end_time", default: null}
+    - {name: "duration", type: "StringType", api_field: "duration", default: "n/a"}
+    - {name: "queue_duration", type: "StringType", api_field: "queue_duration", default: "n/a"}
+    - {name: "run_as", type: "StringType", api_field: "run_as", default: "n/a"}
+    - {name: "description", type: "StringType", api_field: "description", default: "n/a"}
+    - {name: "run_page_url", type: "StringType", api_field: "run_page_url", default: "n/a"}
+    - {name: "tags", type: "StringType", api_field: "tags", default: "n/a"}
+    - {name: "email_notification", type: "StringType", api_field: "email_notifications", default: "n/a"}
+    - {name: "notification_settings", type: "StringType", api_field: "notification_settings", default: "n/a"}
+    - {name: "error_code", type: "StringType", api_field: "error_code", default: "n/a"}
+    - {name: "timezone_id", type: "StringType", api_field: "timezone_id", default: "n/a"}
+    - {name: "schedule_type", type: "StringType", api_field: "schedule_type", default: "n/a"}
+    - {name: "schedule", type: "StringType", api_field: "schedule", default: "n/a"}
+    - {name: "pause_status", type: "StringType", api_field: "pause_status", default: "n/a"}
+    - {name: "msteams_notification", type: "IntegerType", api_field: "msteams_notif", default: 0}
+  plumbing:
+    - {name: "created_at", type: "TimestampType", api_field: "created_at", default: null}
+    - {name: "created_by", type: "StringType", api_field: "created_by", default: "AdminUser"}
+    - {name: "updated_at", type: "TimestampType", api_field: "updated_at", default: null}
+    - {name: "updated_by", type: "StringType", api_field: "updated_by", default: null}

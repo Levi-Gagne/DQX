@@ -1,0 +1,55 @@
+# Token Management Configuration File
+# File: token-management.yaml
+
+databricks_token_config:
+  prd:
+    databricks_token:
+      tenant_id: 
+        scope: "da-prd-dc01-mgt-kv-dbk"
+        key: "tenant-id"
+      client_id:
+        scope: "da-prd-dc01-mgt-kv-dbk"
+        key: "AppReg-da-prd-dc01-analytics-fw-bk-dbk-admin-jobs-worker-ClientID"
+      client_secret:
+        scope: "da-prd-dc01-mgt-kv-dbk"
+        key: "AppReg-da-prd-dc01-analytics-fw-bk-dbk-admin-jobs-worker-ClientSecret"
+      resource:
+        scope: "da-prd-dc01-mgt-kv-dbk"
+        key: "dbk-resource-id"
+    databricks_instance:
+      instance_scope: "data_quality_databricks_instances" # dataOps Cluster
+      instance_key: "prd_databricks_instance"    # dataOps Cluster
+  tst:
+    databricks_token:
+      tenant_id: 
+        scope: "ops-support-key-vault-secret-tst"
+        key: "tenant-id"
+      client_id:
+        scope: "ops-support-key-vault-secret-tst"
+        key: "AppReg-da-tst-dc01-analytics-fw-bk-dbk-admin-jobs-worker-ClientID"
+      client_secret:
+        scope: "ops-support-key-vault-secret-tst"
+        key: "AppReg-da-tst-dc01-analytics-fw-bk-dbk-admin-jobs-worker-ClientSecret"
+      resource:
+        scope: "ops-support-key-vault-secret-tst"
+        key: "dbk-resource-id"
+    databricks_instance:
+      instance_scope: "data_quality_databricks_instances"
+      instance_key: "tst_databricks_instance"
+  dev:
+    databricks_token:
+      tenant_id:
+        scope: "ops-support-key-vault-secret-tst"
+        key: "tenant-id"
+      client_id:
+        scope: "ops-support-key-vault-secret-tst"
+        key: "AppReg-da-dev-dc01-analytics-fw-bk-dbk-admin-jobs-worker-ClientID"
+      client_secret:
+        scope: "ops-support-key-vault-secret-tst"
+        key: "AppReg-da-dev-dc01-analytics-fw-bk-dbk-admin-jobs-worker-ClientSecret"
+      resource:
+        scope: "ops-support-key-vault-secret-tst"
+        key: "dbk-resource-id"
+    databricks_instance:
+      instance_scope: "data_quality_databricks_instances"
+      instance_key: "dev_databricks_instance"

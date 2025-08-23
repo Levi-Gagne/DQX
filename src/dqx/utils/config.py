@@ -1,9 +1,8 @@
 # src/dqx/utils/config.py
-from __future__ import annotations
 
-import os
+from __future__ import annotations
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Callable
+from typing import Any, Dict, List, Optional
 
 import yaml
 from pyspark.sql import SparkSession
@@ -13,29 +12,20 @@ class ConfigError(RuntimeError):
     pass
 
 
-# ----------------------------
-# Core: ProjectConfig
-# ----------------------------
 class ProjectConfig:
     """
-    Config loader for your YAML shape:
+    Loader for YAML of shape:
 
-      project_config: {..., variables: {env: dev}}
-      notebooks:
-        notebook_1:
-          name: 01_load_dqx_checks
-          data_source: {...}
-          targets:
-            target_table_1: {catalog: "dq_{env}", schema: "dqx", table: "checks_config", ...}
-        notebook_2:
-          ...
+      version: 1
+      variables: { env: dev, ... }
+      notebooks: { notebook_1: {...}, notebook_2: {...}, ... }
+      run_config_name: { default: {...}, generated_check: {...} }
 
     Features:
-      - Only substitutes {env}. All other braces are left as-is.
-      - Accepts `notebook(1)` (-> "notebook_1") or `notebook("notebook_1")`.
-      - Object model: NotebookConfig -> TargetsConfig -> TableSpec
-      - Generic dotted get: cfg.get("project_config.local_timezone", "UTC")
-      - Helpers: .path, .list_notebooks()
+      - Generic {var} expansion for any key in `variables` (unknown braces left intact).
+      - Accessors: .notebook(k), .list_notebooks(), .get("path.to.field", default)
+      - DBFS path normalization (dbfs:/ → /dbfs/).
+      - Variables precedence: caller `variables` > YAML `variables`.
     """
 
     def __init__(
@@ -50,7 +40,6 @@ class ProjectConfig:
             p = (Path.cwd() / p).resolve()
         if not p.exists():
             raise FileNotFoundError(f"Config not found: {p}")
-
         self._cfg_path = p
         self._base_dir = p.parent
         self.spark = spark
@@ -58,25 +47,23 @@ class ProjectConfig:
         with open(p, "r") as fh:
             raw = yaml.safe_load(fh) or {}
 
-        # Resolve variables (only {env})
-        globals_node = (raw.get("project_config") or {})
-        vars_from_yaml = globals_node.get("variables") or {}
-        self._vars: Dict[str, str] = {
-            "env": os.environ.get("DQX_ENV", ""),  # env var may be empty
-            **vars_from_yaml,
-            **(variables or {}),
-        }
+        # Variables precedence: caller overrides YAML (no env var reads)
+        yaml_vars = raw.get("variables") if isinstance(raw.get("variables"), dict) else {}
+        caller_vars = {k: v for k, v in (variables or {}).items() if v is not None}
+        merged = {**(yaml_vars or {}), **caller_vars}
+        self._vars: Dict[str, str] = {k: str(v) for k, v in merged.items()}
 
-        # Render {env} across the whole tree, leaving all other braces intact.
+        # Render {var} across the tree (leave unknown tokens intact)
         self._cfg: Dict[str, Any] = self._render_any(raw)
 
-        # Validate expected top-level keys
-        if "notebooks" not in self._cfg or not isinstance(self._cfg["notebooks"], dict):
-            raise ConfigError("Top-level `notebooks` must be a mapping like {notebook_1: {...}, ...}.")
+        # Validate notebooks
+        nbs = self._cfg.get("notebooks")
+        if not isinstance(nbs, dict) or not nbs:
+            raise ConfigError("Top-level `notebooks` must be a non-empty mapping like {notebook_1: {...}}.")
 
-        # Build notebook map
+        # Build Notebook map
         self._nb_map: Dict[str, NotebookConfig] = {}
-        for nk, node in self._cfg["notebooks"].items():
+        for nk, node in nbs.items():
             if not isinstance(node, dict):
                 raise ConfigError(f"`notebooks.{nk}` must be a mapping.")
             name = node.get("name")
@@ -84,29 +71,26 @@ class ProjectConfig:
                 raise ConfigError(f"`notebooks.{nk}.name` must be a non-empty string.")
             self._nb_map[str(nk)] = NotebookConfig(self, nk, node)
 
-    # ---------- basic ----------
+    # ---------- basics ----------
     @property
     def path(self) -> str:
         return str(self._cfg_path)
+
+    @property
+    def variables(self) -> Dict[str, str]:
+        return dict(self._vars)
 
     def list_notebooks(self) -> List[str]:
         return sorted(self._nb_map.keys())
 
     def notebook(self, key_or_index: int | str) -> "NotebookConfig":
-        if isinstance(key_or_index, int):
-            key = f"notebook_{key_or_index}"
-        else:
-            key = str(key_or_index)
+        key = f"notebook_{key_or_index}" if isinstance(key_or_index, int) else str(key_or_index)
         nb = self._nb_map.get(key)
         if not nb:
             raise ConfigError(f"Notebook not found: {key}")
         return nb
 
-    # ---------- generic dotted get ----------
     def get(self, dotted: str, default: Any = None) -> Any:
-        """
-        Example: cfg.get("project_config.local_timezone", "UTC")
-        """
         node: Any = self._cfg
         for part in (dotted or "").split("."):
             if not isinstance(node, dict) or part not in node:
@@ -114,42 +98,21 @@ class ProjectConfig:
             node = node[part]
         return node
 
-    # ---------- files / discovery helpers ----------
-    def list_rule_files(self, base_dir: str) -> List[str]:
-        """
-        Recursively list YAML files under base_dir (supports dbfs:/).
-        """
-        root = Path(self._normalize_dbfs_like(base_dir))
-        if not root.is_absolute():
-            root = (Path.cwd() / root).resolve()
-        if not root.exists() or not root.is_dir():
-            raise FileNotFoundError(f"Rules folder not found or not a directory: {root}")
-
-        out: List[str] = []
-        for cur, dirs, files in os.walk(root):
-            # prune dot-dirs
-            dirs[:] = [d for d in dirs if not d.startswith(".")]
-            for f in files:
-                if f.startswith("."):
-                    continue
-                if self._is_yaml(f):
-                    out.append(str(Path(cur) / f))
-        return sorted(out)
-
-    # ---------- internals ----------
-    def _render(self, s: Any) -> str:
-        # Only expand {env}; keep all other braces literally.
-        if not isinstance(s, str):
-            return str(s)
-        env_val = "" if self._vars is None else str(self._vars.get("env", ""))
-        return s.replace("{env}", env_val)
+    # ---------- rendering & paths ----------
+    def _render_str(self, s: str) -> str:
+        if not isinstance(s, str) or "{" not in s:
+            return s
+        out = s
+        for k, v in self._vars.items():
+            out = out.replace(f"{{{k}}}", str(v))
+        return out
 
     def _render_any(self, obj: Any) -> Any:
         if isinstance(obj, dict):
             return {k: self._render_any(v) for k, v in obj.items()}
         if isinstance(obj, list):
             return [self._render_any(v) for v in obj]
-        return self._render(obj)
+        return self._render_str(obj) if isinstance(obj, str) else obj
 
     @staticmethod
     def _normalize_dbfs_like(p: str) -> str:
@@ -157,38 +120,54 @@ class ProjectConfig:
             return "/dbfs/" + p[len("dbfs:/"):].lstrip("/")
         return p
 
-    @staticmethod
-    def _is_yaml(fname: str) -> bool:
-        low = (fname or "").lower()
-        return low.endswith(".yaml") or low.endswith(".yml")
 
-
-# ----------------------------
-# Model: Notebook -> Targets -> TableSpec
-# ----------------------------
+# ---------- Model: Notebook → DataSources/Targets ----------
 class NotebookConfig:
     def __init__(self, cfg: ProjectConfig, key: str, node: Dict[str, Any]):
-        self._cfg = cfg
-        self._key = key
-        self._node = node
+        self._cfg, self._key, self._node = cfg, key, node
 
     def get(self, key: str, default: Any = None) -> Any:
-        """
-        Shallow get of fields under this notebook node (already rendered).
-        Example: nb.get("data_source", {})
-        """
-        v = self._node.get(key, default)
-        return v
+        return self._node.get(key, default)
 
     @property
     def name(self) -> str:
         return str(self._node.get("name", ""))
 
+    def data_sources(self) -> "DataSourcesConfig":
+        ds = self._node.get("data_sources") or {}
+        if not isinstance(ds, dict):
+            raise ConfigError(f"`{self._key}.data_sources` must be a mapping (data_source_1, ...).")
+        return DataSourcesConfig(self._cfg, ds)
+
     def targets(self) -> "TargetsConfig":
-        t = self._node.get("targets")
+        t = self._node.get("targets") or {}
         if not isinstance(t, dict) or not t:
             raise ConfigError(f"`{self._key}.targets` must be a non-empty mapping (target_table_1, ...).")
         return TargetsConfig(self._cfg, t)
+
+
+class DataSourcesConfig:
+    def __init__(self, cfg: ProjectConfig, node: Dict[str, Any]):
+        self._cfg = cfg
+        self._node = node  # mapping: data_source_1 -> spec
+
+    def data_source(self, idx_or_key: int | str) -> "DataSourceSpec":
+        key = f"data_source_{idx_or_key}" if isinstance(idx_or_key, int) else str(idx_or_key)
+        spec = self._node.get(key)
+        if not isinstance(spec, dict):
+            raise ConfigError(f"Data source not found: {key}")
+        return DataSourceSpec(self._cfg, key, spec)
+
+    def keys(self) -> List[str]:
+        return sorted(self._node.keys())
+
+
+class DataSourceSpec:
+    def __init__(self, cfg: ProjectConfig, key: str, node: Dict[str, Any]):
+        self._cfg, self._key, self._node = cfg, key, node  # already rendered
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return self._node.get(key, default)
 
 
 class TargetsConfig:
@@ -197,10 +176,7 @@ class TargetsConfig:
         self._node = node  # mapping: target_table_1 -> spec
 
     def target_table(self, idx_or_key: int | str) -> "TableSpec":
-        if isinstance(idx_or_key, int):
-            key = f"target_table_{idx_or_key}"
-        else:
-            key = str(idx_or_key)
+        key = f"target_table_{idx_or_key}" if isinstance(idx_or_key, int) else str(idx_or_key)
         spec = self._node.get(key)
         if not isinstance(spec, dict):
             raise ConfigError(f"Target table not found: {key}")
@@ -212,9 +188,7 @@ class TargetsConfig:
 
 class TableSpec:
     def __init__(self, cfg: ProjectConfig, key: str, node: Dict[str, Any]):
-        self._cfg = cfg
-        self._key = key
-        self._node = node  # already rendered
+        self._cfg, self._key, self._node = cfg, key, node  # already rendered
 
     def get(self, key: str, default: Any = None) -> Any:
         return self._node.get(key, default)
@@ -225,55 +199,26 @@ class TableSpec:
         tbl = (self._node.get("table") or "").strip()
         if not (cat and sch and tbl):
             raise ConfigError(
-                f"{self._key}: catalog/schema/table are required to build full table name (found: "
-                f"catalog={cat!r}, schema={sch!r}, table={tbl!r})"
+                f"{self._key}: catalog/schema/table are required "
+                f"(found: catalog={cat!r}, schema={sch!r}, table={tbl!r})"
             )
         return f"{cat}.{sch}.{tbl}"
-    
 
-def must(val: Any, name: str) -> Any:
-    if val is None or (isinstance(val, str) and not val.strip()):
-        raise ConfigError(f"Missing required config: {name}")
-    return val
+    # NEW: always return usable flat tags {key: value}
+    def table_tags(self) -> Dict[str, str]:
+        raw = self._node.get("table_tags") or {}
+        if not isinstance(raw, dict):
+            return {}
 
-def default_for_column(columns: Dict[str, Any], target_name: str) -> Optional[str]:
-    for spec in (columns or {}).values():
-        if isinstance(spec, dict) and (spec.get("name") or "").strip() == target_name:
-            return spec.get("default_value")
-    return None
+        # Case 1: nested style: table_tag_1: {key: team, value: data_quality}
+        if all(isinstance(v, dict) for v in raw.values()):
+            out: Dict[str, str] = {}
+            for v in raw.values():
+                k = (v.get("key") or "").strip() if isinstance(v, dict) else ""
+                val = v.get("value") if isinstance(v, dict) else None
+                if k and val is not None:
+                    out[k] = str(val)
+            return out
 
-def _as_target_index(k: Any) -> Optional[int]:
-    try:
-        return int(k)
-    except Exception:
-        try:
-            s = str(k)
-            if "_" in s and s.rsplit("_", 1)[-1].isdigit():
-                return int(s.rsplit("_", 1)[-1])
-        except Exception:
-            pass
-    return None
-
-def find_table(cfg: "ProjectConfig", table_name: str) -> str:
-    want = (table_name or "").strip().lower()
-
-    # explicit override only for checks_config, if set:
-    if want == "checks_config":
-        explicit = (cfg.get("project_config") or {}).get("checks_config_table")
-        if isinstance(explicit, str) and explicit.strip():
-            return explicit.strip()
-
-    for nb_key in cfg.list_notebooks():
-        nb = cfg.notebook(nb_key)
-        tcfg = nb.targets()
-        for k in tcfg.keys():
-            idx = _as_target_index(k)
-            if idx is None:
-                continue
-            try:
-                fqn = tcfg.target_table(idx).full_table_name()
-            except Exception:
-                continue
-            if fqn and fqn.split(".")[-1].strip().lower() == want:
-                return fqn
-    raise ValueError(f"Could not locate a target table named '*.*.{want}' in the YAML config.")
+        # Case 2: already-flat style: {team: data_quality, project: dqx}
+        return {str(k): str(v) for k, v in raw.items() if v is not None}
