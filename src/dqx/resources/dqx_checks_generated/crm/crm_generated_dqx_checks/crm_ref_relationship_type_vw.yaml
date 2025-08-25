@@ -1,9 +1,0 @@
-- table_name: de_prd.gold.crm_ref_relationship_type_vw
-  name: relation_type_is_not_null
-  criticality: error
-  run_config_name: default
-  check:
-    function: sql_expression
-    arguments:
-      expression: relation_type is not null
-      name: relation_type_is_not_null

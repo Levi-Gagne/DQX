@@ -64,7 +64,7 @@ notebooks:
         catalog: "dq_{env}"
         schema: "dqx"
         table: "checks_log_summary_by_rule"
-        primary_key: ""            # <-- placeholder reserved for future PK
+        primary_key: ""
         partition_by: []
         write:
           mode: overwrite
@@ -82,7 +82,7 @@ notebooks:
         catalog: "dq_{env}"
         schema: "dqx"
         table: "checks_log_summary_by_table"
-        primary_key: ""            # <-- placeholder reserved for future PK
+        primary_key: ""
         partition_by: []
         write:
           mode: overwrite

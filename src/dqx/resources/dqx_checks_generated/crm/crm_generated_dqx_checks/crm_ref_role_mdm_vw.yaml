@@ -1,9 +1,0 @@
-- table_name: de_prd.gold.crm_ref_role_mdm_vw
-  name: role_is_not_null
-  criticality: error
-  run_config_name: default
-  check:
-    function: sql_expression
-    arguments:
-      expression: role is not null
-      name: role_is_not_null

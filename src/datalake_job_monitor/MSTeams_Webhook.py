@@ -1,11 +1,75 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Teams Webhook
+# MAGIC # MSTeams Webhook
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Documentation
+# MAGIC ## Reference
+
+# COMMAND ----------
+
+# DBTITLE 1,Execution Flow
+"""
+START: process_job_failures_and_send_notifications
+
+|
+|-- 1. Set environment context (`env`):
+|   |
+|   |-- 1a. Pass `env` to:
+|   |   |-- Target Delta table (e.g., dq_{env}.monitoring.job_run_audit)
+|   |   |-- Distribution list volume (e.g., /Volumes/dq_{env}/monitoring/distribution_lists)
+|   |   |-- Teams webhook (from job-monitor.yaml; controls notification channel)
+|   |
+
+|-- 2. Query job audit table for failure records:
+|   |
+|   |-- 2a. Filter for records where:
+|   |   |-- result_state == 'FAILED'
+|   |   |-- msteams_notification == 0
+|   |   |-- start_time >= current_timestamp() - interval <lookback_hours> hours
+|   |   |
+|   |   |-- 2a.i. If **no records** found:
+|   |   |   |-- EXIT (no notifications to send)
+|   |   |
+|   |   |-- 2a.ii. If **failures found**:
+|   |       |-- CONTINUE with all matching records
+|   |
+
+|-- 3. For each failed job record:
+|   |
+|   |-- 3a. Build notification recipient list:
+|   |   |-- Start with static team emails from config (teams_emails in job-monitor.yaml)
+|   |   |-- For each YAML file in the distribution list volume:
+|   |   |   |-- i.   Get file stem (e.g., 'SchemaSquad' from 'SchemaSquad.yaml')
+|   |   |   |-- ii.  If stem found as a substring in the tags column (case sensitive):
+|   |   |       |-- Parse YAML
+|   |   |       |-- Add `distribution` email (if present)
+|   |   |       |-- Add all `members` emails
+|   |   |-- Deduplicate (dict keys)
+|   |
+|   |-- 3b. Send Adaptive Card notification to Teams:
+|   |   |-- Use the full recipient list for Teams mentions and message text
+|   |   |-- Card fields populated with job and notification context
+|   |
+|   |-- 3c. Mark record as notified:
+|       |-- UPDATE job_run_audit row (where job_id/run_id/start_date match)
+|           |-- SET: msteams_notification = 1
+|           |--      updated_at = current timestamp
+|           |--      updated_by = 'AdminUser' (or process user)
+|
+
+|-- 4. Print summary:
+|   |-- For each notified record, print job name and run ID
+|   |-- END process
+
+END: process_job_failures_and_send_notifications
+"""
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### Documentation
 # MAGIC This module processes failed job records and sends notifications to Microsoft Teams using Adaptive Cards. It leverages Apache Spark to query and update a Delta table containing job run data. Configuration is loaded from a YAML file, and two main classes handle the functionality: `TeamsNotifier` and `JobFailureProcessor`.
 # MAGIC
 # MAGIC ---
@@ -121,89 +185,46 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Execution Flow
-"""
-START: process_job_failures_and_send_notifications
-
-|
-|-- 1. Set environment context (`env`):
-|   |
-|   |-- 1a. Pass `env` to:
-|   |   |-- Target Delta table (e.g., dq_{env}.monitoring.job_run_audit)
-|   |   |-- Distribution list volume (e.g., /Volumes/dq_{env}/monitoring/distribution_lists)
-|   |   |-- Teams webhook (from job-monitor.yaml; controls notification channel)
-|   |
-
-|-- 2. Query job audit table for failure records:
-|   |
-|   |-- 2a. Filter for records where:
-|   |   |-- result_state == 'FAILED'
-|   |   |-- msteams_notification == 0
-|   |   |-- start_time >= current_timestamp() - interval <lookback_hours> hours
-|   |   |
-|   |   |-- 2a.i. If **no records** found:
-|   |   |   |-- EXIT (no notifications to send)
-|   |   |
-|   |   |-- 2a.ii. If **failures found**:
-|   |       |-- CONTINUE with all matching records
-|   |
-
-|-- 3. For each failed job record:
-|   |
-|   |-- 3a. Build notification recipient list:
-|   |   |-- Start with static team emails from config (teams_emails in job-monitor.yaml)
-|   |   |-- For each YAML file in the distribution list volume:
-|   |   |   |-- i.   Get file stem (e.g., 'SchemaSquad' from 'SchemaSquad.yaml')
-|   |   |   |-- ii.  If stem found as a substring in the tags column (case sensitive):
-|   |   |       |-- Parse YAML
-|   |   |       |-- Add `distribution` email (if present)
-|   |   |       |-- Add all `members` emails
-|   |   |-- Deduplicate (dict keys)
-|   |
-|   |-- 3b. Send Adaptive Card notification to Teams:
-|   |   |-- Use the full recipient list for Teams mentions and message text
-|   |   |-- Card fields populated with job and notification context
-|   |
-|   |-- 3c. Mark record as notified:
-|       |-- UPDATE job_run_audit row (where job_id/run_id/start_date match)
-|           |-- SET: msteams_notification = 1
-|           |--      updated_at = current timestamp
-|           |--      updated_by = 'AdminUser' (or process user)
-|
-
-|-- 4. Print summary:
-|   |-- For each notified record, print job name and run ID
-|   |-- END process
-
-END: process_job_failures_and_send_notifications
-"""
-
-# COMMAND ----------
-
 # MAGIC %md
-# MAGIC ## Code
+# MAGIC ## Implementation
 
 # COMMAND ----------
 
-# DBTITLE 1,Imports
-# Standard library imports
+# DBTITLE 1,Dependencies
 import os
+import sys
 import json
 import yaml
 import requests
+from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-# PySpark modules for Spark session creation and DataFrame operations.
 from pyspark.sql import SparkSession 
 from pyspark.sql.functions import col, expr
 
-# Custom utility modules.
-from utils.colorConfig import C
-from utils.gifConfig import GifUtils
-from utils.yamlConfig import YamlConfig
-from utils.environmentConfig import EnvironmentConfig
-from utils.emailConfig import email_to_name
+def add_src_to_sys_path(src_dir="src", sentinel="framework_utils", max_levels=12):
+    start = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd().resolve()
+    p = start
+    for _ in range(max_levels):
+        cand = p / src_dir
+        if (cand / sentinel).exists():
+            s = str(cand.resolve())
+            if s not in sys.path:
+                sys.path.insert(0, s)
+                print(f"[bootstrap] sys.path[0] = {s}")
+            return
+        if p == p.parent: break
+        p = p.parent
+    raise ImportError(f"Couldn't find {src_dir}/{sentinel} above {start}")
+
+add_src_to_sys_path()
+
+from framework_utils.color import Color as C
+from framework_utils.gif import Gifframework_utils
+from framework_utils.yaml import YamlConfig
+from framework_utils.environment import EnvironmentConfig
+from framework_utils.email import email_to_name
 
 # COMMAND ----------
 
@@ -460,12 +481,15 @@ class JobFailureProcessor:
 
 # COMMAND ----------
 
-# DBTITLE 1,Main Function
+# DBTITLE 1,Execution Logic
 if __name__ == "__main__":
     CONFIG_PATH   = "yaml/job-monitor.yaml"
     TEMPLATE_PATH = "json/msteams_job_failure_notification.json"
 
-    env, processing_timezone, local_timezone = EnvironmentConfig().environment
+    #env, processing_timezone, local_timezone = EnvironmentConfig().environment
+    env = "dev"
+    processing_timezone = "UTC"
+    local_timezone = "America/Chicago"
 
     print(f"{C.ivory}Running in ENV={C.bubblegum_pink}{env}{C.ivory}, "
           f"processing TZ={C.bubblegum_pink}{processing_timezone}{C.ivory}.{C.b}")

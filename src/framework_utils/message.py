@@ -1,5 +1,7 @@
+# src/framework_utils/message.py
+
 """
-Module: utils/messageConfig.py
+Module: utils/message.py
 Description:
     This module provides utilities for introspecting and displaying the execution environment
     within a Databricks workspace. It defines the ClusterInfo class, which gathers Spark,
@@ -7,90 +9,20 @@ Description:
     the information with color‑coded output. These utilities simplify environment diagnostics
     in both interactive notebooks and automated jobs.
 
-Workflow:
-    1. Initialization:
-        - Accepts a SparkSession and, optionally, databricks_instance, token, local_timezone,
-          and print_env_var flag.
-        - If databricks_instance, token, and local_timezone are provided:
-            * Calls get_notebook_info(local_timezone) to collect:
-                - Cluster ID and name from Spark config tags
-                - Notebook path via dbutils context
-                - Executor memory setting
-                - Current timestamp in the specified timezone
-            * If print_env_var is True, instantiates EnvironmentConfig and prints ENV, TIMEZONE,
-              and LOCAL_TIMEZONE.
-            * Calls get_cluster_info(databricks_instance, token) to fetch and display full
-              cluster details via REST API.
-
-    2. Timestamp Conversion:
-        - convert_timestamp(timestamp): Static method that converts an epoch‑millisecond timestamp
-          to a human‑readable "YYYY‑MM‑DD HH:MM:SS" string or returns "N/A" if input is missing.
-
-    3. Dictionary Formatting:
-        - format_dict(d, indent, key_color): Static method that renders a dict as an indented,
-          colored bullet list, improving readability of nested metadata.
-
-    4. Notebook Info Retrieval:
-        - get_notebook_info(local_timezone): Instance method that:
-            * Reads clusterUsageTags.clusterId and .clusterName from Spark config.
-            * Retrieves notebookPath from dbutils.
-            * Reads spark.executor.memory setting.
-            * Loads ZoneInfo for the specified timezone, falling back to UTC on error.
-            * Captures current time and prints:
-                - Python and Spark versions
-                - Notebook path
-                - Current timestamp with timezone
-                - Cluster name, ID, and executor memory
-
-    5. Cluster Info Retrieval:
-        - get_cluster_info(databricks_instance, token): Instance method that:
-            * Ensures cluster_id is populated (invokes get_notebook_info("UTC") if needed).
-            * Constructs the URL for the /api/2.1/clusters/get endpoint.
-            * Sends a GET request with bearer token authentication.
-            * On HTTP 200, parses JSON and prints:
-                - Cluster ID and creator user name
-                - Driver node details (private IP, public DNS, start timestamp)
-                - Executor node details (private IP, public DNS, start timestamp)
-                - Other metadata: Spark version, state, memory, cores, autoscale settings,
-                  node type IDs, and custom tags
-            * On non‑200 response, logs the HTTP status code failure.
-
-Usage:
-    from utils.messageConfig import ClusterInfo
-    spark = SparkSession.builder.getOrCreate()
-
-    # Retrieve just notebook info:
-    ci = ClusterInfo(spark)
-    ci.get_notebook_info("America/Chicago")
-
-    # Full diagnostics including environment vars and cluster details:
-    ClusterInfo(
-        spark,
-        databricks_instance="mycompany.cloud.databricks.com",
-        token="<your_token>",
-        local_timezone="America/Chicago",
-        print_env_var=True
-    )
-
-Note:
-    - Requires `databricks.sdk.runtime.dbutils` to be available in the Databricks runtime.
-    - Depends on the `requests` and `zoneinfo` libraries, as well as the custom
-      `utils.colorConfig` and `utils.environmentConfig` modules.
-    - Intended for diagnostics and monitoring within Databricks notebooks and workflows.
 
 Author: Levi Gagne
 Created Date: 2025-03-25
 Last Modified: 2025-04-16
 """
 
-import sys                                    # To retrieve Python runtime version
-import requests                              # For HTTP calls to Databricks REST API
-from datetime import datetime                # For timestamp formatting
-from zoneinfo import ZoneInfo                # For timezone‐aware datetimes
-from typing import Optional                  
+import sys
+import requests
+from datetime import datetime
+from zoneinfo import ZoneInfo
+from typing import Optional
 
-from databricks.sdk.runtime import dbutils    # Databricks utility functions
-from utils.colorConfig import C               # Custom color codes for styled terminal output
+from databricks.sdk.runtime import dbutils
+from framework_utils.color import Color as C
 
 
 class ClusterInfo:
@@ -120,15 +52,11 @@ class ClusterInfo:
         self.cluster_name = None
         self.executor_memory = None
 
-        # If all optional parameters are provided, perform full diagnostics
         if databricks_instance and token and local_timezone:
-            # Gather and print notebook & Spark info
             self.get_notebook_info(local_timezone)
-            # Print environment variables if requested
             if print_env_var:
-                from utils.environmentConfig import EnvironmentConfig
+                from framework_utils.environment import EnvironmentConfig
                 EnvironmentConfig().print_environment_info()
-            # Fetch and print detailed cluster info via REST API
             self.get_cluster_info(databricks_instance, token)
 
     @staticmethod
@@ -166,20 +94,15 @@ class ClusterInfo:
 
         Parameters:
             local_timezone: IANA timezone string for current time display.
-
         Returns:
             Tuple(cluster_id, cluster_name, executor_memory, notebook_path, current_time).
         """
-        # Read cluster ID and name from Spark configuration tags
         self.cluster_id = self.spark.conf.get("spark.databricks.clusterUsageTags.clusterId")
         self.cluster_name = self.spark.conf.get("spark.databricks.clusterUsageTags.clusterName")
-        # Obtain notebook path from dbutils context
         notebook_path = dbutils.notebook.entry_point.getDbutils() \
             .notebook().getContext().notebookPath().get()
-        # Read configured executor memory
         self.executor_memory = self.spark.conf.get("spark.executor.memory", "Unknown")
 
-        # Attempt to load the specified timezone; fall back to UTC on error
         try:
             tzinfo = ZoneInfo(local_timezone)
         except Exception as e:

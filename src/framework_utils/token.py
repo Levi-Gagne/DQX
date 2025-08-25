@@ -8,7 +8,7 @@ Description:
     and exposes convenient properties and unpacking for both values.
 
 Token Management Configuration File (excerpt; only 'prd' shown):
-    # File: token-management.yaml
+    # File: src/datalake_job_monitor/resources/token-management.yaml
     databricks_token_config:
         prd:
             databricks_token:
@@ -28,60 +28,9 @@ Token Management Configuration File (excerpt; only 'prd' shown):
                 instance_scope: "prd-databricks-api-token-lmg"
                 instance_key: "prd_databricks_instance_lmg"
 
-Workflow:
-    1. Initialization:
-        - __init__(config_path, env, spark):
-            * Stores path to token-management.yaml and the target environment string.
-            * Retrieves DBUtils via get_dbutils(spark) if a SparkSession is provided.
-            * Loads the YAML into self._config and extracts self._env_config for the given env.
-    2. load_config():
-        - Opens and parses the YAML file at config_path into self._config.
-        - Raises an exception if file I/O or parsing fails.
-    3. load_secrets():
-        - Reads tenant_id, client_id, client_secret, resource, and instance values from
-          DBUtils secrets or OS environment variables.
-        - Constructs the Azure AD token endpoint URL using tenant_id.
-        - Sends an HTTP POST to obtain an OAuth access token.
-        - Raises an exception on non-200 responses or missing access_token.
-        - Normalizes the Databricks instance URL by stripping protocol and trailing slashes.
-        - Returns a tuple (full_instance_url, access_token).
-    4. __iter__():
-        - Enables unpacking: instance_url, token = TokenConfig(...)
-    5. Properties:
-        - databricks_token: Returns {"client_secret": <access_token>}.
-        - databricks_instance: Returns the workspace URL.
-
-Usage Examples:
-    # 1) With SparkSession in Databricks notebook:
-    from pyspark.sql import SparkSession
-    from utils.tokenConfig import TokenConfig
-
-    spark = SparkSession.builder.getOrCreate()
-    cfg = TokenConfig("/path/to/token-management.yaml", "prd", spark)
-    instance_url, token = cfg.load_secrets()
-
-    # 2) Direct unpacking:
-    instance_url, token = TokenConfig("/path/to/token-management.yaml", "prd", spark)
-
-    # 3) Without Spark (using environment variables):
-    import os
-    os.environ["tenant-id"] = "<your-tenant-id>"
-    os.environ["AppReg-da-prd-dc01-analytics-fw-bk-dbk-admin-jobs-worker-ClientID"] = "<your-client-id>"
-    os.environ["AppReg-da-prd-dc01-analytics-fw-bk-dbk-admin-jobs-worker-ClientSecret"] = "<your-client-secret>"
-    os.environ["dbk-resource-id"] = "<your-resource-id>"
-    os.environ["prd_databricks_instance_lmg"] = "prd-workspace.cloud.databricks.com"
-
-    cfg = TokenConfig("/path/to/token-management.yaml", "prd")
-    instance_url, token = cfg.load_secrets()
-
-Note:
-    - Requires DBUtils for secret retrieval in Databricks runtime; otherwise falls back to env vars.
-    - Depends on the 'databricks_token_config.prd' section in token-management.yaml.
-    - Uses the requests library for the OAuth token request to Azure AD.
-
 Author: Levi Gagne
 Created Date: 2025-04-06
-Last Modified: 2025-04-16
+Last Modified: 2025-08-24
 """
 
 import os
@@ -118,10 +67,6 @@ class TokenConfig:
         """
         Initializes TokenConfig with the token-management YAML file, environment string,
         and optional SparkSession for DBUtils.
-        
-        :param config_path: Path to token-management.yaml.
-        :param env: Environment string (e.g., "prd", "dev", "tst").
-        :param spark: SparkSession for DBUtils; if None, falls back to environment variables.
         """
         self.spark = spark
         self.dbutils = get_dbutils(spark) if spark is not None else None
@@ -151,11 +96,6 @@ class TokenConfig:
     def load_secrets(self) -> Tuple[str, str]:
         """
         Retrieves and returns a tuple (full_instance_url, access_token).
-
-        - full_instance_url: Databricks instance URL with 'https://' and no trailing slash.
-        - access_token: OAuth bearer token.
-
-        :return: Tuple(full_instance_url, access_token).
         """
         token_cfg = self._env_config.get("databricks_token")
         instance_cfg = self._env_config.get("databricks_instance")

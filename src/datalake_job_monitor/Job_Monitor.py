@@ -5,8 +5,11 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Overview
-# MAGIC  
+# MAGIC ## Reference
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC This Job Monitor provides continuous visibility into Databricks job executions, capturing key metrics—such as run success/failure frequency and duration—over time. By centralizing run data in a Delta Lake table, teams can proactively identify issues and bottlenecks. While resource utilization and optimized resource allocation are not implemented today, this framework serves as a base table for future enhancements in those areas. "You can’t manage what you don’t measure."
 # MAGIC
 # MAGIC ---
@@ -345,6 +348,7 @@ import os
 import sys
 import yaml
 import requests
+from pathlib import Path
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from typing import Dict, Any, List, Optional, Tuple
@@ -364,14 +368,30 @@ from pyspark.sql.functions import col, upper, desc, row_number, concat_ws, lit, 
 from pyspark.sql.window import Window
 from delta.tables import DeltaTable
 
-# Local application imports
-from utils.colorConfig import C
-from utils.messageConfig import ClusterInfo
-from utils.yamlConfig import YamlConfig
-from utils.deltaConfig import DeltaTableUpdater
-from utils.databricksAPIConfig import DatabricksAPIClient
-from utils.environmentConfig import EnvironmentConfig
-from utils.tokenConfig import TokenConfig
+def add_src_to_sys_path(src_dir="src", sentinel="framework_utils", max_levels=12):
+    start = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd().resolve()
+    p = start
+    for _ in range(max_levels):
+        cand = p / src_dir
+        if (cand / sentinel).exists():
+            s = str(cand.resolve())
+            if s not in sys.path:
+                sys.path.insert(0, s)
+                print(f"[bootstrap] sys.path[0] = {s}")
+            return
+        if p == p.parent: break
+        p = p.parent
+    raise ImportError(f"Couldn't find {src_dir}/{sentinel} above {start}")
+
+add_src_to_sys_path()
+
+from framework_utils.color import Color as C
+from framework_utils.message import ClusterInfo
+from framework_utils.yaml import YamlConfig
+from framework_utils.delta import DeltaTableUpdater
+from framework_utils.databricksAPI import DatabricksAPIClient
+from framework_utils.environment import EnvironmentConfig
+from framework_utils.token import TokenConfig
 
 # COMMAND ----------
 
@@ -779,13 +799,17 @@ if __name__ == "__main__":
     spark = SparkSession.builder.getOrCreate()
 
     # EnvironmentConfig returns a tuple (ENV, TIMEZONE, LOCAL_TIMEZONE)
-    env, processing_timezone, local_timezone = EnvironmentConfig().environment
+    #env, processing_timezone, local_timezone = EnvironmentConfig().environment
+    env = "dev"
+    processing_timezone = "UTC"
+    local_timezone = "America/Chicago"
+
 
     # Instantiate YamlConfig with job-monitor.yaml.
-    yaml_config = YamlConfig("yaml/job-monitor.yaml", env=env, spark=spark)
+    yaml_config = YamlConfig("resources/job-monitor.yaml", env=env, spark=spark)
 
     # Instantiate TokenConfig with token-management.yaml and the given environment.
-    databricks_instance, token = TokenConfig("yaml/token-management.yaml", env=env, spark=spark)
+    databricks_instance, token = TokenConfig("resources/token-management.yaml", env=env, spark=spark)
 
     # Print cluster and notebook information.
     cluster_info = ClusterInfo(spark, databricks_instance, token, local_timezone, print_env_var=True)

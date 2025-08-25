@@ -23,11 +23,11 @@ Created Date: 2025-03-25
 Last Modified: 2025-04-16
 """
 
-import os  # For interacting with operating system environment variables.
-from typing import Optional  # For type annotations.
-from zoneinfo import ZoneInfo  # For timezone support if needed.
+import os
+from typing import Optional
+from zoneinfo import ZoneInfo
 
-from utils.colorConfig import C # Import custom color configuration for terminal output.
+from framework_utils.color import Color as C
 
 
 class EnvironmentConfig:
@@ -51,7 +51,6 @@ class EnvironmentConfig:
         """
         # Retrieve the 'ENV' variable from the OS environment.
         env: Optional[str] = os.getenv("ENV")
-        # Verify that the ENV variable is set; otherwise, raise an error with a colorized message.
         if not env:
             raise EnvironmentError(f"{C.b}{C.red}ENV environment variable is not set{C.r}")
         self._env: str = env
@@ -66,7 +65,6 @@ class EnvironmentConfig:
         # Retrieve the 'TIMEZONE' variable; if it is not set, warn and default to "UTC".
         tz: Optional[str] = os.getenv("TIMEZONE")
         if not tz:
-            # Print a warning message in colored text.
             print(f"{C.b}{C.ivory}Warning: TIMEZONE not set, defaulting to 'UTC'.{C.r}")
             tz = "UTC"
         self._timezone: str = tz
@@ -89,15 +87,11 @@ class EnvironmentConfig:
               printing each in a formatted manner with designated colors.
             - Print the separator line again to close the output.
         """
-        # Create a separator line with bright pink coloring.
         dash_line = f"{C.b}{C.bright_pink}" + "-" * 41 + f"{C.r}"
         print(dash_line)
         print(f"{C.b}{C.ivory}Environment Variables:{C.r}")
-        # Iterate over each key and value in the environment variables.
         for key, value in self._env_vars.items():
-            # Print the key in bright pink and the value in ivory, with formatting.
             print(f"    - {C.b}{C.bright_pink}{key}{C.r} -> {C.b}{C.ivory}{value}{C.r}")
-        # Print the bottom separator.
         print(dash_line)
 
     @property
