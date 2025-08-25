@@ -1,0 +1,215 @@
+# =================================================================================================
+# DQX Rules — gold.wkdy_dim_customer 
+# Catalog: de_prd | Schema: gold | Table: wkdy_dim_customer
+# Run config: default
+#
+# Notes:
+# - Comments above each rule explain intent.
+# - A commented SQL block below each rule shows how to spot offenders in plain Spark SQL.
+# - Criticality: use `error` for must-haves; `warn` for desirable hygiene that legacy rows might violate.
+# =================================================================================================
+
+# 1) Primary key uniqueness (customer_key)
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: pk_uniqueness_on_customer_key
+  criticality: error
+  run_config_name: default
+  check:
+    function: is_unique
+    arguments:
+      columns: ["customer_key"]
+
+# 2) At most one active record per customer_id
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: one_active_record_per_customer_id
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_query
+    arguments:
+      input_placeholder: "{input}"
+      query: |
+        WITH cte AS (
+          SELECT customer_id, SUM(CASE WHEN is_active_record THEN 1 ELSE 0 END) AS active_cnt
+          FROM {input}
+          GROUP BY customer_id
+        )
+        SELECT customer_id, (active_cnt > 1) AS is_offender
+        FROM cte
+      merge_columns: ["customer_id"]
+      condition_column: is_offender
+
+# 3) SCD end_date must be >= start_date on closed rows only
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: scd_closed_has_end_date_after_start
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_query
+    arguments:
+      input_placeholder: "{input}"
+      query: |
+        SELECT scd_record_id,
+               (NOT (
+                 is_active_record = false
+                 AND start_date IS NOT NULL
+                 AND end_date   IS NOT NULL
+                 AND end_date   >= start_date
+               )) AS is_offender
+        FROM {input}
+        WHERE is_active_record = false
+      merge_columns: ["scd_record_id"]
+      condition_column: is_offender
+
+# 4) SCD active rows must have NULL end_date
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: scd_active_has_null_end_date
+  criticality: error
+  run_config_name: default
+  check:
+    function: sql_query
+    arguments:
+      input_placeholder: "{input}"
+      query: |
+        SELECT scd_record_id,
+               (end_date IS NOT NULL) AS is_offender
+        FROM {input}
+        WHERE is_active_record = true
+      merge_columns: ["scd_record_id"]
+      condition_column: is_offender
+
+# 5) US rows: city required only when an address exists
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: city_required_when_country_usa_and_address_present
+  criticality: warn
+  run_config_name: default
+  check:
+    function: sql_query
+    arguments:
+      input_placeholder: "{input}"
+      query: |
+        SELECT customer_key,
+               (
+                 country_iso_code = 'USA'
+                 AND (coalesce(trim(address_line_1), '') <> '' OR coalesce(trim(formatted_address), '') <> '')
+                 AND (city IS NULL OR length(trim(city)) = 0)
+               ) AS is_offender
+        FROM {input}
+        WHERE country_iso_code = 'USA'
+      merge_columns: ["customer_key"]
+      condition_column: is_offender
+
+# 6) US rows: state code must be valid, but only when present
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: state_code_valid_when_country_usa_and_present
+  criticality: warn
+  run_config_name: default
+  check:
+    function: sql_query
+    arguments:
+      input_placeholder: "{input}"
+      query: |
+        SELECT customer_key,
+               (
+                 country_iso_code = 'USA'
+                 AND state_iso_code IS NOT NULL
+                 AND upper(state_iso_code) NOT IN
+                   ('AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','IA','ID','IL','IN','KS',
+                    'KY','LA','MA','MD','ME','MI','MN','MO','MS','MT','NC','ND','NE','NH','NJ','NM',
+                    'NV','NY','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VA','VT','WA','WI','WV','DC','PR')
+               ) AS is_offender
+        FROM {input}
+        WHERE country_iso_code = 'USA' AND state_iso_code IS NOT NULL
+      merge_columns: ["customer_key"]
+      condition_column: is_offender
+
+# 7) US postal code: only evaluate when populated
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: postal_code_format_us_when_present
+  criticality: warn
+  run_config_name: default
+  check:
+    function: regex_match
+    arguments:
+      column: postal_code
+      regex: '^[0-9]{5}(-[0-9]{4})?$'
+      filter: "country_iso_code = 'USA' AND postal_code IS NOT NULL"
+
+# 8) Phone number: check only non-null US rows
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: phone_format_us_when_present
+  criticality: warn
+  run_config_name: default
+  check:
+    function: regex_match
+    arguments:
+      column: default_phone_number
+      regex: '^\\+?1?[\\s\\-\\.]?\\(?\\d{3}\\)?[\\s\\-\\.]?\\d{3}[\\s\\-\\.]?\\d{4}$'
+      filter: "country_iso_code = 'USA' AND default_phone_number IS NOT NULL"
+
+# 9) Email shape: only when an email exists
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: email_format_default_contact_when_present
+  criticality: warn
+  run_config_name: default
+  check:
+    function: regex_match
+    arguments:
+      column: default_email_address
+      regex: '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'
+      filter: "default_email_address IS NOT NULL"
+
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: email_format_biller_when_present
+  criticality: warn
+  run_config_name: default
+  check:
+    function: regex_match
+    arguments:
+      column: customer_biller_email
+      regex: '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'
+      filter: "customer_biller_email IS NOT NULL"
+
+# 10) SIC: 4 digits only when business and code present
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: sic_code_format_4_digits_for_business
+  criticality: warn
+  run_config_name: default
+  check:
+    function: regex_match
+    arguments:
+      column: customer_sic_code
+      regex: '^[0-9]{4}$'
+      filter: "is_business = true AND customer_sic_code IS NOT NULL"
+
+# 11) SIC name required only when SIC code present
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: sic_name_required_when_code_present
+  criticality: warn
+  run_config_name: default
+  check:
+    function: sql_query
+    arguments:
+      input_placeholder: "{input}"
+      query: |
+        SELECT customer_key,
+               (
+                 customer_sic_code IS NOT NULL
+                 AND (customer_sic_code_name IS NULL OR length(trim(customer_sic_code_name)) = 0)
+               ) AS is_offender
+        FROM {input}
+        WHERE customer_sic_code IS NOT NULL
+      merge_columns: ["customer_key"]
+      condition_column: is_offender
+
+# 12) Country ISO format — only when populated
+- table_name: de_prd.gold.wkdy_dim_customer
+  name: country_iso_code_format_when_present
+  criticality: warn
+  run_config_name: default
+  check:
+    function: regex_match
+    arguments:
+      column: country_iso_code
+      regex: '^[A-Z]{2,3}$'
+      filter: "country_iso_code IS NOT NULL"

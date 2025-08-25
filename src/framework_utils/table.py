@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Tuple, List, Optional, Dict, Any
 from pyspark.sql import SparkSession, DataFrame, types as T
 
-from utils.console import Console
+from framework_utils.console import Console
 
 
 __all__ = [

@@ -483,7 +483,7 @@ class JobFailureProcessor:
 
 # DBTITLE 1,Execution Logic
 if __name__ == "__main__":
-    CONFIG_PATH   = "yaml/job-monitor.yaml"
+    CONFIG_PATH   = "resources/job-monitor.yaml"
     TEMPLATE_PATH = "json/msteams_job_failure_notification.json"
 
     #env, processing_timezone, local_timezone = EnvironmentConfig().environment
